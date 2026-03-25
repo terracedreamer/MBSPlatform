@@ -118,10 +118,10 @@
 
 ## Priority 2B — Inner Lab Middleware + Dashboard (Layer 2) — Build NOW
 
-**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `copy-to-innerlab/CLAUDE.md`**
+**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `platform-instructions-for-innerlab/CLAUDE.md`**
 
-- [ ] Add `server/` folder to `Innerlab/` project (currently frontend-only)
-- [ ] Express + Mongoose scaffolding (connects to inner_lab DB)
+### Backend (add to existing server/ in Innerlab/ project)
+- [ ] Add Mongoose + inner_lab DB connection to existing Express server
 - [ ] JWT validation middleware (verifies MBS Platform tokens)
 - [ ] il_consciousness_profiles collection + API (GET/PUT)
 - [ ] il_personal_histories collection + API
@@ -131,19 +131,18 @@
 - [ ] il_activity_feed collection + API
 - [ ] Encryption & data export infrastructure
 - [ ] Deploy to Coolify
-- [ ] Daily briefing engine (LATER — when enough data exists)
-- [ ] Cross-module insights (LATER — when enough data exists)
 
----
+### Frontend (add dashboard pages to existing innerlab.ai React app)
+- [ ] Auth-gated routing (dashboard pages require JWT + entitlement check)
+- [ ] Dashboard page: module launcher, activity feed, check-in widget
+- [ ] Consciousness profile page: view/edit assessment, historical snapshots
+- [ ] Memories page: list by module, sharing toggles
+- [ ] Activity feed page: cross-module events
+- [ ] Upsell page for users without Inner Lab All Access
 
-## Priority 7 — Inner Lab Frontend / Unified Dashboard (Build LATER)
-
-- [ ] innerlab.ai logged-in dashboard (for category_access: "innerlab" subscribers)
-- [ ] Daily briefing view
-- [ ] Cross-module insights view
-- [ ] Unified consciousness profile view
-- [ ] Module launcher
-- [ ] Upsell from standalone to Inner Lab All Access
+### Deferred (build when 2-3 modules have data)
+- [ ] Daily briefing engine + view
+- [ ] Cross-module insights engine + view
 
 ---
 

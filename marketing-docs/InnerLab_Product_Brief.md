@@ -127,9 +127,11 @@ Inner Lab consists of 11 modules spanning multiple modalities of inner growth. E
 | **Status** | Live |
 | **URL** | yoga.magicbusstudios.com |
 
-**Description:** Follow structured yoga sessions designed for your level. Movement-based inner growth practice that complements the more contemplative modules.
+**Description:** Structured yoga, breathwork, and meditation sessions designed for your level and goals. Includes curated flows across categories (strength, flexibility, balance, relaxation), guided breathwork patterns with personal bests tracking, and meditation sessions. Features daily streaks, achievements, community-created flows, and an adaptive program system that adjusts to your progress.
 
-**What it helps users do:** Build a consistent movement practice, improve flexibility and strength, connect body and mind.
+**What it helps users do:** Build a consistent movement practice, improve flexibility and strength, connect body and mind, track progress with streaks and achievements, discover community-created flows.
+
+**Key features:** Category-based flow library, breathwork sessions with timing and personal records, meditation library, daily streak tracking, achievement badges, community flows (user-created and shared), program enrollment (multi-week structured progressions), health condition and injury awareness (adapts recommendations).
 
 ### Coming Soon Modules
 
@@ -204,6 +206,46 @@ Inner Lab consists of 11 modules spanning multiple modalities of inner growth. E
 **Description:** Marketplace connecting users with verified practitioners — therapists, coaches, astrologers, healers.
 
 **What it helps users do:** Find human guidance, book sessions with practitioners, complement digital tools with personal support.
+
+---
+
+## Section 6B: The Inner Lab Dashboard (innerlab.ai/dashboard)
+
+The Inner Lab Dashboard is the unified hub for subscribers with Inner Lab All Access. It's the place where all module data comes together to reveal patterns you wouldn't see from any single module alone.
+
+### Dashboard Features
+
+| Feature | Description |
+|---------|-------------|
+| **Module Launcher** | Quick access to all active modules with status indicators (active, coming soon). One-click launch into any module. |
+| **Daily Check-In** | Quick mood, energy, stress, and intention capture. Takes 30 seconds. Feeds into all modules for personalized recommendations. |
+| **Activity Feed** | Cross-module timeline showing recent activity across all modules — conversations in CWG, sessions in FlowState, journal entries, achievements, check-ins. See your whole inner growth journey in one place. |
+| **Consciousness Profile** | Unified view of your spiritual assessment, archetype, and orientation. Based on CWG's 12-archetype assessment, enriched by data from all modules over time. Historical snapshots show how your profile evolves. |
+| **Memory Manager** | View AI-extracted insights about you from each module. Control which memories are shared across modules and which stay private. Full transparency and sovereignty over what the system knows. |
+| **Daily Briefing** (future) | AI-synthesized summary: "Here's what we noticed across your modules today." Connects check-in data, conversation themes, practice patterns, and astrological transits into a personalized morning briefing. |
+| **Cross-Module Insights** (future) | Pattern detection across modules. Example: "You've been exploring grief in CWG and doing calming breathwork in BreathArc — here's what we notice." Requires 2-3 active modules with enough data. |
+
+### How Modules Connect (Cross-Module Intelligence)
+
+The real power of Inner Lab is that modules talk to each other through shared data:
+
+- **CWG conversation about anxiety** → BreathArc suggests a calming breathing pattern
+- **FlowState yoga session focused on hip opening** → CWG's guides know this often surfaces stored emotions
+- **StarMap shows a challenging transit** → Rituals suggests a relevant practice pack
+- **DreamLens captures a recurring dream symbol** → Archetypes connects it to an active inner voice
+- **Check-in shows low energy for 3 days** → Dashboard flags the pattern and suggests actions
+
+This cross-module intelligence is opt-in — users control what's shared. But for those who opt in, it creates a compounding effect where each module becomes more valuable because of the others.
+
+### User Memory Privacy Model
+
+Inner Lab handles deeply personal data. The privacy model is built on explicit user consent:
+
+- Each module's AI creates memories in its own namespace (private by default)
+- Users can explicitly share specific memories across all Inner Lab modules
+- Shared memories are visible to all modules; private memories are visible only to the source module
+- Users can revoke sharing at any time
+- Full data export and deletion available (GDPR/CCPA compliant)
 
 ---
 

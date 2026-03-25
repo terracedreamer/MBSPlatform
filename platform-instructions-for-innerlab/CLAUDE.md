@@ -77,6 +77,7 @@ il_check_ins                — Daily mood/energy/stress/intention (any module c
 il_daily_check_ins          — Aggregated daily check-in data
 il_user_memories            — Cross-session AI memory with opt-in sharing
 il_shared_memories          — Memories user has consented to share across modules
+il_user_wellness_profiles   — Health conditions, injuries, goals (shared by FlowState + BreathArc)
 il_activity_feed            — Cross-module activity events
 il_blockchain_anchors       — OpenTimestamps data integrity proofs
 il_sync_backups             — Local-first storage sync infrastructure
@@ -166,6 +167,37 @@ StarMap:   astro_charts, astro_transits, ... (future)
 - `GET /encryption/keys` — Get user's encryption key metadata
 - `POST /encryption/setup` — Initialize client-side encryption
 
+## Frontend Pages (Add to Existing Marketing Site)
+
+The existing innerlab.ai React frontend has marketing pages. Add these authenticated pages:
+
+### New Pages
+- `innerlab.ai/dashboard` — Main dashboard (requires auth + Inner Lab All Access entitlement)
+  - Module launcher: links to all active modules with status indicators
+  - Recent activity feed (from il_activity_feed)
+  - Current consciousness snapshot summary
+  - Quick check-in widget (mood, energy, stress, intention)
+  - Daily briefing (placeholder/coming soon until enough data exists)
+- `innerlab.ai/consciousness` — Consciousness profile viewer/editor
+  - Shows archetype, orientation, assessment results
+  - Historical snapshots timeline
+- `innerlab.ai/memories` — User memories manager
+  - List memories by module, with sharing toggle
+  - Shared vs private filter
+- `innerlab.ai/activity` — Full activity feed (cross-module)
+
+### Auth-Gated Routing
+- Marketing pages (/, /modules, /about) — public, no auth required
+- Dashboard pages (/dashboard, /consciousness, /memories, /activity) — require JWT + entitlement check
+- If user has no Inner Lab All Access: show upsell page linking to MBS Platform billing
+
+### Entitlement Check
+Dashboard requires `category_access: "innerlab"` or `mbs_all_access`. Check via:
+```
+GET magicbusstudios.com/api/entitlements/category/innerlab
+```
+If user has only a `product_pass` for one module, they can use that module directly but NOT the dashboard.
+
 ## Auth Middleware
 
 This service does NOT handle login. It validates JWTs from the MBS Platform:
@@ -196,7 +228,7 @@ async function requireAuth(req, res, next) {
 | JWT_SECRET | (same as MBS Platform) | To verify platform-issued JWTs |
 | PORT | TBD | Not 3002 (that's MBS Platform) |
 | CORS_ORIGINS | All Inner Lab frontend domains | CWG, FlowState, innerlab.ai, etc. |
-| MBS_PLATFORM_URL | https://platform.magicbusstudios.com | For user lookups if needed |
+| MBS_PLATFORM_URL | https://magicbusstudios.com | For user lookups if needed |
 
 ## When to Build This
 
@@ -204,12 +236,12 @@ async function requireAuth(req, res, next) {
 
 **Build order:**
 1. MBS Platform (Layer 1) — SSO + billing
-2. **This middleware (Layer 2)** — shared il_* collections + APIs
+2. **This project (Layer 2)** — backend (il_* collections + APIs) + frontend (dashboard shell, consciousness profile, activity feed)
 3. CWG migration — writes shared data to il_* via this middleware
 4. FlowState migration — same pattern
-5. Inner Lab **frontend** (innerlab.ai dashboard) — built LATER when 2-3 modules have enough data
+5. Daily briefing + cross-module insights — built LATER when 2-3 modules have enough data to power them
 
-**What comes later (NOT this project):** The Inner Lab frontend/dashboard at innerlab.ai. That's a separate frontend project built when there are enough modules and data to power a daily briefing and cross-module insights.
+**The Inner Lab frontend/dashboard** is built as part of THIS project (innerlab.ai). The dashboard pages (daily briefing, consciousness profile, memories, activity feed) are added to the existing React frontend alongside the marketing pages. Daily briefing and cross-module insights features are deferred until enough modules have data, but the dashboard shell, consciousness profile view, and activity feed should be built now.
 
 ## Relationship to Other Projects
 
@@ -220,7 +252,7 @@ async function requireAuth(req, res, next) {
 | **CWG Backend** | Spiritual guidance, chat, journaling | `inner_lab` (cwg_* collections) |
 | **FlowState Backend** | Yoga, breathwork, meditation | `inner_lab` (yoga_* collections) |
 | **BreathArc Backend** (future) | Guided breathwork | `inner_lab` (breath_* collections) |
-| **Inner Lab Frontend** (future) | Unified dashboard at innerlab.ai | No DB (calls middleware + modules) |
+| **Inner Lab Frontend** (this project) | Dashboard + marketing at innerlab.ai | No own DB (calls middleware APIs) |
 
 ## Product Catalog (Inner Lab Modules)
 
@@ -240,12 +272,43 @@ Do NOT hardcode these. Store in config so new modules can be added.
 | innerquest | InnerQuest | Coming Soon | TBD |
 | nexus | Nexus | Coming Soon | TBD |
 
+## Project Structure (After Upgrade)
+```
+Innerlab/
+├── src/                    # React frontend
+│   ├── pages/              # Existing marketing pages + NEW dashboard pages
+│   │   ├── HomePage.jsx         # existing — marketing landing
+│   │   ├── ModulesPage.jsx      # existing — module catalog
+│   │   ├── DashboardPage.jsx    # NEW — main dashboard (auth-gated)
+│   │   ├── ConsciousnessPage.jsx # NEW — consciousness profile
+│   │   ├── MemoriesPage.jsx     # NEW — user memories manager
+│   │   └── ActivityPage.jsx     # NEW — cross-module activity feed
+│   ├── components/
+│   └── ...
+├── server/
+│   ├── index.js            # Express entry — EXISTING form handler + NEW il_* APIs
+│   ├── routes/
+│   │   ├── forms.js        # EXISTING — contact, subscribe, waitlist (SendGrid)
+│   │   ├── consciousness.js # NEW — consciousness profile CRUD
+│   │   ├── memories.js     # NEW — user memories CRUD + sharing
+│   │   ├── checkins.js     # NEW — daily check-ins
+│   │   ├── activity.js     # NEW — activity feed
+│   │   └── export.js       # NEW — encryption & data export
+│   ├── models/             # NEW — Mongoose models for il_* collections
+│   ├── middleware/          # NEW — requireAuth (JWT validation)
+│   ├── services/           # NEW — briefing engine, insight engine
+│   └── config/             # NEW — module catalog
+├── Dockerfile
+├── nginx.conf
+└── package.json
+```
+
 ## What NOT to Do
 - Do NOT handle login or auth — MBS Platform does that
 - Do NOT handle billing — MBS Platform does that
 - Do NOT write to module-prefixed collections (cwg_*, yoga_*) — modules own their own data
 - Do NOT hardcode module slugs — use config
-- Do NOT build this until 2-3 modules exist and need cross-module data
+- Do NOT wait until multiple modules exist — build this middleware NOW (immediately after MBS Platform)
 - Do NOT merge with MBS Platform — this is a separate service
 
 ## Coding Rules

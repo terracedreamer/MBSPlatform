@@ -5,6 +5,7 @@
 *Marketing Brief & Website Content Guide — March 2026*
 
 > **Last Updated**: March 25, 2026. Platform decisions integrated.
+> **Note**: Arcade product information has been absorbed into `MagicBusStudios_Brand_And_Company.md` (the master doc). This file is kept as detailed reference for Arcade-specific marketing campaigns and content strategy. The master doc is the source of truth for product descriptions and pricing.
 
 ## Platform Context (New)
 - The Arcade uses the centralized MBS Platform for auth and billing (no per-game payment handling)

@@ -217,12 +217,12 @@ Two migration scripts to build (run once, from this backend):
 - Write CWG product data to `inner_lab` DB with `cwg_*` prefix
 - Write shared data to `inner_lab` DB with `il_*` prefix
 - Old database stays as backup
-- See `MBSPlatform/CWG/MBS_DATABASE_MIGRATION_PLAN.md` for bucket analysis
+- See `CWG/MBS_DATABASE_MIGRATION_PLAN.md` in the CWG project (or `MBSPlatform/platform-instructions-for-cwg/PLATFORM_MIGRATION.md` for the full migration doc)
 
 ### FlowState Migration (7 collections)
 - Read from `yogaghost` database
 - Same split pattern: identity → mbs_platform, product → yoga_*, shared → il_*
-- See `MBSPlatform/YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` for bucket analysis
+- See `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` in the FlowState project (or `MBSPlatform/platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` for the full migration doc)
 
 ## What NOT to Do
 - Do NOT remove existing marketing pages or form handler — they keep working

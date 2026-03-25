@@ -114,24 +114,32 @@ Together, they paint a picture of a creative studio that builds thoughtful, well
 
 ### Studio Works (6 apps)
 
+Practical utility apps for everyday life. Demonstrates the studio's range and technical capability. Each is a standalone app with its own backend, using MBS Platform SSO for authentication.
+
 | App | URL | Description |
 |-----|-----|-------------|
-| WildLens | wildlens.magicbusstudios.com | Wildlife identification and nature exploration tool |
-| Lazy Chef | lazy-chef.magicbusstudios.com | Quick recipe finder and meal planning assistant |
-| Task Tracker | tasktracker.magicbusstudios.com | Family-oriented task and chore management |
-| AI Tutor | tutor.magicbusstudios.com | AI-powered educational tutoring assistant |
-| SmartCart | smartcart.magicbusstudios.com | Intelligent grocery shopping list manager |
-| Movie Picker | moviepicker.magicbusstudios.com | Movie recommendation and decision-making tool |
+| WildLens | wildlens.magicbusstudios.com | Point your camera at any animal or plant and get instant AI identification with habitat info, conservation status, and fun facts. Built for nature walks, hikes, and curious minds. |
+| Lazy Chef | lazy-chef.magicbusstudios.com | Tell it what's in your fridge, your dietary restrictions, and how much effort you want to put in. Get recipe suggestions ranked by laziness level. Meal planning for people who hate meal planning. |
+| Task Tracker | tasktracker.magicbusstudios.com | Family-oriented chore and task management. Assign tasks to household members, set recurring schedules, track completion. Simple enough for kids, useful enough for adults. |
+| AI Tutor | tutor.magicbusstudios.com | AI-powered tutoring across subjects and grade levels. Explains concepts in multiple ways, generates practice problems, tracks learning progress. Patient, adaptive, available 24/7. |
+| SmartCart | smartcart.magicbusstudios.com | Intelligent grocery list that learns your patterns. Auto-categorizes by store aisle, suggests items you're running low on, handles multiple stores. Share lists with household members. |
+| Movie Picker | moviepicker.magicbusstudios.com | End the "what should we watch?" debate. Input who's watching, mood, and preferences — get recommendations ranked by group compatibility. Integrates with major streaming platforms. |
 
 ### The Arcade (5 games)
 
-| Game | Description |
-|------|-------------|
-| Broken Chain | Cooperative word chain puzzle game |
-| MindHacker | Psychological deduction and bluffing party game |
-| Trivia Roast | Competitive trivia with comedic roast mechanics |
-| Whispering House | Mystery and deduction social game |
-| Fake Artist | Drawing-based hidden role party game |
+Multiplayer party games built around skill, creativity, and quick thinking. Browser-based, no downloads required, works on any device. Designed for groups of 3-8 players with quick 5-15 minute rounds. The Arcade represents the playful, social side of the studio.
+
+| Game | Tagline | URL | Description |
+|------|---------|-----|-------------|
+| Broken Chain | "Break free together" | brokenchain.magicbusstudios.com | Cooperative puzzle game — solve chain-breaking challenges as a team. Communication and coordination under pressure. |
+| MindHacker | "Outsmart your friends" | mindhacker.magicbusstudios.com | Psychological strategy game — predict, manipulate, and outthink opponents. Bluffing meets deduction. |
+| Trivia Roast | "Knowledge meets comedy" | triviaroast.magicbusstudios.com | Trivia with a twist — wrong answers get roasted by AI. Knowledge, speed, and comedic timing. |
+| Whispering House | "Trust no one" | whisperinghouse.magicbusstudios.com | Social deduction in a haunted house — find the ghost among you before time runs out. Hidden roles, secret information, trust nobody. |
+| Fake Artist | "One player is faking it" | fakeartist.magicbusstudios.com | Collaborative drawing game where one player doesn't know the prompt and must fake it convincingly. Spot the faker or fool everyone. |
+
+**Arcade target audience:** Friend groups (online party games), remote teams (team-building), couples and families, board game enthusiasts, streamers and content creators. Age range: 16-40.
+
+**Arcade positioning:** Social games built around skill, creativity, and quick thinking. Game night with friends, not esports. Playful, energetic, competitive but inclusive.
 
 ---
 
@@ -179,6 +187,15 @@ Wellness-oriented professionals (therapists, coaches, yoga instructors) looking 
 | **Studio Works -- Individual App** | Single utility app | $2.99 - $4.99/mo | -- |
 | **Studio Works -- All Access** | All 6 Studio Works apps | $9.99/mo | $79.99/yr |
 | **MBS Everything** | All 22 products across all divisions | $29.99/mo | $249.99/yr |
+
+### Arcade-Specific Pricing Options
+
+| Option | Price | What You Get |
+|--------|-------|-------------|
+| Free Tier | Free | Limited daily play time (30 min/day) |
+| Game Pass | $4.99 one-time | Unlimited access to one game forever |
+| 10hr Time Bank | $9.99 one-time | 10 hours of play across any game |
+| 25hr Time Bank | $19.99 one-time | 25 hours of play across any game |
 
 ### Entitlement Types
 

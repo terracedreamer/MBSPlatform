@@ -22,16 +22,17 @@ This repo contains architecture decisions, migration plans, and reference files.
 
 ## Reference Files Ready
 
-| File | Copy to | Purpose |
+| Folder in This Repo | Copy to | Purpose |
 |------|---------|---------|
-| `copy-to-mbs/CLAUDE.md` | `MBS/` project | Build Layer 1 (SSO, billing, entitlements) |
-| `copy-to-innerlab/CLAUDE.md` | `Innerlab/` project | Build Layer 2 (middleware + dashboard) |
-| `copy-to-cwg/PLATFORM_MIGRATION.md` | `CWG/` project | CWG migration instructions |
-| `copy-to-yogaghost/PLATFORM_MIGRATION.md` | `YogaGhost/` project | FlowState migration instructions |
+| `platform-instructions-for-mbs/` | `MBS/platform-instructions/` | Build Layer 1 (SSO, billing, entitlements) |
+| `platform-instructions-for-innerlab/` | `Innerlab/platform-instructions/` | Build Layer 2 (middleware + dashboard) |
+| `platform-instructions-for-cwg/` | `CWG/platform-instructions/` | CWG migration instructions |
+| `platform-instructions-for-yogaghost/` | `YogaGhost/platform-instructions/` | FlowState migration instructions |
+| `platform-instructions-for-new-modules/` | New module project as `platform-instructions/` | Starter kit for future modules |
 
 ## Next Steps
 
-1. Copy `copy-to-mbs/CLAUDE.md` into `MBS/` folder → start building Layer 1
-2. Copy `copy-to-innerlab/CLAUDE.md` into `Innerlab/` folder → start building Layer 2
+1. Copy `platform-instructions-for-mbs/` into `MBS/` as `platform-instructions/` → start building Layer 1
+2. Copy `platform-instructions-for-innerlab/` into `Innerlab/` as `platform-instructions/` → start building Layer 2
 3. Run CWG + FlowState migration scripts (after both layers are built)
-4. Copy migration docs into `CWG/` and `YogaGhost/` → refactor to use platform
+4. Copy migration docs into `CWG/` and `YogaGhost/` as `platform-instructions/` → refactor to use platform
