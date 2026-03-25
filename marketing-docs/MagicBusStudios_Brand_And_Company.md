@@ -118,12 +118,12 @@ Practical utility apps for everyday life. Demonstrates the studio's range and te
 
 | App | URL | Description |
 |-----|-----|-------------|
-| WildLens | wildlens.magicbusstudios.com | Point your camera at any animal or plant and get instant AI identification with habitat info, conservation status, and fun facts. Built for nature walks, hikes, and curious minds. |
-| Lazy Chef | lazy-chef.magicbusstudios.com | Tell it what's in your fridge, your dietary restrictions, and how much effort you want to put in. Get recipe suggestions ranked by laziness level. Meal planning for people who hate meal planning. |
-| Task Tracker | tasktracker.magicbusstudios.com | Family-oriented chore and task management. Assign tasks to household members, set recurring schedules, track completion. Simple enough for kids, useful enough for adults. |
-| AI Tutor | tutor.magicbusstudios.com | AI-powered tutoring across subjects and grade levels. Explains concepts in multiple ways, generates practice problems, tracks learning progress. Patient, adaptive, available 24/7. |
-| SmartCart | smartcart.magicbusstudios.com | Intelligent grocery list that learns your patterns. Auto-categorizes by store aisle, suggests items you're running low on, handles multiple stores. Share lists with household members. |
-| Movie Picker | moviepicker.magicbusstudios.com | End the "what should we watch?" debate. Input who's watching, mood, and preferences — get recommendations ranked by group compatibility. Integrates with major streaming platforms. |
+| WildLens | wildlens.magicbusstudios.com | Identify wildlife and plants instantly. Point your camera and learn about the nature around you. Built for nature walks, hikes, and curious minds. |
+| Lazy Chef | lazy-chef.magicbusstudios.com | A recipe assistant that helps you cook with what you already have. Simple, no-fuss meal planning for people who hate meal planning. |
+| Family Task Tracker | tasktracker.magicbusstudios.com | A shared task management tool built for families. Assign, track, and get things done together. Simple enough for kids, useful enough for adults. |
+| AI Tutor | tutor.magicbusstudios.com | A personal learning companion powered by AI. Get help with any subject, at your own pace. Explains concepts in multiple ways, adapts to your level. |
+| SmartCart | smartcart.magicbusstudios.com | Smart grocery shopping made simple. Build lists, compare prices, and never forget an item. Share lists with household members. |
+| Movie Picker | moviepicker.magicbusstudios.com | Discover your next watch. Get personalized movie recommendations based on your mood and taste. Works for solo or group decisions. |
 
 ### The Arcade (5 games)
 
@@ -131,11 +131,13 @@ Multiplayer party games built around skill, creativity, and quick thinking. Brow
 
 | Game | Tagline | URL | Description |
 |------|---------|-----|-------------|
-| Broken Chain | "Break free together" | brokenchain.magicbusstudios.com | Cooperative puzzle game — solve chain-breaking challenges as a team. Communication and coordination under pressure. |
-| MindHacker | "Outsmart your friends" | mindhacker.magicbusstudios.com | Psychological strategy game — predict, manipulate, and outthink opponents. Bluffing meets deduction. |
-| Trivia Roast | "Knowledge meets comedy" | triviaroast.magicbusstudios.com | Trivia with a twist — wrong answers get roasted by AI. Knowledge, speed, and comedic timing. |
-| Whispering House | "Trust no one" | whisperinghouse.magicbusstudios.com | Social deduction in a haunted house — find the ghost among you before time runs out. Hidden roles, secret information, trust nobody. |
-| Fake Artist | "One player is faking it" | fakeartist.magicbusstudios.com | Collaborative drawing game where one player doesn't know the prompt and must fake it convincingly. Spot the faker or fool everyone. |
+| Broken Chain | "Break free together" | brokenchain.magicbusstudios.com | Break free through strategy and deception. A game of alliances, betrayal, and escape. |
+| MindHacker | "Outsmart your friends" | mindhacker.magicbusstudios.com | Outsmart your friends with psychological strategy. Read minds, bluff, and decode hidden intentions. |
+| Trivia Roast | "Knowledge meets comedy" | triviaroast.magicbusstudios.com | Answer trivia, roast your rivals, and climb the leaderboard. Knowledge meets comedy. |
+| Whispering House | "Trust no one" | whisperinghouse.magicbusstudios.com | A social deduction game of secrets and suspicion. Share whispers, form alliances, and uncover the truth. |
+| Fake Artist | "One player is faking it" | fakeartist.magicbusstudios.com | One player doesn't know the prompt — but has to fake it. Spot the impostor before it's too late. |
+
+**Known issue:** Trivia Roast subdomain is misspelled as `trivaroast.magicbusstudios.com` (missing "i") in the live deployment. Needs DNS fix.
 
 **Arcade target audience:** Friend groups (online party games), remote teams (team-building), couples and families, board game enthusiasts, streamers and content creators. Age range: 16-40.
 
@@ -291,9 +293,25 @@ Each brand level has its own identity, voice, and messaging focus:
 
 | Site | Domain | Purpose | Accent Color |
 |------|--------|---------|--------------|
-| MagicBusStudios | magicbusstudios.com | Studio brand site + platform (SSO, billing, account) | Purple |
+| MagicBusStudios | magicbusstudios.com | Studio brand site + platform (SSO, billing, account) | Cyan/Teal |
 | Inner Lab | innerlab.ai | Inner Lab product site + IL dashboard | Teal |
 | Conversations With God | conversationswithgod.ai | CWG standalone app | Own palette |
+
+### Current Website State (Pre-Platform)
+
+**magicbusstudios.com pages:**
+- `/` — Homepage (hero, flagship section, module grid, newsletter/waitlist CTAs). Note: currently has a timed redirect to innerlab.ai — needs fixing when platform is built.
+- `/studio-works` — Studio Works grid (6 apps, all live)
+- `/arcade` — Arcade grid (5 games, all live)
+- `/about` — Currently redirects to innerlab.ai (no dedicated About page exists yet)
+- `/contact`, `/subscribe`, `/waitlist` — Form pages (SendGrid)
+- `/privacy`, `/terms` — Legal pages
+
+**Known issues to fix when building the platform:**
+- Homepage redirect to innerlab.ai should be removed — MBS homepage should be the primary landing
+- `/about` needs a real About page (studio story, mission, team)
+- No pricing visible anywhere — pricing pages come with the platform build
+- Trivia Roast subdomain typo: `trivaroast` should be `triviaroast`
 
 ### Shared Design Language
 
@@ -386,6 +404,6 @@ When creating marketing content for any MagicBusStudios property, always follow 
 
 ### Visual & Design Rules
 - All sites share dark aesthetic, glass card UI, particle effects, premium feel
-- MBS uses purple accent; innerlab.ai uses teal accent; CWG has its own palette
+- MBS uses cyan/teal accent; innerlab.ai uses teal accent; CWG has its own palette
 - Typography: Space Grotesk (headings), DM Sans (body), Instrument Serif (accents)
 - Maintain premium quality in all visual assets -- never use stock-looking or generic imagery
