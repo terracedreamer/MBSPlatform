@@ -200,13 +200,11 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── PLATFORM_MIGRATION.md                   ← FlowState migration steps
 │   └── README.md                               ← Agent intro
 │
-├── marketing-docs/                             ← Source of truth for product briefs
-│   ├── PLATFORM_CONTEXT_FOR_MARKETING.md       ← Platform context for marketing agent
-│   ├── ConversationsWithGod_Product_Brief.docx
-│   ├── InnerLab_Product_Brief.docx
-│   ├── MagicBusStudios_Brand_Architecture.docx
-│   ├── MagicBusStudios_Company_Overview.docx
-│   └── TheArcade_Marketing_Brief.docx
+├── marketing-docs/                             ← Source of truth — synced to Desktop/Marketing/Overview/
+│   ├── MagicBusStudios_Brand_And_Company.md    ← Master: company + brand + all products + pricing
+│   ├── InnerLab_Product_Brief.md               ← Inner Lab deep dive (11 modules, framework)
+│   ├── ConversationsWithGod_Product_Brief.md   ← CWG deep dive (21 guides, features, pricing)
+│   └── TheArcade_Marketing_Brief.md            ← Arcade deep dive (5 games, campaigns)
 │
 ├── archive/                                    ← Old reference (absorbed)
 │   ├── ChatGPT-architecture/
@@ -242,9 +240,18 @@ Each project's CLAUDE.md has been updated with a note to check `platform-instruc
 4. Open Claude Code in that project — the agent picks up the new instructions
 
 ## Marketing Folder Sync
-When marketing docs change in this repo (`marketing-docs/`), copy them to `Desktop/Marketing/Overview/`. Also update `Desktop/Marketing/README.md` if the folder structure or contents changed.
-- The Marketing folder on Desktop is NOT a git repo — just copy files there directly.
-- Marketing folder structure: `Overview/` (briefs + platform context), `Magic Bus Studios/` (MBS brand), `Inner Lab/` (IL product line), `Inner Lab/Conversations with God/` (CWG campaigns). No separate Arcade or Studio Works folders — those are marketed under MBS brand.
+When ANY file in `marketing-docs/` changes in this repo:
+1. Copy ALL `.md` files from `marketing-docs/` to `Desktop/Marketing/Overview/` (overwrite)
+2. Update `Desktop/Marketing/README.md` if the file listing changed
+3. Tell the user what was synced
+
+- The Marketing folder at `Desktop/Marketing/` is NOT a git repo — just copy files directly.
+- Marketing folder structure:
+  - `Overview/` — product briefs (synced from this repo)
+  - `Magic Bus Studios/` — MBS brand marketing (social, campaigns)
+  - `Inner Lab/` — IL product line marketing
+  - `Inner Lab/Conversations with God/` — CWG campaigns, social, guides, emails
+- No separate Arcade or Studio Works folders — marketed under MBS brand.
 
 ## What NOT to Do
 - Do NOT write code in this repo — this is architecture/planning only
