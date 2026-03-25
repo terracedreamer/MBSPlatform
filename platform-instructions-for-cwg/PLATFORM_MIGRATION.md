@@ -1,7 +1,18 @@
 # CWG — MBS Platform Migration Instructions
 
+## Prerequisites — Do NOT Start Until These Are Built
+1. **MBS Platform (Layer 1)** at magicbusstudios.com must be live with SSO + entitlements API
+2. **Inner Lab Middleware (Layer 2)** at innerlab.ai must be live with il_* collections created
+3. Both must be tested and working before ANY CWG migration begins
+
 ## What's Happening
 CWG (Conversations With God) is being migrated to use the centralized MBS Platform for auth/billing and the Inner Lab shared database for data. This document tells the CWG agent what to do.
+
+## Important Technical Notes
+- **CWG is Python (FastAPI + Motor)** — JWT validation middleware must be written in Python, not JavaScript
+- **CWG uses UUID strings for _id** (not MongoDB ObjectId) — migration must map CWG UUIDs to platform ObjectIds. Store a `platform_user_id` field in CWG user profiles linking to the platform user.
+- **JWT_SECRET must match the MBS Platform** — use the same secret so JWTs issued by the platform validate in CWG
+- **Migration scripts run FROM the MBS/ project** (`MBS/server/scripts/`), not from CWG. The CWG agent should NOT build its own migration script — just prepare the backend for the new database structure.
 
 ## Current State
 - CWG has its own auth (Google SSO + email/password + Nostr + LNURL)

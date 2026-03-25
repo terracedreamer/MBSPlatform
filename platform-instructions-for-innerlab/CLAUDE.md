@@ -22,7 +22,7 @@ Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate c
 
 ## Stack
 - **Frontend**: React (Vite) — existing marketing pages + NEW dashboard/consciousness/memories pages
-- **Backend**: Express (NEW — `server/` folder to be created) — il_* APIs + SendGrid form handler
+- **Backend**: Express (NEW — `server/` folder to be created) — il_* APIs. Forms continue using the existing MBS form handler at api.magicbusstudios.com (no need to duplicate SendGrid setup here).
 - **Database**: MongoDB — `DB_NAME: inner_lab` (same database all IL modules connect to)
 - **Auth**: Validates JWTs issued by MBS Platform (does NOT handle login itself)
 - **Deployment**: Coolify — 2 containers (frontend + backend), same pattern as all MBS apps

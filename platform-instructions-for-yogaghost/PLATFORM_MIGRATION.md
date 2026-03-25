@@ -1,7 +1,18 @@
 # FlowState (YogaGhost) — MBS Platform Migration Instructions
 
+## Prerequisites — Do NOT Start Until These Are Built
+1. **MBS Platform (Layer 1)** at magicbusstudios.com must be live with SSO + entitlements API
+2. **Inner Lab Middleware (Layer 2)** at innerlab.ai must be live with il_* collections created
+3. Both must be tested and working before ANY FlowState migration begins
+
 ## What's Happening
 FlowState is being migrated to use the centralized MBS Platform for auth/billing and the Inner Lab shared database for data. This document tells the FlowState agent what to do.
+
+## Important Technical Notes
+- **FlowState uses MongoDB ObjectId for _id** — this matches the MBS Platform, so ID mapping is simpler than CWG
+- **FlowState uses native MongoDB driver (not Mongoose)** — may want to switch to Mongoose for consistency with platform, or keep native driver. Agent decides.
+- **JWT_SECRET must match the MBS Platform** — use the same secret so JWTs issued by the platform validate in FlowState
+- **Migration scripts run FROM the MBS/ project** (`MBS/server/scripts/`), not from FlowState. The FlowState agent should NOT build its own migration script — just prepare the backend for the new database structure.
 
 ## Current State
 - FlowState has its own auth (Google SSO + email/password with scrypt hashing)
