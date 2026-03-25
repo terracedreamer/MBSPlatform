@@ -1,14 +1,24 @@
 # CHANGELOG — MBS Platform
 
-## March 25, 2026 — Session 1 (final update): Build Order Revised + Docs Finalized
+## March 25, 2026 — Session 1 (final): Merged Architecture + Think Tank Model
 
-### Key revision
-- **Inner Lab Middleware backend must be built NOW** (right after MBS Platform), not later
-- Reason: migrations need il_* shared tables to exist so shared data (consciousness, memories, check-ins, wellness) writes directly to shared collections instead of requiring a double-migration
-- The Inner Lab **frontend** (innerlab.ai dashboard) is what comes later, not the middleware backend
-- Added il_user_wellness_profiles as confirmed shared collection (health conditions, injuries, goals)
-- Documented CWG dual-format fields (personal_history legacy string vs personal_history_structured)
-- Documented user memory sharing system (per-module by default, opt-in cross-module)
+### Major decision: Merge platforms into existing website projects
+- MBS Platform code gets built inside `MBS/` folder (magicbusstudios.com) — NOT a separate project
+- Inner Lab Middleware + Dashboard gets built inside `Innerlab/` folder (innerlab.ai) — NOT a separate project
+- `ILPlatform/` folder no longer needed
+- This repo (`MBSPlatform/`) becomes the **architecture think tank** — no code, just docs + reference CLAUDE.md files
+- Created `MBS-platform-reference/CLAUDE.md` — copy into `MBS/` to build Layer 1
+- Updated `InnerLab-middleware/CLAUDE.md` — copy into `Innerlab/` to build Layer 2
+
+### Result: 4 containers instead of 8
+- magicbusstudios.com: frontend (marketing + login + billing) + backend (forms + SSO + entitlements)
+- innerlab.ai: frontend (marketing + dashboard) + backend (il_* APIs)
+- Same pattern as every other MBS product — no new containers needed
+
+### Previous revision (also this date)
+- Inner Lab Middleware backend must be built NOW, not later
+- Inner Lab frontend/dashboard also built NOW (not deferred)
+- Reason: migrations need il_* shared tables, dashboard has value even with just CWG data
 
 ### Files updated
 - CLAUDE.md: revised build order, three-layer architecture clarification

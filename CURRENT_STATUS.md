@@ -1,58 +1,35 @@
-# CURRENT STATUS — MBS Platform
+# CURRENT STATUS — MBS Platform Architecture Repo
 
 **Last Updated**: March 25, 2026
 
-## Project State: Architecture Complete — Ready for Phase 1 Build
+## Repo Purpose: Architecture Think Tank (No Code)
 
-All 17 architecture decisions are finalized. No open questions. No code written yet.
+This repo contains architecture decisions, migration plans, and reference CLAUDE.md files. No code is built here. Code gets built in the actual project folders (`MBS/`, `Innerlab/`).
 
 ## What Exists
 
-| Component | Status | Notes |
+| Component | Status | Where |
 |-----------|--------|-------|
-| MBS Platform backend | Not started | Spec complete. Ready to build. |
-| Inner Lab Middleware | Not started | Reference CLAUDE.md created. Build when 2-3 modules exist. |
-| CWG backend | Exists (separate repo) | 56 collections, ~10 users, sovereignty features. Migration plan in `CWG/MBS_DATABASE_MIGRATION_PLAN.md` |
-| FlowState backend | Exists (separate repo) | 7 collections, 0 real users. Migration plan in `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` |
-| innerlab.ai | Live marketing site | No backend, no auth |
-| Other Inner Lab modules | Not started | Will be born into new architecture |
-| Arcade games (5) | Exist independently | No changes until Phase 4 |
-| Studio Works tools (6) | Exist independently | No changes until Phase 4 |
+| MBS website (marketing + forms) | Deployed | `MBS/` → magicbusstudios.com |
+| Inner Lab website (marketing) | Deployed | `Innerlab/` → innerlab.ai |
+| MBS Platform (SSO + billing) | **Not started** | Will be added to `MBS/` |
+| Inner Lab Middleware (il_* APIs) | **Not started** | Will be added to `Innerlab/` |
+| Inner Lab Dashboard (UI) | **Not started** | Will be added to `Innerlab/` |
+| CWG | Deployed, needs migration | `CWG/` → conversationswithgod.ai |
+| FlowState | Deployed, needs migration | `YogaGhost/` → yoga.magicbusstudios.com |
+| Arcade games (5) | Deployed, no changes yet | Individual folders |
+| Studio Works tools (6) | Deployed, no changes yet | Individual folders |
 
-## Infrastructure
+## Reference Files Ready
 
-| Component | Status |
-|-----------|--------|
-| MongoDB | Self-hosted on Coolify (`conversations-mongodb` container) |
-| Coolify server | Running (localhost) |
-| GitHub repo | https://github.com/terracedreamer/MBSPlatform.git |
-
-## Key Decisions That Affect Implementation
-
-- Auth: Google SSO + Nostr + LNURL-Auth (no email/password)
-- Payments: Stripe + BTCPay (Lightning) — both platform-level
-- Friends/Invites: Platform-level with originating product context
-- Push subscriptions & feature flags: Platform-level
-- Branded login: `?brand=innerlab` or `?brand=mbs` parameter
-- Activity feed: Inner Lab level (not platform, not per-product)
-- User memories: Inner Lab level with user opt-in sharing
-- Encryption/export: Inner Lab level
-
-## Environment Variables Needed (MBS Platform — when built)
-
-- MONGODB_URI, DB_NAME (`mbs_platform`)
-- JWT_SECRET, JWT_EXPIRY
-- GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-- STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
-- BTCPAY_URL, BTCPAY_API_KEY, BTCPAY_STORE_ID
-- SENDGRID_API_KEY, FROM_EMAIL
-- PORT (3002), CORS_ORIGINS (all product URLs)
+| File | Copy to | Status |
+|------|---------|--------|
+| `MBS-platform-reference/CLAUDE.md` | `MBS/` project | Ready to copy |
+| `InnerLab-middleware/CLAUDE.md` | `Innerlab/` project | Ready to copy |
 
 ## Next Steps
 
-1. Build MBS Platform Phase 1 (Express + Mongoose scaffolding, Google SSO, Nostr/LNURL, entitlements, Stripe, BTCPay)
-2. Build Inner Lab Middleware backend (separate project — shared il_* collections, consciousness, memories, check-ins, wellness profiles). **Must exist before migrations.**
-3. Write CWG + FlowState migration scripts (shared data → il_* via middleware, product data → cwg_*/yoga_*)
-4. Refactor CWG + FlowState to use platform auth + middleware APIs
-5. Deploy both to Coolify
-6. Inner Lab FRONTEND (innerlab.ai dashboard) — built later when 2-3 modules have enough data
+1. Copy `MBS-platform-reference/CLAUDE.md` into `MBS/` folder, start building Layer 1
+2. Copy `InnerLab-middleware/CLAUDE.md` into `Innerlab/` folder, start building Layer 2
+3. Write CWG + FlowState migration scripts
+4. Refactor CWG + FlowState to use platform auth

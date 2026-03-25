@@ -1,9 +1,10 @@
 # SESSION HANDOFF — MBS Platform Architecture Planning
 
-**Last Updated**: March 25, 2026 (Session 1 — complete)
+**Last Updated**: March 25, 2026 (Session 1 — final)
 **Session Type**: Architecture planning (no code written yet)
 **Git Branch**: main
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
+**Repo Purpose**: Architecture think tank — no code here. Reference CLAUDE.md files get copied to actual projects.
 
 ---
 
@@ -123,14 +124,25 @@ These move to MBS Platform (Layer 1) for auth/payments/GDPR, or Inner Lab middle
 
 ---
 
-## FILES IN THIS REPO
+## REPO STRUCTURE
+
+**This repo is a think tank — no code.** Reference CLAUDE.md files get copied into actual projects.
 
 | File/Folder | Purpose |
 |-------------|---------|
-| `CLAUDE.md` | Project instructions for Claude agents |
+| `CLAUDE.md` | Repo overview and architecture |
 | `SESSION_HANDOFF.md` | This file — session continuity |
+| `MBS-platform-reference/CLAUDE.md` | **Copy into `MBS/` folder** → builds Layer 1 (SSO, billing) into magicbusstudios.com |
+| `InnerLab-middleware/CLAUDE.md` | **Copy into `Innerlab/` folder** → builds Layer 2 (middleware + dashboard) into innerlab.ai |
 | `MBS_Platform_Technical_Architecture.docx` | Original Layer 1 spec |
 | `ChatGPT-architecture/` | Inner Lab shared intelligence discussion |
-| `marketing-docs/` | Product briefs (Inner Lab, CWG, Arcade, MBS brand) |
-| `InnerLab-middleware/` | **Reference folder for building Layer 2** (copy to new project) |
-| `InnerLab-middleware/CLAUDE.md` | Full CLAUDE.md for the Inner Lab middleware project |
+| `marketing-docs/` | Product briefs |
+
+## WHERE CODE GETS BUILT
+
+| Folder | Domain | What gets added | Database |
+|--------|--------|----------------|----------|
+| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login page + admin | `mbs_platform` |
+| `Innerlab/` | innerlab.ai | il_* APIs + dashboard + consciousness + memories | `inner_lab` |
+| `CWG/` | conversationswithgod.ai | Refactored to use platform auth + write to inner_lab DB | `inner_lab` (cwg_*) |
+| `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + write to inner_lab DB | `inner_lab` (yoga_*) |

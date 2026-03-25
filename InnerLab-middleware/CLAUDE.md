@@ -1,30 +1,37 @@
-# Inner Lab Middleware — Shared Data Layer for Inner Lab Modules
+# Inner Lab Middleware + Dashboard — Layer 2
 
-## Overview
-This is the **Layer 2 middleware** for Inner Lab — a shared data and intelligence service that sits between the MBS Platform (Layer 1: SSO + billing) and individual Inner Lab modules (CWG, FlowState, BreathArc, etc.).
+## What This Project Becomes
+This project is `Innerlab/` — the innerlab.ai website. It currently serves as a **frontend-only marketing site** (no backend). It is being upgraded to ALSO serve as the **Inner Lab Middleware** (shared data layer) AND the **Inner Lab Dashboard** (unified experience for subscribers).
 
-The MBS Platform knows WHO the user is and WHAT they've paid for.
-The Inner Lab Middleware knows the user's **consciousness, state, memories, and cross-module insights**.
+**After the upgrade:**
+- `innerlab.ai` (public) — marketing pages (existing, unchanged)
+- `innerlab.ai/dashboard` — daily briefing, consciousness profile, memories, activity feed (NEW — requires Inner Lab All Access)
+- `innerlab.ai/modules` — module launcher (existing marketing → becomes functional)
+- `innerlab.ai/api/...` — all Inner Lab middleware API endpoints (NEW)
 
-Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate container with its own backend. They all connect to the same `inner_lab` database. This middleware is ALSO a separate container that owns the shared `il_*` collections and provides cross-module intelligence.
+The MBS Platform (magicbusstudios.com) knows WHO the user is and WHAT they've paid for.
+This project knows the user's **consciousness, state, memories, and cross-module insights**.
 
-## What This Project Is NOT
-- NOT the MBS Platform (that's a separate project handling SSO/billing at platform.magicbusstudios.com)
-- NOT a replacement for individual module backends (CWG, FlowState keep their own backends)
-- NOT a frontend — this is backend-only API. The Inner Lab frontend at innerlab.ai is a separate project.
+Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate container with its own backend. They all connect to the same `inner_lab` database. This middleware owns the shared `il_*` collections and provides cross-module intelligence.
+
+## What This Project Does NOT Do
+- Does NOT handle login or auth — MBS Platform (magicbusstudios.com) does that
+- Does NOT handle billing — MBS Platform does that
+- Does NOT replace individual module backends (CWG, FlowState keep their own backends)
+- Does NOT own module-prefixed collections (cwg_*, yoga_*) — modules own their own data
 
 ## Stack
-- **Backend**: Node.js v22, Express, MongoDB (Mongoose 7/8) — matches MBS conventions
+- **Frontend**: React (Vite) — existing marketing pages + NEW dashboard/consciousness/memories pages
+- **Backend**: Express (NEW — `server/` folder to be created) — il_* APIs + SendGrid form handler
 - **Database**: MongoDB — `DB_NAME: inner_lab` (same database all IL modules connect to)
 - **Auth**: Validates JWTs issued by MBS Platform (does NOT handle login itself)
-- **Port**: TBD (not 3002 which is MBS Platform)
-- **Deployment**: Coolify — separate container, same server
+- **Deployment**: Coolify — 2 containers (frontend + backend), same pattern as all MBS apps
 
 ## Stack Deviations from Global
-- **No frontend** — backend-only API service
-- **No auth of its own** — validates MBS Platform JWTs via middleware
+- **Auth**: No login/auth of its own — validates MBS Platform JWTs via middleware
 - **No Stripe** — billing is handled by MBS Platform
 - **Shares database** with all Inner Lab module backends — they all use `DB_NAME=inner_lab`
+- **Frontend has both public and authenticated routes** — marketing is public, dashboard requires auth
 
 ## Architecture Context
 
