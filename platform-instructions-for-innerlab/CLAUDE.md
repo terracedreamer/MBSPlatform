@@ -1,7 +1,7 @@
 # Inner Lab Middleware + Dashboard — Layer 2
 
 ## What This Project Becomes
-This project is `Innerlab/` — the innerlab.ai website. It currently serves as a **frontend-only marketing site** (no backend). It is being upgraded to ALSO serve as the **Inner Lab Middleware** (shared data layer) AND the **Inner Lab Dashboard** (unified experience for subscribers).
+This project is `Innerlab/` — the innerlab.ai website. It currently has a **frontend + backend** (Express with SendGrid form handler, deployed on Coolify). It is being upgraded to ALSO serve as the **Inner Lab Middleware** (shared data layer) AND the **Inner Lab Dashboard** (unified experience for subscribers).
 
 **After the upgrade:**
 - `innerlab.ai` (public) — marketing pages (existing, unchanged)
@@ -22,7 +22,7 @@ Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate c
 
 ## Stack
 - **Frontend**: React (Vite) — existing marketing pages + NEW dashboard/consciousness/memories pages
-- **Backend**: Express (NEW — `server/` folder to be created) — il_* APIs. Forms continue using the existing MBS form handler at api.magicbusstudios.com (no need to duplicate SendGrid setup here).
+- **Backend**: Express (EXISTING — `server/` folder already exists with SendGrid form handler) — add il_* APIs alongside existing form endpoints.
 - **Database**: MongoDB — `DB_NAME: inner_lab` (same database all IL modules connect to)
 - **Auth**: Validates JWTs issued by MBS Platform (does NOT handle login itself)
 - **Deployment**: Coolify — 2 containers (frontend + backend), same pattern as all MBS apps

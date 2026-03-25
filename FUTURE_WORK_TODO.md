@@ -4,6 +4,19 @@
 
 ---
 
+## Priority 0 — Marketing Brief Enhancement (Next Session)
+
+- [ ] Absorb Arcade brief content into MBS master doc (MagicBusStudios_Brand_And_Company.md)
+- [ ] Check innerlab.ai website for missing product info → update InnerLab_Product_Brief.md
+- [ ] Add Inner Lab dashboard vision, module connections, activity feed to IL brief
+- [ ] Check magicbusstudios.com for missing info → update MBS master doc
+- [ ] Add Studio Works detail to MBS master doc (currently minimal)
+- [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
+- [ ] Sync updated briefs to Desktop/Marketing/Overview/
+- [ ] Focus on PRODUCT INFORMATION only — marketing strategy is the marketing agent's job
+
+---
+
 ## Priority 1 — MBS Platform Phase 1 (MVP)
 
 ### Auth

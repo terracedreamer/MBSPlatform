@@ -1,150 +1,85 @@
-# SESSION HANDOFF — MBS Platform Architecture Planning
+# SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 25, 2026 (Session 1 — final)
-**Session Type**: Architecture planning (no code written yet)
+**Last Updated**: March 25, 2026 (Session 1 — complete)
 **Git Branch**: main
+**Last Commit**: pending (end-of-session push)
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
-**Repo Purpose**: Architecture think tank — no code here. Reference CLAUDE.md files get copied to actual projects.
+**Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
 ---
 
-## WHERE WE LEFT OFF
+## WHAT WAS DONE THIS SESSION
 
-All architecture decisions are **finalized**. No open questions remain.
+### Architecture Decisions (17 total, all finalized)
+- Three-layer architecture: MBS Platform (Layer 1) → Inner Lab Middleware (Layer 2) → Standalone Products (Layer 3)
+- MBS Platform merges into existing MBS/ website (magicbusstudios.com) — 2 containers
+- Inner Lab Middleware merges into existing Innerlab/ website (innerlab.ai) — 2 containers
+- Auth: Google SSO + Nostr + LNURL (all passwordless)
+- Payments: Stripe + BTCPay (Lightning) — both platform-level
+- Branded login: IL modules → Inner Lab branding, Arcade/SW → MBS branding
+- Friends/invites at platform level, activity feed at Inner Lab level
+- User memories: per-module private by default, user opt-in to share across IL
+- Fresh inner_lab database, old DBs stay as backups
+- All Inner Lab modules = separate containers, shared database
+- Reviewed CWG (56 collections) and FlowState (7 collections) schemas and migration plans
 
-**Next steps (in order):**
-1. Build MBS Platform backend (Phase 1 MVP) — Google SSO + Nostr/LNURL + entitlements + Stripe + BTCPay
-2. Build Inner Lab Middleware backend (Layer 2) — shared il_* collections, consciousness profiles, user memories, check-ins, wellness profiles. **Build NOW** so migrations write shared data correctly from day one.
-3. Write migration scripts for CWG (56 collections) and FlowState (7 collections) — shared data goes to il_* via middleware, product data to cwg_*/yoga_*
-4. Refactor CWG and FlowState backends to use platform auth + middleware APIs
-5. Build Inner Lab **frontend** (innerlab.ai dashboard) — LATER when 2-3 modules have enough data
+### Files Created
+- `platform-instructions-for-mbs/` — Layer 1 build instructions (copied to MBS/)
+- `platform-instructions-for-innerlab/` — Layer 2 build instructions (copied to Innerlab/)
+- `platform-instructions-for-cwg/` — CWG migration instructions (copied to CWG/)
+- `platform-instructions-for-yogaghost/` — FlowState migration instructions (copied to YogaGhost/)
+- `platform-instructions-for-new-modules/` — Starter kit for any new Inner Lab module
+- 4 marketing briefs converted from .docx to .md with platform context integrated
+- Marketing README.md with agent instructions
+- Global CLAUDE.md updated with end-session protocol and branch safety
 
-**Migration analysis docs created by product agents:**
-- `CWG/MBS_DATABASE_MIGRATION_PLAN.md` — 56 collections categorized into 3 buckets
-- `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` — 7 collections categorized into 3 buckets
-
----
-
-## THREE-LAYER ARCHITECTURE (Finalized)
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Layer 1: MBS Platform  (DB: mbs_platform)                   │
-│  SSO + billing + entitlements — serves ALL 22+ products      │
-│  Lives in: MBS/ → magicbusstudios.com (existing site)        │
-│                                                               │
-│  Auth: Google SSO + Nostr + LNURL-Auth                       │
-│  Payments: Stripe + BTCPay (Lightning)                       │
-│  Also: friends, invites, push subscriptions, feature flags,  │
-│         promo codes, referrals, GDPR consent/data requests   │
-└──────────┬──────────────────────────┬────────────────────────┘
-           │                          │
-┌──────────▼──────────┐       ┌───────▼──────────────────────┐
-│  Layer 2: Inner Lab │       │  Layer 3: Standalone         │
-│  Middleware          │       │  Products                    │
-│  (DB: inner_lab)    │       │                              │
-│                      │       │  Arcade (5 games) — own DBs  │
-│  Shared:            │       │  Studio Works (6 tools)      │
-│  - consciousness    │       │    — own DBs                 │
-│  - user memories    │       │                              │
-│    (opt-in)         │       │  SSO only via MBS Platform.  │
-│  - check-ins        │       │  No shared data between them.│
-│  - activity feed    │       │                              │
-│  - daily briefing   │       └──────────────────────────────┘
-│  - encryption/      │
-│    data export      │
-│                      │
-│  Module data:       │
-│  cwg_*, yoga_*,     │
-│  breath_*, etc.     │
-│                      │
-│  Each module =      │
-│  separate container │
-│  Same database      │
-└──────────────────────┘
-```
+### Issues Found & Fixed
+- JWT_SECRET must be shared across all projects
+- Migration scripts run from MBS/, not from individual products
+- CWG uses UUID strings (not ObjectId) — migration must map IDs
+- CWG is Python (FastAPI) — JWT middleware needs Python implementation
+- Inner Lab HAS a backend (corrected from earlier "no backend" error)
+- Added explicit prerequisites to CWG/FlowState migration docs
 
 ---
 
-## ALL ARCHITECTURE DECISIONS (Confirmed 2026-03-25)
+## NEXT SESSION TASKS
 
-| # | Decision | Details |
-|---|----------|---------|
-| 1 | Fresh `inner_lab` database | CWG data migrates with `cwg_` prefix. Old DB stays as backup. |
-| 2 | User identity ONLY in `mbs_platform` | Single source of truth. No duplicate user tables. |
-| 3 | Shared IL data starts as module-prefixed | Everything starts as `cwg_*` or `yoga_*`. Promote to `il_*` when second module needs it. |
-| 4 | Inner Lab Middleware + Dashboard — build NOW (after MBS Platform) | So migrations write shared data to il_* from day one. Both backend + frontend built into `Innerlab/` project. |
-| 5 | Frontend: B+C hybrid | Modules standalone at own domains. `innerlab.ai` has both marketing (public) + dashboard (auth). |
-| 6 | Branded login | Inner Lab modules → IL branding. Arcade/SW → MBS branding. Via `?brand=` param. |
-| 7 | Arcade/Studio Works | SSO only. No shared data. Independent. |
-| 8 | Admin | Simple `is_admin` flag. |
-| 9 | Nostr/LNURL auth | MBS Platform level — all products. |
-| 10 | Payments | Stripe + BTCPay both at MBS Platform. No per-product payment handling. |
-| 11 | Friends/Invites | MBS Platform level — with originating product context. |
-| 12 | Activity feed | Inner Lab level. No feed for Arcade/SW. Built when IL frontend exists. |
-| 13 | Push subscriptions | MBS Platform level. |
-| 14 | Feature flags | MBS Platform level. |
-| 15 | User memories (AI) | Inner Lab level. Option C: per-module by default, user opt-in to share across IL. |
-| 16 | Encryption & data export | Inner Lab level — all IL modules are sensitive. |
-| 17 | Modules as containers | Each = separate Coolify container. All share `inner_lab` DB. |
+### Immediate (start with these)
+- [ ] **Enhance marketing briefs** — check innerlab.ai and magicbusstudios.com for missing product info. Absorb Arcade brief into MBS master doc. Add Inner Lab dashboard/module connection details to IL brief. Focus on PRODUCT INFORMATION, not marketing strategy.
+- [ ] **Convert CWG marketing plan .docx to .md** in Desktop/Marketing/Inner Lab/Conversations with God/ (currently old .docx)
+- [ ] **Begin MBS Platform build** — open Claude Code in MBS/ folder, agent reads platform-instructions/CLAUDE.md
 
----
-
-## CWG SOVEREIGNTY FEATURES (Move to Platform)
-
-CWG has experimental (untested) sovereignty infrastructure:
-- **Nostr identity**: `nostr_npub`, `nostr_challenges`, `nostr_events`
-- **LNURL-Auth**: `lnurl_linking_key`, `lnurl_challenges`
-- **Lightning payments**: `btcpay_invoices`, `btcpay_tips`, `btcpay_donations`, `btcpay_chat_sessions`
-- **Client encryption**: `user_encryption`, `encrypted_backups`
-- **Blockchain anchors**: OpenTimestamps data integrity proofs
-- **GDPR**: `consent_audit_log`, `data_requests`
-
-These move to MBS Platform (Layer 1) for auth/payments/GDPR, or Inner Lab middleware (Layer 2) for encryption/export.
-
----
-
-## MODULE STATUS
-
-| Module | Database | Collections | Real Users | Migration |
-|--------|----------|-------------|------------|-----------|
-| CWG | `conversations_with_god` | 56 | ~10 friends | Split: users→platform, product→inner_lab cwg_* |
-| FlowState | `yogaghost` | 7 | 0 | Split: users→platform, product→inner_lab yoga_* |
-| Others | Don't exist | — | — | Born into new architecture |
-
----
-
-## INFRASTRUCTURE
-
-- MongoDB: **self-hosted on Coolify** (NOT Atlas) — container `conversations-mongodb`
-- All apps on one Coolify server (localhost)
-- CWG backend: FastAPI + Motor (Python)
-- FlowState backend: Express 5 + native MongoDB driver (Node.js)
-- MBS Platform: Express + Mongoose (Node.js) — to be built
+### Implementation Order (strict sequence)
+1. Build MBS Platform (MBS/ folder) — SSO + billing + entitlements
+2. Build Inner Lab Middleware (Innerlab/ folder) — il_* collections + APIs + dashboard
+3. CWG Migration — scripts from MBS/, then CWG agent refactors
+4. FlowState Migration — scripts from MBS/, then FlowState agent refactors
+5. New modules — use platform-instructions-for-new-modules/ starter kit
 
 ---
 
 ## REPO STRUCTURE
 
-**This repo is a think tank — no code.** Reference CLAUDE.md files get copied into actual projects.
-
-| File/Folder | Purpose |
-|-------------|---------|
-| `CLAUDE.md` | Repo overview and architecture |
-| `SESSION_HANDOFF.md` | This file — session continuity |
-| `copy-to-mbs/CLAUDE.md` | **Copy into `MBS/` folder** → builds Layer 1 (SSO, billing) into magicbusstudios.com |
-| `copy-to-innerlab/CLAUDE.md` | **Copy into `Innerlab/` folder** → builds Layer 2 (middleware + dashboard) into innerlab.ai |
-| `copy-to-cwg/PLATFORM_MIGRATION.md` | **Copy into `CWG/` folder** → CWG migration instructions |
-| `copy-to-yogaghost/PLATFORM_MIGRATION.md` | **Copy into `YogaGhost/` folder** → FlowState migration instructions |
-| `marketing-docs/` | Product briefs + platform context for marketing agent |
-| `archive/ChatGPT-architecture/` | Old reference material (absorbed into current docs) |
-| `MBS_Platform_Technical_Architecture.docx` | Original Layer 1 spec |
+```
+MBSPlatform/
+├── platform-instructions-for-mbs/          ← Copied to MBS/platform-instructions/
+├── platform-instructions-for-innerlab/     ← Copied to Innerlab/platform-instructions/
+├── platform-instructions-for-cwg/          ← Copied to CWG/platform-instructions/
+├── platform-instructions-for-yogaghost/    ← Copied to YogaGhost/platform-instructions/
+├── platform-instructions-for-new-modules/  ← Starter kit for future modules
+├── marketing-docs/                         ← Product briefs (synced to Desktop/Marketing/Overview/)
+├── archive/                                ← Old reference material
+├── CLAUDE.md, SESSION_HANDOFF.md, CHANGELOG.md, CURRENT_STATUS.md, FUTURE_WORK_TODO.md
+└── .gitignore
+```
 
 ## WHERE CODE GETS BUILT
 
 | Folder | Domain | What gets added | Database |
 |--------|--------|----------------|----------|
-| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login page + admin | `mbs_platform` |
+| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login + admin | `mbs_platform` |
 | `Innerlab/` | innerlab.ai | il_* APIs + dashboard + consciousness + memories | `inner_lab` |
-| `CWG/` | conversationswithgod.ai | Refactored to use platform auth + write to inner_lab DB | `inner_lab` (cwg_*) |
-| `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + write to inner_lab DB | `inner_lab` (yoga_*) |
+| `CWG/` | conversationswithgod.ai | Refactored to use platform auth + inner_lab DB | `inner_lab` (cwg_*) |
+| `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + inner_lab DB | `inner_lab` (yoga_*) |
+| New modules | TBD | Born into architecture using starter kit | `inner_lab` ({prefix}_*) |
