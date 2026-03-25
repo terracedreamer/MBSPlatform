@@ -7,8 +7,8 @@
 - Inner Lab Middleware + Dashboard gets built inside `Innerlab/` folder (innerlab.ai) — NOT a separate project
 - `ILPlatform/` folder no longer needed
 - This repo (`MBSPlatform/`) becomes the **architecture think tank** — no code, just docs + reference CLAUDE.md files
-- Created `MBS-platform-reference/CLAUDE.md` — copy into `MBS/` to build Layer 1
-- Updated `InnerLab-middleware/CLAUDE.md` — copy into `Innerlab/` to build Layer 2
+- Created `copy-to-mbs/CLAUDE.md` — copy into `MBS/` to build Layer 1
+- Updated `copy-to-innerlab/CLAUDE.md` — copy into `Innerlab/` to build Layer 2
 
 ### Result: 4 containers instead of 8
 - magicbusstudios.com: frontend (marketing + login + billing) + backend (forms + SSO + entitlements)
@@ -22,7 +22,7 @@
 
 ### Files updated
 - CLAUDE.md: revised build order, three-layer architecture clarification
-- InnerLab-middleware/CLAUDE.md: changed from "build later" to "build now"
+- copy-to-innerlab/CLAUDE.md: changed from "build later" to "build now"
 - SESSION_HANDOFF.md: revised build order and decision #4
 - CURRENT_STATUS.md: updated next steps
 - FUTURE_WORK_TODO.md: moved middleware to Priority 2B (build now), frontend stays later
@@ -64,7 +64,7 @@
 - Updated `CLAUDE.md` — added sovereignty features, branded login, three-layer architecture, migration details
 - Updated `SESSION_HANDOFF.md` — complete context with all 17 decisions
 - Updated `CHANGELOG.md`, `CURRENT_STATUS.md`, `FUTURE_WORK_TODO.md`
-- Created `InnerLab-middleware/CLAUDE.md` — full reference for building Layer 2
+- Created `copy-to-innerlab/CLAUDE.md` — full reference for building Layer 2
 
 ### No code written
 - Project remains spec-only. Architecture is complete. Ready for Phase 1 implementation.

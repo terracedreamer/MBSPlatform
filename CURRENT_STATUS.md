@@ -4,7 +4,7 @@
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
-This repo contains architecture decisions, migration plans, and reference CLAUDE.md files. No code is built here. Code gets built in the actual project folders (`MBS/`, `Innerlab/`).
+This repo contains architecture decisions, migration plans, and reference files. No code is built here. Code gets built in the actual project folders (`MBS/`, `Innerlab/`, `CWG/`, `YogaGhost/`).
 
 ## What Exists
 
@@ -22,14 +22,16 @@ This repo contains architecture decisions, migration plans, and reference CLAUDE
 
 ## Reference Files Ready
 
-| File | Copy to | Status |
-|------|---------|--------|
-| `MBS-platform-reference/CLAUDE.md` | `MBS/` project | Ready to copy |
-| `InnerLab-middleware/CLAUDE.md` | `Innerlab/` project | Ready to copy |
+| File | Copy to | Purpose |
+|------|---------|---------|
+| `copy-to-mbs/CLAUDE.md` | `MBS/` project | Build Layer 1 (SSO, billing, entitlements) |
+| `copy-to-innerlab/CLAUDE.md` | `Innerlab/` project | Build Layer 2 (middleware + dashboard) |
+| `copy-to-cwg/PLATFORM_MIGRATION.md` | `CWG/` project | CWG migration instructions |
+| `copy-to-yogaghost/PLATFORM_MIGRATION.md` | `YogaGhost/` project | FlowState migration instructions |
 
 ## Next Steps
 
-1. Copy `MBS-platform-reference/CLAUDE.md` into `MBS/` folder, start building Layer 1
-2. Copy `InnerLab-middleware/CLAUDE.md` into `Innerlab/` folder, start building Layer 2
-3. Write CWG + FlowState migration scripts
-4. Refactor CWG + FlowState to use platform auth
+1. Copy `copy-to-mbs/CLAUDE.md` into `MBS/` folder → start building Layer 1
+2. Copy `copy-to-innerlab/CLAUDE.md` into `Innerlab/` folder → start building Layer 2
+3. Run CWG + FlowState migration scripts (after both layers are built)
+4. Copy migration docs into `CWG/` and `YogaGhost/` → refactor to use platform

@@ -55,9 +55,9 @@
 - [ ] Verify migration with existing ~10 CWG users
 
 ### Deployment
-- [ ] Deploy to Coolify at platform.magicbusstudios.com:3002
-- [ ] Configure all env vars in Coolify
-- [ ] Test full login flow from CWG → platform → back to CWG
+- [ ] Deploy updated MBS/ to Coolify (magicbusstudios.com — existing containers)
+- [ ] Configure new env vars in Coolify (JWT_SECRET, STRIPE, BTCPAY, etc.)
+- [ ] Test full login flow from CWG → magicbusstudios.com/auth/login → back to CWG
 
 ---
 
@@ -103,11 +103,11 @@
 
 ---
 
-## Priority 2B — Inner Lab Middleware (Layer 2) — Build NOW
+## Priority 2B — Inner Lab Middleware + Dashboard (Layer 2) — Build NOW
 
-**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `InnerLab-middleware/CLAUDE.md`**
+**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `copy-to-innerlab/CLAUDE.md`**
 
-- [ ] Set up separate project + GitHub repo
+- [ ] Add `server/` folder to `Innerlab/` project (currently frontend-only)
 - [ ] Express + Mongoose scaffolding (connects to inner_lab DB)
 - [ ] JWT validation middleware (verifies MBS Platform tokens)
 - [ ] il_consciousness_profiles collection + API (GET/PUT)

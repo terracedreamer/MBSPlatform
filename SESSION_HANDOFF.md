@@ -31,7 +31,7 @@ All architecture decisions are **finalized**. No open questions remain.
 ┌──────────────────────────────────────────────────────────────┐
 │  Layer 1: MBS Platform  (DB: mbs_platform)                   │
 │  SSO + billing + entitlements — serves ALL 22+ products      │
-│  Domain: platform.magicbusstudios.com:3002                   │
+│  Lives in: MBS/ → magicbusstudios.com (existing site)        │
 │                                                               │
 │  Auth: Google SSO + Nostr + LNURL-Auth                       │
 │  Payments: Stripe + BTCPay (Lightning)                       │
@@ -73,8 +73,8 @@ All architecture decisions are **finalized**. No open questions remain.
 | 1 | Fresh `inner_lab` database | CWG data migrates with `cwg_` prefix. Old DB stays as backup. |
 | 2 | User identity ONLY in `mbs_platform` | Single source of truth. No duplicate user tables. |
 | 3 | Shared IL data starts as module-prefixed | Everything starts as `cwg_*` or `yoga_*`. Promote to `il_*` when second module needs it. |
-| 4 | Inner Lab Middleware backend — build NOW (after MBS Platform) | So migrations write shared data to il_* from day one. Inner Lab FRONTEND comes later. |
-| 5 | Frontend: B+C hybrid | Modules standalone at own domains. `innerlab.ai` becomes premium dashboard later. |
+| 4 | Inner Lab Middleware + Dashboard — build NOW (after MBS Platform) | So migrations write shared data to il_* from day one. Both backend + frontend built into `Innerlab/` project. |
+| 5 | Frontend: B+C hybrid | Modules standalone at own domains. `innerlab.ai` has both marketing (public) + dashboard (auth). |
 | 6 | Branded login | Inner Lab modules → IL branding. Arcade/SW → MBS branding. Via `?brand=` param. |
 | 7 | Arcade/Studio Works | SSO only. No shared data. Independent. |
 | 8 | Admin | Simple `is_admin` flag. |
@@ -132,11 +132,13 @@ These move to MBS Platform (Layer 1) for auth/payments/GDPR, or Inner Lab middle
 |-------------|---------|
 | `CLAUDE.md` | Repo overview and architecture |
 | `SESSION_HANDOFF.md` | This file — session continuity |
-| `MBS-platform-reference/CLAUDE.md` | **Copy into `MBS/` folder** → builds Layer 1 (SSO, billing) into magicbusstudios.com |
-| `InnerLab-middleware/CLAUDE.md` | **Copy into `Innerlab/` folder** → builds Layer 2 (middleware + dashboard) into innerlab.ai |
+| `copy-to-mbs/CLAUDE.md` | **Copy into `MBS/` folder** → builds Layer 1 (SSO, billing) into magicbusstudios.com |
+| `copy-to-innerlab/CLAUDE.md` | **Copy into `Innerlab/` folder** → builds Layer 2 (middleware + dashboard) into innerlab.ai |
+| `copy-to-cwg/PLATFORM_MIGRATION.md` | **Copy into `CWG/` folder** → CWG migration instructions |
+| `copy-to-yogaghost/PLATFORM_MIGRATION.md` | **Copy into `YogaGhost/` folder** → FlowState migration instructions |
+| `marketing-docs/` | Product briefs + platform context for marketing agent |
+| `archive/ChatGPT-architecture/` | Old reference material (absorbed into current docs) |
 | `MBS_Platform_Technical_Architecture.docx` | Original Layer 1 spec |
-| `ChatGPT-architecture/` | Inner Lab shared intelligence discussion |
-| `marketing-docs/` | Product briefs |
 
 ## WHERE CODE GETS BUILT
 
