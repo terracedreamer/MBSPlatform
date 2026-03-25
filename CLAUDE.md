@@ -241,6 +241,11 @@ Each project's CLAUDE.md has been updated with a note to check `platform-instruc
 3. Re-copy the relevant `platform-instructions-for-*` folder to the target project
 4. Open Claude Code in that project — the agent picks up the new instructions
 
+## Marketing Folder Sync
+When marketing docs change in this repo (`marketing-docs/`), copy them to `Desktop/Marketing/Overview/`. Also update `Desktop/Marketing/README.md` if the folder structure or contents changed.
+- The Marketing folder on Desktop is NOT a git repo — just copy files there directly.
+- Marketing folder structure: `Overview/` (briefs + platform context), `Magic Bus Studios/` (MBS brand), `Inner Lab/` (IL product line), `Inner Lab/Conversations with God/` (CWG campaigns). No separate Arcade or Studio Works folders — those are marketed under MBS brand.
+
 ## What NOT to Do
 - Do NOT write code in this repo — this is architecture/planning only
 - Do NOT modify existing product backends (CWG, FlowState) until after platform + middleware are built
