@@ -8,10 +8,12 @@ A centralized middleware for Magic Bus Studios that provides unified identity, b
 
 ## Stack Deviations from Global
 - **Backend-only project** — no React frontend. This is a middleware/API service consumed by all 22 product frontends.
-- **Auth**: Google SSO only — NO email/password auth. Unlike other MBS apps, there is no "or" divider with email login.
+- **Auth**: Google SSO + Nostr + LNURL-Auth — NO email/password auth. Three auth methods, all passwordless.
+- **Payments**: Stripe + BTCPay (Lightning) — dual payment system at platform level. No per-product payment handling.
 - **Stripe prefixes**: By category (`[IL]`, `[Arcade]`, `[SW]`, `[MBS]`) instead of per-app (`[CWG]`, `[FlowState]`)
 - **Port**: 3002 (non-default)
 - **DB_NAME**: `mbs_platform`
+- **Branded login page**: Login UI changes based on origin — Inner Lab modules show IL branding, Arcade/SW show MBS branding (via `?brand=innerlab` or `?brand=mbs` parameter)
 
 ## Project Structure
 ```
@@ -41,7 +43,7 @@ server/
 **Do NOT hardcode slugs** — store in config or database so new products can be added without code changes.
 
 ## Core Data Models
-- **User**: email (unique, indexed), name, avatar, google_id (unique, indexed), preferred_language, preferences {}, created_at, updated_at, last_login
+- **User**: email (unique, indexed), name, avatar, google_id (unique, indexed), nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
 - **Entitlement**: user_id (indexed), category (innerlab|arcade|studioworks), type (product_pass|category_access|mbs_all_access), product (slug|null), status (active|expired|cancelled|trial), stripe_subscription_id?, stripe_customer_id, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type (purchase|subscription|refund|gift), category, product?, amount (cents), currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type (percentage|fixed|free_product|free_trial_extension), value, applies_to (all|category|specific_product), category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
@@ -49,6 +51,16 @@ server/
 - **EmailPreference**: user_id (unique), marketing_emails, product_updates, billing_alerts, promotional_offers, unsubscribe_token (unique)
 - **ActivityLog**: user_id, product, category, action (session_start|session_end|purchase|login), metadata {}, created_at
 - **Announcement**: title, message, type (info|promo|new_product|maintenance), target (all|category|specific_product), active, valid_from, valid_until
+- **Friend**: users (sorted pair of user_ids), source_product (which product the friendship originated from), created_at
+- **Invite**: code (unique), from_user_id, product (which product the invite is for), expires_at (TTL), created_at
+- **ActiveSession**: user_id, session_token (JWT jti), ip_address (hashed), user_agent, created_at, last_active
+- **PushSubscription**: user_id, subscription (endpoint, keys), user_agent, subscribed_at
+- **FeatureFlag**: flag_name, enabled, category, description, target_plans, target_users, created_at
+- **ConsentAuditLog**: user_id, change_type, old_value, new_value, timestamp — GDPR/CCPA required, cannot delete
+- **DataRequest**: user_id, request_type (access|deletion|portability|rectification), status, created_at
+- **NostrChallenge**: challenge, user_id?, expires_at — temporary auth challenges
+- **LnurlChallenge**: k1, status, user_id?, expires_at — LNURL-Auth challenges
+- **BtcpayInvoice**: user_id, invoice_id, amount_sats, status, product?, created_at — Lightning payment records
 
 ## Entitlement Types
 - `product_pass` — access to one specific product (one-time or subscription)
@@ -59,17 +71,30 @@ server/
 For Google OAuth implementation patterns, see `~/.claude/skills/google-oauth-setup/SKILL.md`
 ```
 User clicks "Login" on any product (e.g., conversationswithgod.ai)
-  → Redirect to: platform.magicbusstudios.com/auth/login?redirect={origin}
-  → Google SSO → Platform creates/finds user, issues JWT
+  → Redirect to: platform.magicbusstudios.com/auth/login?redirect={origin}&brand={innerlab|mbs}
+  → Login page shows branded UI (Inner Lab branding for IL modules, MBS branding for Arcade/SW)
+  → User authenticates via Google SSO, Nostr, or LNURL-Auth
+  → Platform creates/finds user, issues JWT
   → Redirect back: {origin}?token={JWT}
   → Product frontend stores JWT, sends in Authorization header
   → Product backend verifies JWT via platform's /entitlements/:product
   → 401 = redirect to platform login | 403 = redirect to platform billing
 ```
 
+### Branded Login Mapping
+| User comes from | Brand parameter | Login page shows |
+|---|---|---|
+| Any Inner Lab module (CWG, FlowState, etc.) | `brand=innerlab` | Inner Lab logo + branding |
+| Any Arcade game | `brand=mbs` | MagicBusStudios logo + branding |
+| Any Studio Works tool | `brand=mbs` | MagicBusStudios logo + branding |
+| innerlab.ai | `brand=innerlab` | Inner Lab logo + branding |
+| magicbusstudios.com | `brand=mbs` | MagicBusStudios logo + branding |
+
 ## API Endpoints
 **Phase 1 (MVP)**
 - POST /auth/google — Google SSO, create/find user, return JWT
+- POST /auth/nostr — Nostr authentication (challenge → verify signature)
+- POST /auth/lnurl — LNURL-Auth (k1 challenge → verify signature)
 - GET /auth/me — current user + entitlements summary
 - POST /auth/logout — invalidate session
 - DELETE /auth/account — delete account + all data (GDPR). See `~/.claude/skills/compliance-gdpr-ccpa/SKILL.md`
@@ -104,18 +129,26 @@ User clicks "Login" on any product (e.g., conversationswithgod.ai)
 - GET /profile/activity — cross-product activity history
 - POST /profile/export — GDPR data export
 
-## CWG User Migration
+## Data Migration
 For cross-database migration patterns, see `~/.claude/skills/mongodb-shared-cluster/SKILL.md`
 
-CWG has 5–10 existing users in a separate MongoDB database. Migration script must:
-1. Read users from CWG database
-2. Create matching records in `mbs_platform.users` (email, name, avatar, google_id, preferred_language, created_at)
-3. Create entitlements based on current plan (free or premium)
-4. Product-specific data (chat sessions, consciousness profiles, message counts) stays in CWG database
+### CWG Migration (56 collections)
+CWG has ~10 existing users in `conversations_with_god` database. Migration analysis: `CWG/MBS_DATABASE_MIGRATION_PLAN.md`
+- **Bucket 1 → `mbs_platform`**: User identity (email, name, google_id, nostr_npub, lnurl_linking_key), Stripe fields, consent, active sessions, LNURL/Nostr challenges, GDPR data requests, consent audit log
+- **Bucket 2 → `inner_lab` with `cwg_*` prefix**: All 39 CWG-specific collections (chats, journals, meditations, programs, badges, BTCPay invoices, community, sharing, etc.)
+- **Bucket 3 → starts as `cwg_*`, promote to `il_*` later**: Consciousness profiles, personal history, check-ins, user memories, blockchain anchors, analytics events, notifications, push subscriptions, feature flags
 
-**⚠ Inspect the actual CWG database/codebase for the latest schema before writing the migration script** — the architecture document's field mapping may not be current.
+### FlowState Migration (7 collections)
+FlowState has 0 real users in `yogaghost` database. Migration analysis: `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md`
+- **Bucket 1 → `mbs_platform`**: User identity (email, name, googleId), Stripe fields, email preferences
+- **Bucket 2 → `inner_lab` with `yoga_*` prefix**: Sessions, achievements, community flows, user profiles (settings, streaks, favorites)
+- **Bucket 3 → shared**: Friends → platform, invites → platform, activity → Inner Lab level, health conditions/injuries → potentially shared `il_*`
 
-**⚠ CWG currently has its own Stripe integration being built. All Stripe billing moves to this platform — do NOT build Stripe per-product.**
+### Migration Rules
+- Old databases (`conversations_with_god`, `yogaghost`) stay untouched as backups
+- New data is COPIED, not moved
+- Only delete old DBs after weeks/months of verified operation
+- CWG's Stripe and BTCPay integrations move to MBS Platform — no per-product payment handling
 
 ## Deployment
 For Coolify Docker deployment patterns, see `~/.claude/skills/coolify-deployment/SKILL.md`
@@ -130,6 +163,7 @@ For Coolify Docker deployment patterns, see `~/.claude/skills/coolify-deployment
 - JWT_SECRET (64-char), JWT_EXPIRY (`7d`)
 - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 - STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+- BTCPAY_URL, BTCPAY_API_KEY, BTCPAY_STORE_ID
 - SENDGRID_API_KEY, FROM_EMAIL (`noreply@magicbusstudios.com`)
 - PORT (`3002`), CORS_ORIGINS (all product URLs, comma-separated)
 
@@ -150,15 +184,29 @@ For Coolify Docker deployment patterns, see `~/.claude/skills/coolify-deployment
 - Do NOT hardcode product slugs — config or database
 - Do NOT build play time / session tracking — removed from scope
 
+## Three-Layer Architecture
+This project is **Layer 1** in a three-layer system:
+- **Layer 1 (this project)**: MBS Platform — SSO, billing, entitlements, friends, invites, push, feature flags, GDPR
+- **Layer 2 (separate project)**: Inner Lab Middleware — shared consciousness, memories, check-ins, activity feed, encryption/export. See `InnerLab-middleware/CLAUDE.md` for reference.
+- **Layer 3**: Standalone products (Arcade, Studio Works) — own databases, SSO only
+
+Inner Lab modules (CWG, FlowState, etc.) are separate containers that all connect to `inner_lab` database. They call this platform for auth/billing and (later) the Inner Lab Middleware for shared data.
+
 ## Current Status
-Not started — spec only. Reference document: `MBS_Platform_Technical_Architecture.docx`
+Not started — spec only. All architecture decisions finalized (2026-03-25).
+
+Reference documents:
+- `MBS_Platform_Technical_Architecture.docx` — original spec
+- `SESSION_HANDOFF.md` — all decisions and context
+- `CWG/MBS_DATABASE_MIGRATION_PLAN.md` — CWG 56-collection bucket analysis
+- `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` — FlowState 7-collection bucket analysis
 
 ## Implementation Phases
-**Phase 1 (MVP)** — Google SSO + user profiles + entitlements + Stripe billing + webhooks + CWG migration
+**Phase 1 (MVP)** — Google SSO + Nostr/LNURL auth + user profiles + entitlements + Stripe billing + BTCPay Lightning + webhooks + CWG/FlowState migration + branded login + friends/invites + push subscriptions + feature flags + GDPR consent
 **Phase 2** — Transactional emails + basic admin (list users, grant/revoke) + email preferences
 **Phase 3** — Promo codes + free trials + referral program + win-back offers
 **Phase 4** — Connect each product backend (add checkAccess middleware to all 22 products)
 **Phase 5** — User dashboard (My Products, billing history, profile settings, onboarding)
 **Phase 6** — Admin dashboard (analytics, revenue, product stats, funnel tracking, audit log)
 **Phase 7** — Email campaigns + announcements + surveys + newsletter
-**Phase 8** — Advanced: multi-currency, family plan, teams, achievements, push notifications, SSO, API keys
+**Phase 8** — Advanced: multi-currency, family plan, teams, achievements, push notifications, enterprise SSO, API keys

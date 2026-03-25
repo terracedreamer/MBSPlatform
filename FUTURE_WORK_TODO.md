@@ -1,74 +1,137 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 24, 2026
+**Last Updated**: March 25, 2026
 
 ---
 
-## Priority 1 — Immediate (Next Session)
+## Priority 1 — MBS Platform Phase 1 (MVP)
 
-- [ ] Inspect CWG MongoDB database (collections, fields, sample data)
-- [ ] Design data migration plan: what goes to `mbs_platform` vs `inner_lab`
-- [ ] Identify which CWG data might become shared `il_*` tables
-- [ ] Begin MBS Platform Phase 1 scaffolding (Express, Mongoose, project structure)
-
-## Priority 2 — MBS Platform Phase 1 (MVP)
-
+### Auth
 - [ ] Google SSO login with JWT issuance
-- [ ] User profiles (name, email, avatar, preferences)
-- [ ] Entitlements CRUD (grant, revoke, check access)
+- [ ] Nostr authentication (challenge → signature verification)
+- [ ] LNURL-Auth (k1 challenge → signature verification)
+- [ ] Branded login page (Inner Lab vs MBS branding via `?brand=` param)
+- [ ] Active session management (track JWTs, device sign-out)
+- [ ] JWT verification middleware for product backends
+
+### User Profiles
+- [ ] User model (email, name, avatar, google_id, nostr_npub, lnurl_linking_key, auth_provider, consent_preferences, is_admin)
+- [ ] Profile CRUD endpoints
+
+### Entitlements
+- [ ] Entitlement model (user_id, category, type, product, status, dates)
+- [ ] GET /entitlements/:product → `{ hasAccess, reason }`
+- [ ] GET /entitlements/category/:cat
+- [ ] Admin grant/revoke endpoints
+
+### Billing — Stripe
 - [ ] Stripe checkout (product passes, category access, MBS all access)
-- [ ] Stripe webhook handler (payment success, subscription changes)
-- [ ] Stripe customer portal
-- [ ] CWG user migration script (~10 users)
+- [ ] Stripe webhook handler (payment success, subscription changes, refunds)
+- [ ] Stripe customer portal (manage subscriptions)
+- [ ] Transaction history
+
+### Billing — BTCPay (Lightning)
+- [ ] BTCPay integration (invoice creation, payment verification)
+- [ ] Lightning checkout flow
+- [ ] BTCPay webhook handler
+
+### Social
+- [ ] Friends model (sorted user pair, source_product)
+- [ ] Invites model (code, from_user, product, TTL)
+- [ ] Friend/invite endpoints
+
+### Platform Infrastructure
+- [ ] Push subscription storage (device tokens)
+- [ ] Feature flag system
+- [ ] GDPR consent audit log
+- [ ] Data request handling (access/deletion/portability)
 - [ ] Health check endpoint
-- [ ] CORS, rate limiting, input validation
-- [ ] Deploy to Coolify at platform.magicbusstudios.com
+- [ ] CORS (all 22+ product domains), rate limiting, input validation
+- [ ] Product catalog config (slugs, categories, URLs — NOT hardcoded)
 
-## Priority 3 — CWG Refactoring
+### Migration
+- [ ] CWG migration script (56 collections → mbs_platform users + inner_lab cwg_*)
+- [ ] FlowState migration script (7 collections → mbs_platform users + inner_lab yoga_*)
+- [ ] Verify migration with existing ~10 CWG users
 
-- [ ] Migrate CWG data to `inner_lab` database with `cwg_` prefix
-- [ ] Remove CWG's standalone auth — use MBS Platform SSO
-- [ ] Remove CWG's Stripe integration — use MBS Platform billing
-- [ ] Update CWG backend to verify JWTs from MBS Platform
+### Deployment
+- [ ] Deploy to Coolify at platform.magicbusstudios.com:3002
+- [ ] Configure all env vars in Coolify
+- [ ] Test full login flow from CWG → platform → back to CWG
+
+---
+
+## Priority 2 — MBS Platform Phase 2: Communication
+
+- [ ] Welcome email on signup
+- [ ] Purchase confirmation emails
+- [ ] Subscription change emails (cancelled, expiring, payment failed)
+- [ ] Basic admin panel: list users, view entitlements, manually grant/revoke
+- [ ] Email preferences (opt-in/out per category)
+- [ ] One-click unsubscribe (token-based)
+
+---
+
+## Priority 3 — MBS Platform Phase 3: Growth
+
+- [ ] Promo code engine (create, validate, redeem, track usage)
+- [ ] Free trial support (X days free, auto-convert to paid)
+- [ ] Referral program (unique links, invite emails, automatic rewards)
+- [ ] Win-back offers (auto-send discount to churned/inactive users)
+
+---
+
+## Priority 4 — CWG & FlowState Refactoring
+
+- [ ] Update CWG backend to verify MBS Platform JWTs (remove standalone auth)
 - [ ] Update CWG frontend to redirect to MBS Platform for login
+- [ ] Remove CWG's standalone Stripe integration
+- [ ] Remove CWG's standalone BTCPay integration
+- [ ] Update FlowState backend to verify MBS Platform JWTs
+- [ ] Update FlowState frontend to redirect to MBS Platform for login
+- [ ] Remove FlowState's standalone Stripe integration
+- [ ] Test full flow for both: login → purchase → access product
 
-## Priority 4 — Inner Lab Shared Data Design
+---
 
-- [ ] Design `il_*` shared table schemas (profiles, consciousness, state, check-ins)
-- [ ] Define read/write rules (which modules can write to shared tables)
-- [ ] Define the Inner Lab Core API surface
-- [ ] Decide exact domains for future modules
+## Priority 5 — Connect All Products (Phase 4)
 
-## Priority 5 — Inner Lab Core Container
+- [ ] Add checkAccess middleware to each Arcade game backend (5)
+- [ ] Add checkAccess middleware to each Studio Works backend (6)
+- [ ] Update each frontend to use MBS Platform JWT
+- [ ] Test full flow for each product: login → purchase → access
 
-- [ ] Build when 2-3 modules exist
-- [ ] Daily briefing engine
-- [ ] Cross-module insights
+---
+
+## Priority 6 — Inner Lab Middleware (Layer 2)
+
+**Build when 2-3 Inner Lab modules exist. Reference: `InnerLab-middleware/CLAUDE.md`**
+
+- [ ] Consciousness profile API (GET/PUT)
+- [ ] Personal history API
 - [ ] Check-in API (mood, energy, stress, intention)
-- [ ] Consciousness profile API
-- [ ] State engine (aggregated user state)
+- [ ] User memories system (per-module + opt-in cross-module sharing)
+- [ ] Activity feed (Inner Lab level)
+- [ ] Encryption & data export
+- [ ] Daily briefing engine (cross-module synthesis)
+- [ ] Cross-module insights
 
-## Priority 6 — Inner Lab Unified Dashboard
+---
 
-- [ ] innerlab.ai logged-in dashboard (for category_access subscribers)
+## Priority 7 — Inner Lab Unified Dashboard
+
+- [ ] innerlab.ai logged-in dashboard (for category_access: "innerlab" subscribers)
 - [ ] Daily briefing view
 - [ ] Cross-module insights view
 - [ ] Unified consciousness profile view
 - [ ] Module launcher
+- [ ] Upsell from standalone to Inner Lab All Access
 
-## Priority 7 — Connect All Products
+---
 
-- [ ] Add checkAccess middleware to each Arcade game backend
-- [ ] Add checkAccess middleware to each Studio Works backend
-- [ ] Update each frontend to use MBS Platform JWT
-- [ ] Test full flow for each product: login → purchase → access
+## Priority 8 — MBS Platform Advanced Phases
 
-## Backlog — Future Phases
-
-- [ ] MBS Platform Phase 2: Transactional emails + basic admin
-- [ ] MBS Platform Phase 3: Promo codes + free trials + referrals
-- [ ] MBS Platform Phase 5: User dashboard (My Products, billing history)
-- [ ] MBS Platform Phase 6: Admin dashboard (analytics, revenue)
-- [ ] MBS Platform Phase 7: Email campaigns + announcements
-- [ ] MBS Platform Phase 8: Multi-currency, family plan, teams, API keys
-- [ ] Build next Inner Lab modules (BreathArc, StarMap, etc.)
+- [ ] Phase 5: User dashboard (My Products, billing history, manage subscriptions)
+- [ ] Phase 6: Admin dashboard (analytics, revenue, product stats, funnel tracking, audit log)
+- [ ] Phase 7: Email campaigns + announcements + surveys + newsletter
+- [ ] Phase 8: Multi-currency, family plan, teams, achievements, push notifications, enterprise SSO, API keys
