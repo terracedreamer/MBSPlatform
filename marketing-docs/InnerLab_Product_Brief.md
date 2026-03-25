@@ -53,23 +53,23 @@ Inner Lab is a unified system for reflection, practice, and awareness that adapt
 
 ## Section 3: How It Works (4-Step Framework)
 
-The Inner Lab experience follows a consistent 4-step cycle designed to deepen self-awareness over time:
+The Inner Lab experience follows a consistent 4-step cycle designed to deepen self-awareness over time. Each session is simple, short, and personal.
 
 ### Step 1: Observe
 
-Check in with your mood, energy, and intention. Capture your current state without judgment. The system begins by meeting you where you are.
+Check in with your mood, energy, and intention. A 30-second snapshot of where you are right now. The system begins by meeting you where you are.
 
 ### Step 2: Interpret
 
-The system reads your signals and surfaces relevant content. It helps you understand patterns — what keeps showing up, what's shifting, what needs attention.
+The system reads your signals -- transits, journal themes, patterns -- and surfaces what matters today. It helps you understand what keeps showing up, what's shifting, what needs attention.
 
 ### Step 3: Practice
 
-Engage in a guided exercise tailored to your current state. This could be a conversation, a breathing session, a meditation, a journal prompt, or a movement practice. Take guided action.
+Follow a guided exercise tailored to your state: breathwork, reflection, yoga, or a focused prompt. Take guided action.
 
 ### Step 4: Integrate
 
-Reflect on what shifted. Help the system learn from your experience so future suggestions become more relevant. This is where growth compounds.
+Reflect on what shifted. Rate accuracy, capture insights, and help the system learn alongside you. This is where growth compounds.
 
 ---
 
@@ -82,6 +82,46 @@ Theme  →  Practice  →  Prompt  →  Action  →  Reflection  →  Insight
 ```
 
 This cycle repeats and deepens over time as the system adapts to the user. Each pass through the loop builds on previous insights, creating a compounding effect where the system becomes increasingly personalized and effective.
+
+---
+
+## Section 4B: A Day With Inner Lab
+
+What a single session looks like across the day (presented as Morning / Midday / Evening tabs on the website):
+
+| Step | What Happens |
+|------|-------------|
+| 1. 30-Second Check-in | Mood, energy, stress level, and your intention for the day |
+| 2. Signals + Context | Transits, lunar phase, recent journal themes, and your personal goals |
+| 3. Theme Interpretation | A plain-English summary of what this period is about for you |
+| 4. 3-10 Min Practice | Breathwork, a short yoga flow, reflection exercise, or mantra |
+| 5. One Real-World Action | A boundary to set, a conversation to have, or a focus step to take |
+| 6. Reflection + Feedback | Rate accuracy and helpfulness -- the system learns from you |
+
+---
+
+## Section 4C: The Intelligence Layer
+
+A shared intelligence layer connects every module -- making the whole greater than the sum of its parts. Visualized on the website as concentric layers with the user at the center:
+
+| Layer | Components |
+|-------|-----------|
+| **You** (center) | At the center of every layer |
+| **Identity + State** | Identity Model, State Awareness |
+| **Memory + Orchestrator** | Memory + Insights, Orchestrator |
+| **Safety + Adaptive Learning** | Safety + Boundaries, Adaptive Learning |
+
+### Where AI Fits (5 Capabilities)
+
+Intelligence that enhances your practice -- never replaces your intuition:
+
+1. **Guide Conversations** -- Personalized dialogue using your identity, recent entries, and current state
+2. **Daily Briefing** -- Synthesizes signals into your Theme, Practice, Prompt, and Action
+3. **Journal Intelligence** -- Pattern extraction, gentle reframes, and prompt generation from your entries
+4. **Ritual Builder** -- Assembles rituals from a library based on your goals and time available
+5. **Symbol Interpretation** -- Suggests meanings for dreams and synchronicities, learning your personal dictionary
+
+> "AI is a tool in your toolkit -- you always stay in control."
 
 ---
 
@@ -261,6 +301,19 @@ Inner Lab handles deeply personal data. The privacy model is built on explicit u
 
 ---
 
+## Section 7B: Privacy & Data Commitments
+
+Prominently displayed on the website with 6 specific commitments:
+
+1. **Encrypted by Default** -- AES-256, TLS. Journal entries never stored in plain text.
+2. **Privacy-First AI** -- Minimal context sent to AI, no persistent profiles shared with AI providers.
+3. **Your Data, Your Choice** -- Export or delete everything anytime. JSON or CSV download.
+4. **Minimal Collection** -- No analytics trackers, no ad profiles, no third-party data sharing.
+5. **No Third-Party Selling** -- Data never sold, shared, or used to train external AI models.
+6. **Transparent Practices** -- Privacy policy in plain language, not legalese.
+
+---
+
 ## Section 8: User Journey
 
 | Stage | Description |
@@ -278,6 +331,8 @@ Inner Lab handles deeply personal data. The privacy model is built on explicit u
 
 Approved messaging themes and taglines for marketing use:
 
+- "Platform for Inner Growth" (website hero H1)
+- "A product ecosystem for reflection, practice, and holistic well-being" (website hero subheadline)
 - "A unified system for inner growth"
 - "Observe. Reflect. Grow."
 - "Technology that serves the soul"
@@ -295,3 +350,41 @@ Approved messaging themes and taglines for marketing use:
 - Avoid "calm" in marketing copy
 - Never use "Operating System" to describe Inner Lab
 - Tone: grounded, inclusive, clear — not preachy, not clinical
+
+---
+
+## Section 10B: Design Language (innerlab.ai)
+
+### Colors
+- Background: near-black (`rgb(5, 5, 5)`)
+- Body text: off-white zinc-100 (`rgb(244, 244, 245)`)
+- Muted text: zinc-400 (`rgb(161, 161, 170)`)
+- Primary accent: teal-500 (`rgb(20, 184, 166)`)
+- Secondary accent: sky-500 (`rgb(14, 165, 233)`)
+- Accent gradient: teal-500 to sky-500 (used on italic hero text and highlights)
+- Card backgrounds: dark at 30-50% opacity with borders at 6-10% white
+
+### Typography
+- Body: **DM Sans** (Variable), 14-16px
+- Headings: **Space Grotesk** (Variable), bold 700, 36-72px
+- Italic accent: **Instrument Serif**, italic, with gradient text effect
+
+### UI Patterns
+- Dark theme throughout (no light mode)
+- Glass-morphism cards (semi-transparent bg + subtle borders)
+- Horizontal scrolling marquee tickers with dot separators
+- Aurora drift animations (4 layers) for background ambiance
+- Concentric ring diagrams for system architecture
+- Tab-based filtering (All/Active/Coming Soon)
+- Morning/Midday/Evening time-of-day tabs
+- Numbered step indicators ("01", "02" format)
+- Green dot status badge for "live" modules
+
+### Current Website State (Pre-Platform)
+- `/` — Homepage (hero, how it works, daily flow, intelligence layer, AI capabilities, privacy, module stats)
+- `/modules` — Module catalog with filter tabs (All/Active/Coming Soon)
+- `/about` — Redirects to magicbusstudios.com
+- `/waitlist`, `/subscribe`, `/contact` — Form pages
+- No login/dashboard UI yet (comes with platform build)
+- No pricing visible (comes with platform build)
+- No individual module detail pages
