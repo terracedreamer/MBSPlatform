@@ -50,10 +50,9 @@ All 17 architecture decisions are finalized. No open questions. No code written 
 
 ## Next Steps
 
-1. Begin MBS Platform Phase 1 implementation (Express + Mongoose scaffolding)
-2. Implement Google SSO + JWT issuance
-3. Implement entitlements system
-4. Implement Stripe checkout + webhooks
-5. Implement BTCPay Lightning payments
-6. Write CWG + FlowState migration scripts
-7. Deploy to Coolify at platform.magicbusstudios.com
+1. Build MBS Platform Phase 1 (Express + Mongoose scaffolding, Google SSO, Nostr/LNURL, entitlements, Stripe, BTCPay)
+2. Build Inner Lab Middleware backend (separate project — shared il_* collections, consciousness, memories, check-ins, wellness profiles). **Must exist before migrations.**
+3. Write CWG + FlowState migration scripts (shared data → il_* via middleware, product data → cwg_*/yoga_*)
+4. Refactor CWG + FlowState to use platform auth + middleware APIs
+5. Deploy both to Coolify
+6. Inner Lab FRONTEND (innerlab.ai dashboard) — built later when 2-3 modules have enough data

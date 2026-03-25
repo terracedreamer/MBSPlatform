@@ -193,11 +193,16 @@ async function requireAuth(req, res, next) {
 
 ## When to Build This
 
-**NOT Phase 1.** This middleware only has value when 2-3 Inner Lab modules exist and there's actual cross-module data to work with.
+**Build immediately after MBS Platform (Layer 1).** This middleware must exist BEFORE the CWG and FlowState migrations so that shared data (consciousness profiles, check-ins, personal history, user memories, wellness profiles) can be written directly to `il_*` tables from day one. Without this, shared data would temporarily live as `cwg_*` or `yoga_*` and require a painful double-migration later.
 
-**Build trigger**: When the second Inner Lab module (e.g., BreathArc) needs to read data that CWG created (e.g., consciousness profile, mood check-ins, user memories).
+**Build order:**
+1. MBS Platform (Layer 1) — SSO + billing
+2. **This middleware (Layer 2)** — shared il_* collections + APIs
+3. CWG migration — writes shared data to il_* via this middleware
+4. FlowState migration — same pattern
+5. Inner Lab **frontend** (innerlab.ai dashboard) — built LATER when 2-3 modules have enough data
 
-**Until then**: CWG and FlowState write to `cwg_*` and `yoga_*` collections in `inner_lab` DB. No shared `il_*` tables exist yet. When this middleware is built, it creates the `il_*` tables and modules start writing to them.
+**What comes later (NOT this project):** The Inner Lab frontend/dashboard at innerlab.ai. That's a separate frontend project built when there are enough modules and data to power a daily briefing and cross-module insights.
 
 ## Relationship to Other Projects
 

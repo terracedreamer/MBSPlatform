@@ -1,5 +1,25 @@
 # CHANGELOG — MBS Platform
 
+## March 25, 2026 — Session 1 (final update): Build Order Revised + Docs Finalized
+
+### Key revision
+- **Inner Lab Middleware backend must be built NOW** (right after MBS Platform), not later
+- Reason: migrations need il_* shared tables to exist so shared data (consciousness, memories, check-ins, wellness) writes directly to shared collections instead of requiring a double-migration
+- The Inner Lab **frontend** (innerlab.ai dashboard) is what comes later, not the middleware backend
+- Added il_user_wellness_profiles as confirmed shared collection (health conditions, injuries, goals)
+- Documented CWG dual-format fields (personal_history legacy string vs personal_history_structured)
+- Documented user memory sharing system (per-module by default, opt-in cross-module)
+
+### Files updated
+- CLAUDE.md: revised build order, three-layer architecture clarification
+- InnerLab-middleware/CLAUDE.md: changed from "build later" to "build now"
+- SESSION_HANDOFF.md: revised build order and decision #4
+- CURRENT_STATUS.md: updated next steps
+- FUTURE_WORK_TODO.md: moved middleware to Priority 2B (build now), frontend stays later
+- CHANGELOG.md: this entry
+
+---
+
 ## March 25, 2026 — Session 1 (continued): Architecture Finalized
 
 ### What happened

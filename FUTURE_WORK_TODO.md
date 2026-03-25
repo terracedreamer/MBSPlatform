@@ -103,22 +103,27 @@
 
 ---
 
-## Priority 6 — Inner Lab Middleware (Layer 2)
+## Priority 2B — Inner Lab Middleware (Layer 2) — Build NOW
 
-**Build when 2-3 Inner Lab modules exist. Reference: `InnerLab-middleware/CLAUDE.md`**
+**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `InnerLab-middleware/CLAUDE.md`**
 
-- [ ] Consciousness profile API (GET/PUT)
-- [ ] Personal history API
-- [ ] Check-in API (mood, energy, stress, intention)
-- [ ] User memories system (per-module + opt-in cross-module sharing)
-- [ ] Activity feed (Inner Lab level)
-- [ ] Encryption & data export
-- [ ] Daily briefing engine (cross-module synthesis)
-- [ ] Cross-module insights
+- [ ] Set up separate project + GitHub repo
+- [ ] Express + Mongoose scaffolding (connects to inner_lab DB)
+- [ ] JWT validation middleware (verifies MBS Platform tokens)
+- [ ] il_consciousness_profiles collection + API (GET/PUT)
+- [ ] il_personal_histories collection + API
+- [ ] il_check_ins collection + API (mood, energy, stress, intention)
+- [ ] il_user_memories collection + API (per-module + opt-in sharing)
+- [ ] il_user_wellness_profiles collection (health conditions, injuries, goals — shared by FlowState + BreathArc)
+- [ ] il_activity_feed collection + API
+- [ ] Encryption & data export infrastructure
+- [ ] Deploy to Coolify
+- [ ] Daily briefing engine (LATER — when enough data exists)
+- [ ] Cross-module insights (LATER — when enough data exists)
 
 ---
 
-## Priority 7 — Inner Lab Unified Dashboard
+## Priority 7 — Inner Lab Frontend / Unified Dashboard (Build LATER)
 
 - [ ] innerlab.ai logged-in dashboard (for category_access: "innerlab" subscribers)
 - [ ] Daily briefing view

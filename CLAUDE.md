@@ -187,10 +187,11 @@ For Coolify Docker deployment patterns, see `~/.claude/skills/coolify-deployment
 ## Three-Layer Architecture
 This project is **Layer 1** in a three-layer system:
 - **Layer 1 (this project)**: MBS Platform — SSO, billing, entitlements, friends, invites, push, feature flags, GDPR
-- **Layer 2 (separate project)**: Inner Lab Middleware — shared consciousness, memories, check-ins, activity feed, encryption/export. See `InnerLab-middleware/CLAUDE.md` for reference.
+- **Layer 2 (separate project, build alongside this)**: Inner Lab Middleware — shared consciousness, memories, check-ins, wellness profiles, activity feed, encryption/export. Backend-only API, no frontend. See `InnerLab-middleware/CLAUDE.md` for reference. **Build NOW** so CWG/FlowState migrations can write shared data directly to il_* tables instead of double-migrating later.
+- **Layer 2 Frontend (build LATER)**: Inner Lab dashboard at innerlab.ai — daily briefing, cross-module insights, unified profile. Only when 2-3 modules have enough data to show.
 - **Layer 3**: Standalone products (Arcade, Studio Works) — own databases, SSO only
 
-Inner Lab modules (CWG, FlowState, etc.) are separate containers that all connect to `inner_lab` database. They call this platform for auth/billing and (later) the Inner Lab Middleware for shared data.
+Inner Lab modules (CWG, FlowState, etc.) are separate containers that all connect to `inner_lab` database. They call this platform for auth/billing and the Inner Lab Middleware for shared data.
 
 ## Current Status
 Not started — spec only. All architecture decisions finalized (2026-03-25).
@@ -201,8 +202,16 @@ Reference documents:
 - `CWG/MBS_DATABASE_MIGRATION_PLAN.md` — CWG 56-collection bucket analysis
 - `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` — FlowState 7-collection bucket analysis
 
-## Implementation Phases
-**Phase 1 (MVP)** — Google SSO + Nostr/LNURL auth + user profiles + entitlements + Stripe billing + BTCPay Lightning + webhooks + CWG/FlowState migration + branded login + friends/invites + push subscriptions + feature flags + GDPR consent
+## Build Order (Revised 2026-03-25)
+1. **MBS Platform (this project)** — SSO + billing + entitlements + friends + push + feature flags + GDPR
+2. **Inner Lab Middleware (separate project)** — shared il_* collections, consciousness profile, user memories, check-ins, wellness profiles. Build NOW so migrations write shared data correctly from day one. See `InnerLab-middleware/CLAUDE.md`.
+3. **CWG Migration** — identity → mbs_platform, CWG-specific → inner_lab cwg_*, shared data → inner_lab il_* via middleware
+4. **FlowState Migration** — same pattern as CWG
+5. **New Inner Lab modules** (BreathArc, StarMap, etc.) — born into the architecture
+6. **Inner Lab Frontend** (innerlab.ai dashboard) — built LATER when enough modules/data exist
+
+## Implementation Phases (MBS Platform)
+**Phase 1 (MVP)** — Google SSO + Nostr/LNURL auth + user profiles + entitlements + Stripe billing + BTCPay Lightning + webhooks + branded login + friends/invites + push subscriptions + feature flags + GDPR consent
 **Phase 2** — Transactional emails + basic admin (list users, grant/revoke) + email preferences
 **Phase 3** — Promo codes + free trials + referral program + win-back offers
 **Phase 4** — Connect each product backend (add checkAccess middleware to all 22 products)

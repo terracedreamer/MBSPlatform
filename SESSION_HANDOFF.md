@@ -12,11 +12,11 @@
 All architecture decisions are **finalized**. No open questions remain.
 
 **Next steps (in order):**
-1. Write final MBS Platform architecture doc incorporating sovereignty features (Nostr, LNURL, BTCPay, encryption)
-2. Build MBS Platform backend (Phase 1 MVP) — Google SSO + entitlements + Stripe + BTCPay
-3. Write migration scripts for CWG (56 collections) and FlowState (7 collections)
-4. Refactor CWG and FlowState backends to use platform auth
-5. Build Inner Lab middleware (Layer 2) when ready — use `InnerLab-middleware/CLAUDE.md` as reference
+1. Build MBS Platform backend (Phase 1 MVP) — Google SSO + Nostr/LNURL + entitlements + Stripe + BTCPay
+2. Build Inner Lab Middleware backend (Layer 2) — shared il_* collections, consciousness profiles, user memories, check-ins, wellness profiles. **Build NOW** so migrations write shared data correctly from day one.
+3. Write migration scripts for CWG (56 collections) and FlowState (7 collections) — shared data goes to il_* via middleware, product data to cwg_*/yoga_*
+4. Refactor CWG and FlowState backends to use platform auth + middleware APIs
+5. Build Inner Lab **frontend** (innerlab.ai dashboard) — LATER when 2-3 modules have enough data
 
 **Migration analysis docs created by product agents:**
 - `CWG/MBS_DATABASE_MIGRATION_PLAN.md` — 56 collections categorized into 3 buckets
@@ -72,7 +72,7 @@ All architecture decisions are **finalized**. No open questions remain.
 | 1 | Fresh `inner_lab` database | CWG data migrates with `cwg_` prefix. Old DB stays as backup. |
 | 2 | User identity ONLY in `mbs_platform` | Single source of truth. No duplicate user tables. |
 | 3 | Shared IL data starts as module-prefixed | Everything starts as `cwg_*` or `yoga_*`. Promote to `il_*` when second module needs it. |
-| 4 | Inner Lab Core container — build later | When 2-3 modules exist. Not Phase 1. |
+| 4 | Inner Lab Middleware backend — build NOW (after MBS Platform) | So migrations write shared data to il_* from day one. Inner Lab FRONTEND comes later. |
 | 5 | Frontend: B+C hybrid | Modules standalone at own domains. `innerlab.ai` becomes premium dashboard later. |
 | 6 | Branded login | Inner Lab modules → IL branding. Arcade/SW → MBS branding. Via `?brand=` param. |
 | 7 | Arcade/Studio Works | SSO only. No shared data. Independent. |
