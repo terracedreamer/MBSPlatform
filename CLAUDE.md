@@ -179,20 +179,47 @@ Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
 5. **New Inner Lab modules** — born into the architecture
 6. **Inner Lab Frontend enhancements** — daily briefing, cross-module insights (when enough data)
 
-## Files in This Repo
+## Folder Structure
 
-| File/Folder | Purpose |
-|-------------|---------|
-| `CLAUDE.md` | This file — repo purpose and architecture overview |
-| `SESSION_HANDOFF.md` | Session continuity — all decisions and context |
-| `CHANGELOG.md` | History of architecture decisions |
-| `CURRENT_STATUS.md` | Current state of the project |
-| `FUTURE_WORK_TODO.md` | Prioritized task list |
-| `MBS-platform-reference/` | **CLAUDE.md to copy into MBS/ folder** for building Layer 1 |
-| `InnerLab-middleware/` | **CLAUDE.md to copy into Innerlab/ folder** for building Layer 2 |
-| `MBS_Platform_Technical_Architecture.docx` | Original technical spec |
-| `ChatGPT-architecture/` | Inner Lab shared intelligence discussion |
-| `marketing-docs/` | Product briefs (Inner Lab, CWG, Arcade, MBS brand) |
+```
+MBSPlatform/                          ← THIS REPO (think tank, no code)
+│
+├── copy-to-mbs/                      ← Copy contents into MBS/ project
+│   └── CLAUDE.md                     ← Instructions for building Layer 1
+│
+├── copy-to-innerlab/                 ← Copy contents into Innerlab/ project
+│   └── CLAUDE.md                     ← Instructions for building Layer 2
+│
+├── copy-to-cwg/                      ← Copy contents into CWG/ project
+│   └── PLATFORM_MIGRATION.md         ← Migration instructions for CWG agent
+│
+├── copy-to-yogaghost/                ← Copy contents into YogaGhost/ project
+│   └── PLATFORM_MIGRATION.md         ← Migration instructions for FlowState agent
+│
+├── marketing-docs/                   ← Product briefs for marketing agent
+│   ├── PLATFORM_CONTEXT_FOR_MARKETING.md  ← NEW: platform context supplement
+│   ├── ConversationsWithGod_Product_Brief.docx
+│   ├── InnerLab_Product_Brief.docx
+│   ├── MagicBusStudios_Brand_Architecture.docx
+│   ├── MagicBusStudios_Company_Overview.docx
+│   └── TheArcade_Marketing_Brief.docx
+│
+├── archive/                          ← Old reference material (absorbed into current docs)
+│   └── ChatGPT-architecture/         ← Original Inner Lab shared architecture from ChatGPT
+│
+├── CLAUDE.md                         ← This file — repo purpose and architecture
+├── SESSION_HANDOFF.md                ← Session continuity for future Claude sessions
+├── CHANGELOG.md                      ← History of architecture decisions
+├── CURRENT_STATUS.md                 ← Current state
+├── FUTURE_WORK_TODO.md               ← Prioritized task list
+└── MBS_Platform_Technical_Architecture.docx  ← Original Layer 1 spec
+```
+
+### How to use the copy-to folders:
+1. **`copy-to-mbs/`** → Copy `CLAUDE.md` into your `MBS/` project folder. Open Claude Code in `MBS/`. The agent reads this and builds Layer 1 (SSO, billing, entitlements) into magicbusstudios.com.
+2. **`copy-to-innerlab/`** → Copy `CLAUDE.md` into your `Innerlab/` project folder. Open Claude Code in `Innerlab/`. The agent reads this and builds Layer 2 (middleware + dashboard) into innerlab.ai.
+3. **`copy-to-cwg/`** → Copy `PLATFORM_MIGRATION.md` into your `CWG/` project folder. The CWG agent reads this and migrates CWG to use the platform.
+4. **`copy-to-yogaghost/`** → Copy `PLATFORM_MIGRATION.md` into your `YogaGhost/` project folder. The FlowState agent reads this and migrates FlowState to use the platform.
 
 ## What NOT to Do
 - Do NOT write code in this repo — this is architecture/planning only
