@@ -432,3 +432,24 @@ Follow all conventions from the global CLAUDE.md:
 - Input validation on all routes
 - Rate limiting on API routes
 - Document all env vars in `.env.example`
+
+---
+
+## Completion Report (REQUIRED)
+
+When you finish building, generate a file called `PHASE_2_REPORT.md` in the project root containing:
+
+1. **What was built** — Every file created or modified, grouped by backend/frontend
+2. **What changed from the plan** — Any deviations from this document. Did you rename anything? Skip anything? Add anything not in the spec? Why?
+3. **Env vars required** — Complete list of every env var the code expects, with example values
+4. **Database collections** — Exact name of every Mongoose model and its MongoDB collection name
+5. **API routes** — Full table (method, path, auth required?, description)
+6. **Frontend routes** — Every React route added (path, component, auth-gated?)
+7. **il_* schema contracts** — Exact field names and types for each il_* collection as actually implemented
+8. **JWT validation** — How your middleware validates tokens (header format, algorithm, fields extracted)
+9. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
+10. **Known gaps** — Anything intentionally deferred or couldn't complete
+11. **Gotchas for downstream phases** — Anything Phase 3 (CWG migration) or Phase 4 (FlowState migration) agents need to know — especially il_* collection field names if they differ from the spec, how modules should write to shared collections, or any middleware behavior they need to match
+12. **Testing commands** — Exact curl commands or steps to verify each feature works
+
+This report is critical — the orchestrator session (MBSPlatform repo) uses it to update instructions for all downstream phases before they start.

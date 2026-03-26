@@ -145,3 +145,24 @@ The migration script MUST use **upsert on email** when creating `mbs_platform.us
 - Do NOT modify user data during migration — copy only
 - Do NOT run migration until MBS Platform and Inner Lab Middleware are built and tested
 - Do NOT keep standalone auth/billing code — remove it completely after migration
+
+---
+
+## Completion Report (REQUIRED)
+
+When you finish the migration and refactor, generate a file called `PHASE_3_REPORT.md` in the project root containing:
+
+1. **What was built/changed** — Every file created, modified, or deleted, grouped by backend/frontend
+2. **What changed from the plan** — Any deviations from this document. Why?
+3. **Migration results** — How many users migrated, collections copied, any errors or skipped records
+4. **Collection mapping** — Old collection name → new collection name (cwg_* and il_*) as actually created
+5. **Field renames** — Every field that was renamed during migration (old → new)
+6. **Env vars required** — Complete list for the refactored CWG app
+7. **Code removed** — List of removed auth/billing routes, pages, and files
+8. **JWT integration** — How JWT middleware was implemented (Python library used, header format, fields extracted)
+9. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
+10. **Known gaps** — Anything deferred or issues discovered
+11. **Gotchas for the orchestrator** — Anything that affects other phases or the platform architecture
+12. **Testing steps** — How to verify the migration worked and the refactored app functions correctly
+
+This report is critical — the orchestrator session (MBSPlatform repo) uses it to track the migration and update downstream instructions if needed.

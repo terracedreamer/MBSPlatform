@@ -172,3 +172,21 @@ Your product's backend is responsible for enforcing free tier limits (time, usag
 - Do NOT build your own Stripe integration — the platform handles billing
 - Do NOT keep standalone auth after migration — remove it completely
 - Do NOT hardcode the product slug — use env var `PRODUCT_SLUG`
+
+---
+
+## Completion Report (REQUIRED)
+
+When you finish the SSO migration, generate a file called `PHASE_5_REPORT.md` in the project root containing:
+
+1. **What was built/changed** — Every file created, modified, or deleted
+2. **What changed from the plan** — Any deviations from this document. Why?
+3. **Env vars required** — Complete list for the migrated app
+4. **Code removed** — List of removed auth/billing routes, pages, and files (if any existed)
+5. **JWT integration** — How JWT middleware was implemented (library, header format, fields extracted)
+6. **Entitlement check** — How entitlement is checked (API call? cached? which endpoint?)
+7. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
+8. **Known gaps** — Anything deferred or issues discovered
+9. **Testing steps** — How to verify the SSO migration works
+
+This report helps the orchestrator track which standalone products are fully migrated.

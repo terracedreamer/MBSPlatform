@@ -127,3 +127,24 @@ FlowState has 0 real users, so collision risk is zero. The migration script shou
 - Do NOT modify user data during migration — copy only
 - Do NOT run migration until MBS Platform and Inner Lab Middleware are built and tested
 - Do NOT keep standalone auth/billing code after migration
+
+---
+
+## Completion Report (REQUIRED)
+
+When you finish the migration and refactor, generate a file called `PHASE_4_REPORT.md` in the project root containing:
+
+1. **What was built/changed** — Every file created, modified, or deleted, grouped by backend/frontend
+2. **What changed from the plan** — Any deviations from this document. Why?
+3. **Migration results** — How many users migrated, collections copied, any errors or skipped records
+4. **Collection mapping** — Old collection name → new collection name (yoga_* and il_*) as actually created
+5. **Field renames** — Every field that was renamed during migration (old → new)
+6. **Env vars required** — Complete list for the refactored FlowState app
+7. **Code removed** — List of removed auth/billing routes, pages, and files
+8. **JWT integration** — How JWT middleware was implemented (library, header format, fields extracted)
+9. **deviceId sunset** — How deviceId legacy routes were handled (kept for 90 days? removed?)
+10. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
+11. **Known gaps** — Anything deferred or issues discovered
+12. **Testing steps** — How to verify the migration worked and the refactored app functions correctly
+
+This report is critical — the orchestrator session (MBSPlatform repo) uses it to track the migration.
