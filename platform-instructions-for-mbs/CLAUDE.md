@@ -420,3 +420,34 @@ When you finish building, generate a file called `PHASE_1_REPORT.md` in the proj
 12. **Testing commands** — Exact curl commands or steps to verify each feature works
 
 This report is critical — the orchestrator session (MBSPlatform repo) uses it to update instructions for all downstream phases before they start.
+
+---
+
+## Phase 1 Addendum (Added by Orchestrator after Phase 1 Report Review — 2026-03-26)
+
+The core Phase 1 build is complete and deployed. These are additional items identified during the orchestrator's review of the Phase 1 report. Complete these before Phase 2 begins.
+
+### 1. Add "Login" Button to MBS Marketing Site Nav
+- Add a "Login" button to the marketing site navigation bar, next to the existing items (Inner Lab, Studio Works, The Arcade, About)
+- Link to `/auth/login?brand=mbs`
+- Simple nav button — no complex UX needed right now
+
+### 2. Add Rate Limiting to Platform Routes
+- The existing form routes (`/api/contact`, `/api/subscribe`, `/api/waitlist`) already have rate limiting (10 requests per 15 minutes)
+- Platform routes (`/api/auth/*`, `/api/entitlements/*`, `/api/billing/*`, `/api/friends/*`) do NOT have rate limiting yet
+- Add appropriate rate limiting before production traffic increases
+- Suggested: auth routes 10/15min, entitlement checks 60/15min, billing 5/15min, friends 20/15min
+
+### 3. Add Lightning Payment Option to Billing Page UI
+- Backend routes exist: `POST /api/billing/btcpay/checkout` and `POST /api/billing/btcpay/webhook`
+- The BillingPage.jsx currently only shows Stripe checkout buttons
+- Add a "Pay with Lightning" option alongside Stripe on the billing page
+- BTCPay entitlements are 30-day non-recurring passes — make this clear in the UI
+
+### Deferred (do NOT build now — these need pricing decisions first)
+- Create real Stripe products and prices in Stripe Dashboard (need pricing structure decision)
+- Design full product catalog billing page (22 products across 3 categories)
+- Wire Stripe Price IDs into the billing checkout flow
+
+### When done
+Generate an updated report as `PHASE_1_ADDENDUM_REPORT.md` in the project root. Include what was changed and any new gotchas for downstream phases.
