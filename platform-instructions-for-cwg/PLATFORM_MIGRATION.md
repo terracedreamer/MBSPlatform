@@ -62,7 +62,7 @@ Run migration script (built in MBS/ project) that:
 - All field names must be snake_case in mbs_platform (CWG already uses snake_case ✓)
 - Fields not present in CWG data get sensible defaults: `preferred_language: "en"`, `preferences: {}`, `referral_count: 0`
 
-**Copies to `inner_lab` with `cwg_` prefix (39 collections):**
+**Copies to `inner_lab` with `cwg_` prefix (39 product collections + 3 infrastructure collections = 42 total):**
 - cwg_chat_sessions, cwg_messages, cwg_journal_entries, cwg_journal_insights
 - cwg_practices, cwg_meditation_completions, cwg_user_meditations, cwg_meditation_sessions
 - cwg_program_enrollments, cwg_user_challenges, cwg_badge_history
@@ -126,6 +126,9 @@ When migrating `user_memories` to `il_user_memories`:
 - Set `source_module: "cwg"` on every memory
 - Set `shared: false` on every memory (private by default)
 - User must explicitly opt-in to share memories across Inner Lab modules
+
+## User Dedup / Merge Logic
+The migration script MUST use **upsert on email** when creating `mbs_platform.users` records. If a user already exists (e.g., they were migrated from another product first), MERGE fields — do not overwrite. CWG data takes priority for fields like `nostr_npub` and `lnurl_linking_key` that FlowState doesn't have.
 
 ## What NOT to Do
 - Do NOT delete the `conversations_with_god` database — it's the backup

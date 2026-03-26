@@ -83,6 +83,9 @@ il_notifications            — Cross-module notifications
 il_analytics_events         — User event tracking (90-day TTL)
 ```
 
+### userId Mapping
+The JWT uses `userId` (camelCase) but all database documents use `user_id` (snake_case). When writing to any collection, map: `user_id: req.user.userId`.
+
 ### Database Rules
 - **Write** to your own prefix (`{prefix}_*`) freely
 - **Write** to `il_check_ins` when your module captures mood/energy data

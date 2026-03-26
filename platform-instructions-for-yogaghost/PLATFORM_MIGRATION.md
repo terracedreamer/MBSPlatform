@@ -119,6 +119,9 @@ FlowState stores breathwork/meditation/flow data as embedded arrays in the `user
 - After 90 days, remove deviceId routes and field entirely
 - Do NOT create new deviceId entries
 
+## User Dedup / Merge Logic
+The migration script MUST use **upsert on email** when creating `mbs_platform.users` records. If a user already exists (e.g., they were migrated from CWG first), MERGE fields — do not overwrite existing values. Existing CWG data (nostr_npub, lnurl_linking_key, etc.) takes priority over FlowState defaults.
+
 ## What NOT to Do
 - Do NOT delete the `yogaghost` database — it's the backup
 - Do NOT modify user data during migration — copy only

@@ -129,45 +129,61 @@ StarMap:   astro_charts, astro_transits, ... (future)
 }
 ```
 
+## Data Write Paths (IMPORTANT — Read This First)
+
+There are TWO ways data gets written to il_* collections:
+
+1. **Direct DB writes** — Module backends (CWG, FlowState, etc.) share the `inner_lab` database and write directly to il_* collections via Mongoose/Motor. This is the primary write path for modules. No HTTP call needed.
+2. **HTTP API** — The endpoints below are called by the **Inner Lab dashboard frontend** (innerlab.ai) only. Example: the dashboard's check-in widget calls `POST /api/check-in`.
+
+**Rule:** Modules write to il_* via shared DB. The dashboard frontend writes via these HTTP endpoints. Both paths write to the same collections. Keep validation logic consistent — if you add validation to the HTTP endpoint, document the same rules for direct DB writers.
+
+**CORS_ORIGINS** only needs to include `innerlab.ai` because module backends don't call these HTTP endpoints.
+
+### userId Mapping
+The JWT uses `userId` (camelCase) but all il_* database documents use `user_id` (snake_case). When writing to any il_* collection, map: `user_id: req.user.userId`.
+
 ## API Endpoints
 
+All endpoints are mounted at `/api/` prefix (e.g., `POST /api/check-in`).
+
 ### Check-In
-- `POST /check-in` — Store mood, energy, stress, intention (any module can call this)
-- `GET /check-in/latest` — Get user's most recent check-in
-- `GET /check-in/history` — Check-in history with date range
+- `POST /api/check-in` — Store mood, energy, stress, intention (dashboard frontend calls this)
+- `GET /api/check-in/latest` — Get user's most recent check-in
+- `GET /api/check-in/history` — Check-in history with date range
 
 ### Consciousness Profile
-- `GET /consciousness` — Get user's consciousness profile
-- `PUT /consciousness` — Update consciousness profile (from assessment)
-- `GET /consciousness/snapshots` — Historical snapshots
+- `GET /api/consciousness` — Get user's consciousness profile
+- `PUT /api/consciousness` — Update consciousness profile (from assessment)
+- `GET /api/consciousness/snapshots` — Historical snapshots
 
 ### Personal History
-- `GET /personal-history` — Get user's life story
-- `PUT /personal-history` — Update personal history
+- `GET /api/personal-history` — Get user's life story
+- `PUT /api/personal-history` — Update personal history
 
 ### User Memories
-- `GET /memories` — Get memories for current module (filtered by source + shared)
-- `POST /memories` — Create a memory (from any module)
-- `PUT /memories/:id/share` — User opts to share a memory across Inner Lab
-- `PUT /memories/:id/unshare` — User revokes sharing
-- `GET /memories/shared` — Get all shared memories (for cross-module use)
+- `GET /api/memories` — Get memories for current module (filtered by source + shared)
+- `POST /api/memories` — Create a memory (from any module)
+- `PUT /api/memories/:id/share` — User opts to share a memory across Inner Lab
+- `PUT /api/memories/:id/unshare` — User revokes sharing
+- `GET /api/memories/shared` — Get all shared memories (for cross-module use)
 
 ### Daily Briefing (Future)
-- `GET /today` — Synthesized daily briefing from all module data
+- `GET /api/today` — Synthesized daily briefing from all module data
 - Reads from: check-ins, memories, module activity, consciousness profile
 
 ### Cross-Module Insights (Future)
-- `GET /insights` — Patterns detected across modules
+- `GET /api/insights` — Patterns detected across modules
 - Example: "You've been exploring grief in CWG and doing calming breathwork — here's what we notice..."
 
 ### Activity Feed
-- `POST /activity` — Log an activity event (any module calls this)
-- `GET /activity/feed` — Cross-module activity feed for Inner Lab dashboard
+- `POST /api/activity` — Log an activity event (any module calls this)
+- `GET /api/activity/feed` — Cross-module activity feed for Inner Lab dashboard
 
 ### Encryption & Data Export
-- `POST /export` — Generate encrypted data export across all Inner Lab modules
-- `GET /encryption/keys` — Get user's encryption key metadata
-- `POST /encryption/setup` — Initialize client-side encryption
+- `POST /api/export` — Generate encrypted data export across all Inner Lab modules
+- `GET /api/encryption/keys` — Get user's encryption key metadata
+- `POST /api/encryption/setup` — Initialize client-side encryption
 
 ## Frontend Pages (Add to Existing Marketing Site)
 
@@ -225,12 +241,18 @@ async function requireAuth(req, res, next) {
 
 | Variable | Value | Notes |
 |----------|-------|-------|
+**NEW (add to Coolify):**
 | MONGODB_URI | (same as all MBS apps) | Shared MongoDB instance |
 | DB_NAME | `inner_lab` | Same DB all IL modules use |
 | JWT_SECRET | (same as MBS Platform) | To verify platform-issued JWTs |
 | PORT | TBD | Not 3002 (that's MBS Platform) |
-| CORS_ORIGINS | innerlab.ai frontend only | Modules access il_* data directly via shared DB, not HTTP. Only the IL dashboard frontend calls these APIs. |
-| MBS_PLATFORM_URL | https://magicbusstudios.com | For user lookups if needed |
+| CORS_ORIGINS | innerlab.ai frontend only | Dashboard frontend is the only HTTP caller |
+| PLATFORM_URL | `https://magicbusstudios.com` | For entitlement checks |
+
+**EXISTING (keep — form handler needs these):**
+| SENDGRID_API_KEY | (existing) | Used by existing contact/subscribe/waitlist forms |
+| FROM_EMAIL | (existing) | SendGrid sender |
+| TO_EMAIL | (existing) | SendGrid recipient |
 
 ## When to Build This
 

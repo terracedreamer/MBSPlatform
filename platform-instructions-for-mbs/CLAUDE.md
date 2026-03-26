@@ -95,15 +95,31 @@ The login page at `magicbusstudios.com/auth/login` changes branding based on the
 ## Login Flow
 ```
 User clicks "Login" on any product (e.g., conversationswithgod.ai)
-  → Redirect to: magicbusstudios.com/auth/login?redirect={origin}&brand={innerlab|mbs}
+  → Redirect to: https://magicbusstudios.com/auth/login?redirect=https://conversationswithgod.ai&brand=innerlab
   → User sees branded login page
   → Authenticates via Google SSO / Nostr / LNURL
   → Platform creates/finds user, issues JWT
-  → Redirect back: {origin}?token={JWT}
-  → Product frontend stores JWT, sends in Authorization header
+  → Platform VALIDATES redirect domain against ALLOWED_REDIRECT_DOMAINS (see below)
+  → Redirect back: https://{origin}?token={JWT}
+  → Product frontend extracts token from URL, stores it, removes token from URL (history.replaceState)
+  → Product frontend sends JWT in Authorization header on API calls
   → Product backend calls GET /api/entitlements/{product} to verify access
   → 401 = redirect to login | 403 = redirect to billing
 ```
+
+### Open Redirect Protection (SECURITY — REQUIRED)
+The `?redirect=` parameter on the login page MUST be validated against an allowlist to prevent token theft:
+- Maintain an `ALLOWED_REDIRECT_DOMAINS` list (can be derived from CORS_ORIGINS or a separate env var)
+- Before redirecting back with `?token={JWT}`, check that the redirect domain is in the allowlist
+- If the domain is NOT in the allowlist, redirect to `magicbusstudios.com` instead (safe default)
+- The `?redirect=` value MUST include `https://` protocol — reject bare domains
+
+### Token-in-URL Handling
+The JWT is passed as a URL query parameter during the redirect. The product frontend MUST:
+1. Extract the token from the URL immediately on page load
+2. Store it (localStorage or cookie)
+3. Remove the token from the URL using `history.replaceState(null, '', window.location.pathname)`
+4. This prevents the token from appearing in browser history, server logs, or referrer headers
 
 ## Payments: Dual System
 - **Stripe** — subscriptions (monthly/yearly) + one-time purchases. Stripe prefixes by category: `[IL]`, `[Arcade]`, `[SW]`, `[MBS]`
@@ -114,7 +130,7 @@ Both handled here. No per-product payment integration.
 ## Database: `mbs_platform`
 
 ### Core Models
-- **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
+- **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
 - **Entitlement**: user_id, category (innerlab|arcade|studioworks), type (product_pass|category_access|mbs_all_access), product (slug|null), status (active|expired|cancelled|trial), stripe_subscription_id?, stripe_customer_id, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type, category, product?, amount (cents), currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type, value, applies_to, category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
@@ -137,6 +153,34 @@ Both handled here. No per-product payment integration.
 - `product_pass` — one specific product
 - `category_access` — all products in a category (Inner Lab / Arcade / Studio Works)
 - `mbs_all_access` — everything
+
+## Entitlement Check Response Specification
+
+`GET /api/entitlements/:product` returns `{ success: true, hasAccess: Boolean, reason: String }`.
+
+Valid `reason` values:
+
+| reason | Meaning | When returned |
+|--------|---------|---------------|
+| `free_tier` | User has no paid entitlement but product allows free access | Product has `freeTier: true` in catalog config |
+| `product_pass` | User has a paid pass for this specific product | Active Entitlement with type=product_pass for this slug |
+| `category_access` | User has access to the entire category (e.g., all Inner Lab) | Active Entitlement with type=category_access for matching category |
+| `mbs_all_access` | User has access to everything | Active Entitlement with type=mbs_all_access |
+| `no_subscription` | User has no access and product has no free tier | No matching Entitlement and product has `freeTier: false` |
+
+### Free Tier Logic
+The product catalog config determines which products have free tiers. Example:
+```javascript
+// config/products.js
+{ slug: "cwg", freeTier: true, freeTierLimits: { messagesPerDay: 5 } }
+{ slug: "brokenchain", freeTier: true, freeTierLimits: { minutesPerDay: 30 } }
+{ slug: "wildlens", freeTier: false }
+```
+When a user has no Entitlement for a product:
+- If `freeTier: true` → return `{ hasAccess: true, reason: "free_tier" }`
+- If `freeTier: false` → return `{ hasAccess: false, reason: "no_subscription" }`
+
+The product's OWN backend enforces free tier limits (message caps, time caps) based on the `reason` field. The platform only answers "can they access it at all."
 
 ## API Endpoints
 
