@@ -29,20 +29,21 @@
 
 ---
 
-## Pricing Decision (BLOCKS: Real payments across all phases)
+## Pricing Decision — PARTIALLY RESOLVED (moved to Phase 1 Addendum #13)
 
-**Status: Not decided. Deferred.**
+**Status: CWG pricing decided. Bundles decided. Arcade/SW/FlowState deferred.**
 
-Before any product can charge real money, we need:
-- [ ] Decide pricing structure: per-product subscriptions vs category bundles vs all-access — what combinations?
-- [ ] Decide which products are free forever (Arcade? Studio Works?) vs freemium (CWG free tier) vs paid-only
-- [ ] Decide how existing CWG Stripe subscriptions appear on the platform
-- [ ] Create Stripe products in Dashboard (prefixed `[MBS]` per convention)
-- [ ] Create Stripe Price IDs and wire into billing checkout flow
-- [ ] Design full product catalog billing page (22 products, 3 categories)
-- [ ] Add Lightning as equal payment option alongside Stripe in billing UI
+- [x] CWG pricing: $9.99/mo, $79.99/yr (Stripe) + 21K sats/mo, 126K sats/yr (Lightning)
+- [x] Inner Lab All Access: $19.99/mo, $159.99/yr
+- [x] MBS All Access: $29.99/mo, $249.99/yr
+- [x] Structured billing page design (category tabs → product → plans)
+- [x] Lightning as equal payment option alongside Stripe
+- [ ] FlowState pricing (no paid tier defined yet — currently free)
+- [ ] Arcade pricing (free for now)
+- [ ] Studio Works pricing (free for now)
+- [ ] Create actual Stripe products in Dashboard (manual step — owner must do before testing real payments)
 
-**This does NOT block Phase 2, 3, 4, or 5.** Entitlement checks work. Free tier works. Products can launch and be used. Payments are the last mile.
+**CWG already has Stripe price IDs** in its Coolify env vars. The Phase 1 agent can either reuse those or create new platform-level ones.
 
 ---
 

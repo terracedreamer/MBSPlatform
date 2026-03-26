@@ -526,10 +526,60 @@ SendGrid is already integrated for form handling. Add transactional emails:
 - Frontend should call this silently when token is within 1 day of expiry
 - If token is already expired, redirect to login
 
-### Deferred (do NOT build now — needs pricing decision)
-- Create real Stripe products and prices in Stripe Dashboard
-- Design full product catalog billing page (22 products across 3 categories)
-- Wire Stripe Price IDs into the billing checkout flow
+### 13. Structured Billing Page with Real CWG Pricing
+
+Replace the placeholder billing page with a structured layout organized by category.
+
+**Page Layout:**
+- Top level: three category tabs/sections — **Inner Lab**, **The Arcade**, **Studio Works**
+- Plus an **MBS All Access** section at the top (access to everything)
+
+**When user clicks "Inner Lab":**
+- Shows available modules: **Conversations With God** (Live), **FlowState** (Live), plus Coming Soon modules
+- Shows **Inner Lab All Access** bundle option
+- When user clicks on **Conversations With God**, shows:
+
+**CWG Pricing (from existing CWG Stripe integration):**
+
+| Plan | Stripe Price | Lightning (sats) |
+|------|-------------|-----------------|
+| CWG Premium Monthly | $9.99/mo | 21,000 sats/mo |
+| CWG Premium Yearly | $79.99/yr | 126,000 sats/yr |
+
+CWG also has pay-per-use Lightning options (these are product-specific, not platform subscriptions):
+- Single Chat: 1,000 sats (~$0.50)
+- Extended Session (24 hours): 5,000 sats (~$2.50)
+
+**Bundle Pricing:**
+
+| Plan | Price | Scope |
+|------|-------|-------|
+| Inner Lab All Access Monthly | $19.99/mo | All Inner Lab modules |
+| Inner Lab All Access Yearly | $159.99/yr | All Inner Lab modules |
+| MBS All Access Monthly | $29.99/mo | Everything (Inner Lab + Arcade + Studio Works) |
+| MBS All Access Yearly | $249.99/yr | Everything |
+
+**Stripe Products to Create:**
+The CWG Stripe products already exist (env vars `STRIPE_MONTHLY_PRICE_ID` and `STRIPE_ANNUAL_PRICE_ID` in CWG's Coolify config). For the platform billing page, create these NEW Stripe products (prefixed `[MBS]` per convention):
+- `[MBS] CWG Premium Monthly` — $9.99/mo (or reuse existing CWG price IDs)
+- `[MBS] CWG Premium Yearly` — $79.99/yr (or reuse existing CWG price IDs)
+- `[MBS] Inner Lab All Access Monthly` — $19.99/mo
+- `[MBS] Inner Lab All Access Yearly` — $159.99/yr
+- `[MBS] All Access Monthly` — $29.99/mo
+- `[MBS] All Access Yearly` — $249.99/yr
+
+**NOTE:** The actual Stripe Price IDs will need to be created in Stripe Dashboard manually and set as env vars. The billing page should read price IDs from env vars or the product catalog config, NOT hardcode them.
+
+**For Arcade and Studio Works tabs:**
+- Show the products as "Free" or "Coming Soon" for now
+- These don't have paid tiers yet — just list them so the structure is in place
+
+**Lightning payment** should be shown as an equal option alongside Stripe for every paid plan (not hidden in a sub-menu). For Lightning plans, BTCPay creates a 30-day pass (no auto-renewal) — make this clear in the UI.
+
+### Deferred (genuinely cannot build now)
+- FlowState pricing (no paid tier defined yet)
+- Arcade/Studio Works pricing (free for now)
+- Pay-per-use Lightning for CWG (this is CWG-specific, handled in Phase 3 migration)
 
 ### When done
 Generate an updated report as `PHASE_1_ADDENDUM_REPORT.md` in the project root. Include:
