@@ -1,79 +1,83 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 26, 2026 (Session 2 — ongoing)
+**Last Updated**: March 26, 2026 (End of Session 2)
 **Git Branch**: main
-**Last Commit**: c3ffe49
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
 ---
 
-## WHAT WAS DONE THIS SESSION (Session 2)
+## WHERE WE ARE RIGHT NOW
 
-### Full Architecture Review (6 audit passes, 50+ issues found and fixed)
-- Pass 1: Fixed 7 issues — stale folder names, wrong URLs, contradictory build-later/build-now
-- Pass 2: Fixed 6 cross-document inconsistencies — redundant collections, memory schema mismatch, missing API endpoints
-- Pass 3: Fixed 3 HIGH + 7 MEDIUM — open redirect protection, free_tier logic, dual write paths, /api/ prefixes
-- Pass 4: Fixed 4 stale docs + 3 architectural specs — deep links, token refresh, entitlement resilience
-- Pass 5: Fixed 11 field mismatches — avatar/picture, google_id/googleId, JWT payload undefined, CWG cutover
-- Pass 6 (adversarial): Fixed 3 CRITICAL + 11 HIGH + 10 MEDIUM — GDPR cascade, il_* schema contracts, deployment checklist, JWT security, BTCPay→Entitlement flow, CORS enumeration
+### Phase 1: MBS Platform — MOSTLY COMPLETE
+- **Built and deployed** at magicbusstudios.com: Google SSO, JWT auth, entitlements, Stripe checkout, BTCPay checkout, friends/invites, branded login page, GDPR delete cascade, health check
+- **Phase 1 Addendum** (13 items) added to `platform-instructions-for-mbs/CLAUDE.md` — these are additional items to build in MBS/ before moving on:
+  1. Login button in nav (**DONE** — pushed to MBS/)
+  2. Rate limiting on platform routes (**DONE** — already existed)
+  3. Lightning payment toggle in billing UI (**DONE**)
+  4. Nostr authentication routes (**DONE** — needs real-world testing)
+  5. LNURL-Auth routes (**DONE** — needs real-world testing)
+  6. Auth method linking (**DONE**)
+  7. Email preferences + one-click unsubscribe (**DONE**)
+  8. Transactional emails via SendGrid (6 types) (**DONE**)
+  9. Basic admin panel (**DONE**)
+  10. Promo code routes (**DONE**)
+  11. Referral routes (**DONE**)
+  12. Token refresh endpoint (**DONE**)
+  13. Structured billing page with real CWG pricing (**DONE**)
+- **Phase 1 report**: `MBS/phase-reports/PHASE_1_REPORT.md` and `MBSPlatform/phase-reports/PHASE_1_LEARNINGS.md`
 
-### Marketing Brief Enhancements
-- Absorbed Arcade detail into MBS master doc (URLs, taglines, pricing, target audience)
-- Expanded Studio Works from one-liners to full descriptions
-- Added Inner Lab Dashboard section (module launcher, activity feed, cross-module intelligence, memory privacy)
-- Enhanced FlowState description (breathwork, streaks, achievements, programs)
-- Added design language section to IL brief (exact colors, typography from live site)
-- Synced all briefs to Desktop/Marketing/Overview/
+### Known Issues from Phase 1
+- **BTCPay 403 error**: API key has insufficient permissions. Lightning payments fail. Need to regenerate BTCPay API key with full store permissions. Does NOT block Phase 2.
+- **Stripe bundle price IDs**: CWG prices work ($9.99/mo, $79.99/yr). IL All Access and MBS All Access price IDs need to be created in Stripe Dashboard before those checkout buttons work.
+- **package-lock.json out of sync**: After installing nostr-tools + @noble/secp256k1, the lock file needs regeneration (`npm install` in MBS/server/) before next deploy.
 
-### New Files Created
-- `platform-instructions-for-standalone-products/` — SSO migration guide for 11 Arcade + Studio Works apps
-- `ORCHESTRATION_GUIDE.md` — Step-by-step guide with exact copy-paste prompts for each Claude Code session
+### Phase 2: Inner Lab Middleware — NOT STARTED
+- Instructions are ready and synced at `Innerlab/platform-instructions/CLAUDE.md`
+- Phase 1 learnings already baked into the instructions
+- **Start this in a separate Claude Code session** pointing to `Innerlab/` folder
 
-### All Instruction Sets Now Include
-- JWT payload specification (userId, email, name, avatar, isAdmin)
-- il_* schema contracts (check-ins, consciousness, histories, wellness, activity feed)
-- Open redirect protection spec
-- GDPR deletion cascade (cross-database)
-- Entitlement response spec with full reason enum and free tier logic
-- BTCPay → Entitlement flow
-- Deployment checklist
-- CORS complete domain enumeration (18 domains)
-- Entitlement cache spec (5min TTL, ?refresh=true invalidation)
-- CWG cutover sequence (simplified for ~10 users)
-- MongoDB-level JSON Schema validation recommendations
-- **Completion report requirements** — each phase agent auto-generates a PHASE_X_REPORT.md when done
-
-### Marketing Brief Updates
-- All 4 briefs updated to March 26, 2026
-- Arcade brief game descriptions synced with live magicbusstudios.com copy
-- Trivia Roast URL typo note added to Arcade brief
+### Phases 3-5: Not started
+- All instructions synced to their target project folders
+- All have Phase 1 learnings baked in
 
 ---
 
-## NEXT STEPS — BUILD PHASE 1
+## WHAT THE NEXT SESSION NEEDS TO DO
 
-JWT_SECRET has been generated. Follow `ORCHESTRATION_GUIDE.md` for exact prompts.
+### Option A: Continue as Orchestrator (new session in MBSPlatform/)
+1. Open separate Claude Code sessions for each phase (one at a time)
+2. Phase 2: `Innerlab/` — paste prompt from `ORCHESTRATION_GUIDE.md`
+3. After Phase 2 finishes, review `PHASE_2_REPORT.md`, update downstream instructions if needed
+4. Phase 3: `CWG/` migration
+5. Phase 4: `YogaGhost/` migration
+6. Phase 5: 11 standalone products (can parallel)
 
-### Orchestration Workflow
-1. Open Claude Code in project folder, paste prompt from orchestration guide
-2. Agent builds and pushes code (auto-deploys via Coolify)
-3. Agent generates `PHASE_X_REPORT.md` in project root
-4. **Bring report back to this orchestrator session** (MBSPlatform) before starting next phase
-5. Orchestrator reviews, updates downstream instructions if needed
-6. Proceed to next phase
+### Option B: Build directly from orchestrator (if context allows)
+- The orchestrator session CAN read/write all project folders
+- Good for small tasks, reviews, and syncing
+- Not recommended for large builds (Phase 2 is a large build — backend + dashboard)
 
-### Build Sequence
-1. **Phase 1: MBS Platform** → `MBS/` — SSO, billing, entitlements (START HERE)
-2. **Phase 2: IL Middleware** → `Innerlab/` — il_* APIs + dashboard
-3. **Phase 3: CWG Migration** → migration script from `MBS/`, then refactor `CWG/`
-4. **Phase 4: FlowState Migration** → migration script from `MBS/`, then refactor `YogaGhost/`
-5. **Phase 5: 11 Standalone Products** → can all run in parallel after Phase 1
+### Sync Status (verified just now)
+| Project | Sync Status |
+|---------|-------------|
+| MBS/platform-instructions/ | IN SYNC |
+| Innerlab/platform-instructions/ | IN SYNC |
+| CWG/platform-instructions/ | IN SYNC |
+| YogaGhost/platform-instructions/ | IN SYNC |
+| Desktop/Marketing/Overview/ | IN SYNC |
 
-### Manual Steps Between Phases
-- Set env vars in Coolify for each service (JWT_SECRET, etc.)
-- Test the deployed service works
-- Bring the PHASE_X_REPORT.md back to the orchestrator for review
+---
+
+## ORCHESTRATION WORKFLOW (established this session)
+
+1. Open Claude Code in project folder
+2. Agent reads `platform-instructions/` and builds
+3. Agent generates `PHASE_X_REPORT.md` when done
+4. **Bring report to orchestrator session** (MBSPlatform/) before starting next phase
+5. Orchestrator reviews, cascades learnings to downstream instructions if needed
+6. Re-sync updated instructions to target folders
+7. Proceed to next phase
 
 ---
 
@@ -88,6 +92,7 @@ MBSPlatform/
 ├── platform-instructions-for-standalone-products/ ← Copied to each Arcade/SW project
 ├── platform-instructions-for-new-modules/      ← Starter kit for future IL modules
 ├── marketing-docs/                             ← Product briefs (synced to Desktop/Marketing/Overview/)
+├── phase-reports/                              ← Phase completion reports (copied from project folders)
 ├── archive/                                    ← Old reference material
 ├── ORCHESTRATION_GUIDE.md                      ← Copy-paste prompts for each Claude Code session
 ├── CLAUDE.md, SESSION_HANDOFF.md, CHANGELOG.md, CURRENT_STATUS.md, FUTURE_WORK_TODO.md
@@ -96,12 +101,11 @@ MBSPlatform/
 
 ## WHERE CODE GETS BUILT
 
-| Folder | Domain | What gets added | Database |
-|--------|--------|----------------|----------|
-| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login + migration scripts | `mbs_platform` |
-| `Innerlab/` | innerlab.ai | il_* APIs + dashboard + consciousness + memories | `inner_lab` |
-| `CWG/` | conversationswithgod.ai | Refactored to use platform auth + inner_lab DB | `inner_lab` (cwg_*) |
-| `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + inner_lab DB | `inner_lab` (yoga_*) |
-| 5 Arcade games | *.magicbusstudios.com | SSO migration (JWT middleware, remove standalone auth) | Own DBs |
-| 6 Studio Works apps | *.magicbusstudios.com | SSO migration (JWT middleware, remove standalone auth) | Own DBs |
-| New IL modules | TBD | Born into architecture using starter kit | `inner_lab` ({prefix}_*) |
+| Folder | Domain | What gets added | Database | Phase |
+|--------|--------|----------------|----------|-------|
+| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login | `mbs_platform` | 1 (mostly done) |
+| `Innerlab/` | innerlab.ai | il_* APIs + dashboard + consciousness + memories | `inner_lab` | 2 (next) |
+| `CWG/` | conversationswithgod.ai | Refactored to use platform auth + inner_lab DB | `inner_lab` (cwg_*) | 3 |
+| `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + inner_lab DB | `inner_lab` (yoga_*) | 4 |
+| 5 Arcade games | *.magicbusstudios.com | SSO migration (JWT middleware) | Own DBs | 5 |
+| 6 Studio Works apps | *.magicbusstudios.com | SSO migration (JWT middleware) | Own DBs | 5 |
