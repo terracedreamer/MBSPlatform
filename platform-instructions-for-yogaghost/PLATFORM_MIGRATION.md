@@ -120,7 +120,7 @@ FlowState stores breathwork/meditation/flow data as embedded arrays in the `user
 - Do NOT create new deviceId entries
 
 ## User Dedup / Merge Logic
-The migration script MUST use **upsert on email** when creating `mbs_platform.users` records. If a user already exists (e.g., they were migrated from CWG first), MERGE fields — do not overwrite existing values. Existing CWG data (nostr_npub, lnurl_linking_key, etc.) takes priority over FlowState defaults.
+FlowState has 0 real users, so collision risk is zero. The migration script should still use upsert on email as a safety pattern — if a user somehow exists (from CWG migration), merge without overwriting existing values.
 
 ## What NOT to Do
 - Do NOT delete the `yogaghost` database — it's the backup

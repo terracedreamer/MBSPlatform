@@ -128,23 +128,14 @@ When migrating `user_memories` to `il_user_memories`:
 - Set `shared: false` on every memory (private by default)
 - User must explicitly opt-in to share memories across Inner Lab modules
 
-## Cutover Sequence (Migration Day)
+## Cutover Approach
 
-With ~10 real users (friends testing), a forced logout is acceptable. Follow this exact sequence:
+~10 friends testing. Data loss is acceptable if it happens. Keep it simple:
 
-1. **Announce** — Tell the ~10 users: "CWG is getting an upgrade, expect a brief maintenance window"
-2. **Put CWG in maintenance mode** — Show a "Back shortly" page. This prevents new data from being written to the old DB during migration.
-3. **Run migration script** from `MBS/server/scripts/` — copies all data from `conversations_with_god` to `mbs_platform` + `inner_lab`
-4. **Verify migration** — Check that all ~10 users exist in `mbs_platform.users`, spot-check a few cwg_* collections and il_* collections in `inner_lab`
-5. **Deploy new CWG** — Backend (new DB, JWT middleware, no standalone auth) + Frontend (no login page, redirect to platform)
-6. **Verify deployment** — Test the full flow: visit CWG → click Login → redirect to MBS Platform → Google SSO → redirect back with JWT → use CWG
-7. **Remove maintenance mode** — CWG is live on the new architecture
-8. **Monitor for 48 hours** — Watch for errors, missing data, auth failures
-9. **Old database stays as backup** — Do not delete `conversations_with_god` for weeks/months
-
-**Important**: All existing CWG JWTs become invalid after deploy (different JWT_SECRET). Every user must re-login through the MBS Platform. With ~10 users, this is a non-issue.
-
-**Data written during maintenance window**: None — CWG is in maintenance mode. No data loss risk.
+1. Run migration script — copies data from `conversations_with_god` to `mbs_platform` + `inner_lab`
+2. Deploy new CWG (new DB, JWT auth, no standalone auth)
+3. Old tokens break — users re-login through MBS Platform. That's fine.
+4. Old database stays untouched as a backup. Don't delete it.
 
 ## User Dedup / Merge Logic
 The migration script MUST use **upsert on email** when creating `mbs_platform.users` records. If a user already exists (e.g., they were migrated from another product first), MERGE fields — do not overwrite. CWG data takes priority for fields like `nostr_npub` and `lnurl_linking_key` that FlowState doesn't have.
