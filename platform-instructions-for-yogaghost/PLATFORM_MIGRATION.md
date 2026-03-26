@@ -179,3 +179,11 @@ These are real-world implementation details from the MBS Platform build that aff
 
 ### GDPR
 - MBS Platform cascade delete reaches into `inner_lab` database. All yoga_* and il_* collections must use `user_id` field consistently.
+
+### Additional Phase 1 Learnings (updated after live testing)
+- **email can be null** — Nostr/LNURL users have no email. Guard with `if (user.email)` everywhere.
+- **Entitlement reason values**: `"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"none"` — NOT `"no_subscription"`.
+- **Rate limiting on platform API**: 100 req/15min. Cache entitlement checks for 5 min.
+- **Billing page is live** at `magicbusstudios.com/billing` with CWG pricing and Lightning option. Redirect upgrade buttons there.
+- **BTCPay status**: Currently 403 due to API key permissions. Will be fixed separately — does not block FlowState migration.
+- **First platform user**: Abhinav Gupta (`1984.abhinav@gmail.com`), ID: `69c53401fe8f1763b9046ae5`.

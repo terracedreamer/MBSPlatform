@@ -205,3 +205,40 @@ These are real-world implementation details from the MBS Platform build that aff
 
 ### BTCPay
 - BTCPay entitlements are 30-day non-recurring. CWG's existing BTCPay integration should be REMOVED — all payments go through the platform.
+
+---
+
+## Phase 1 Learnings (SUPPLEMENT — confirmed from live MBS Platform)
+
+### JWT Format (use this for Python middleware)
+```python
+# JWT payload from MBS Platform:
+# { "userId": "ObjectId string", "email": "..." or null, "name": "...", "avatar": "..." or null, "isAdmin": false }
+# Verify: jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+# Access user ID: payload["userId"]  (camelCase, string)
+```
+
+### CRITICAL: email can be null
+Nostr/LNURL users have no email. CWG code that assumes `user.email` exists will break. Guard with `if user.get("email"):` everywhere.
+
+### Token extraction pattern (frontend)
+```javascript
+// After redirect back from MBS Platform login:
+const token = new URLSearchParams(window.location.search).get("token");
+if (token) {
+  localStorage.setItem("mbs_token", token);
+  window.history.replaceState(null, '', window.location.pathname);
+}
+```
+
+### Stripe price IDs for CWG
+CWG's existing Stripe price IDs (`STRIPE_MONTHLY_PRICE_ID`, `STRIPE_ANNUAL_PRICE_ID`) are already configured in the MBS Platform backend. When CWG removes its Stripe integration, users who click "Upgrade" get redirected to `magicbusstudios.com/billing` which handles checkout using those same price IDs.
+
+### Entitlement reason values (complete list)
+`"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"none"` — the value `"no_subscription"` mentioned earlier is NOT used. Use `"none"` to mean no access.
+
+### Rate limiting
+MBS Platform rate limits: 100 req/15min. Cache entitlement checks for 5 min to avoid hitting the limit.
+
+### First platform user
+Abhinav Gupta (`1984.abhinav@gmail.com`), platform user ID: `69c53401fe8f1763b9046ae5`. Use this for testing migration — this user exists in `mbs_platform.users` already.

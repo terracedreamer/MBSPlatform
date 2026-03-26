@@ -497,4 +497,47 @@ These are real-world implementation details from the MBS Platform build that aff
 - Abhinav Gupta (`1984.abhinav@gmail.com`), platform ID: `69c53401fe8f1763b9046ae5`. This user exists ONLY in `mbs_platform` — no link to CWG or FlowState data yet.
 
 ### Billing Page Status
-- Billing page is a skeleton with placeholder pricing. No real Stripe Price IDs configured. Stripe product creation deferred to a later phase. Lightning payment option not yet in the UI.
+- Billing page is LIVE with real pricing (CWG $9.99/mo, IL All Access $19.99/mo, MBS All Access $29.99/mo) and Lightning payment toggle. CWG Stripe price IDs configured. IL/MBS bundle price IDs still need Stripe Dashboard setup.
+
+---
+
+## Phase 1 Learnings (SUPPLEMENT — added after Phase 1 build)
+
+**Read this before starting Phase 2 work. These are confirmed facts from the live MBS Platform.**
+
+### JWT Payload (confirmed from live code)
+```javascript
+{ userId: "ObjectId string", email: "..." || null, name: "...", avatar: "..." || null, isAdmin: false, iat, exp }
+```
+- **`userId` is camelCase, string** — use `req.user.userId` after verification
+- **`email` can be null** — Nostr/LNURL users are pseudonymous. Do NOT assume email exists.
+- JWT_EXPIRY defaults to `"7d"`, configurable via env var
+
+### Auth Header
+```
+Authorization: Bearer <JWT>
+```
+Verify with: `jwt.verify(token, process.env.JWT_SECRET)` — HS256 shared secret.
+
+### localStorage Key
+Token stored as `mbs_token` — `localStorage.getItem("mbs_token")`
+
+### user_id in il_* Collections
+Store as `user_id` (snake_case) in all il_* MongoDB documents. The value is the `userId` string from the JWT (which is the ObjectId.toString() from mbs_platform.users). The GDPR cascade delete in MBS Platform searches inner_lab collections for documents matching `user_id`.
+
+### Rate Limiting
+MBS Platform has rate limiting: 100 req/15min general, 20 req/15min auth, 30 req/15min billing. If Inner Lab middleware calls the platform API (e.g., entitlement checks), implement retry with backoff on 429.
+
+### Entitlement Check (confirmed format)
+```
+GET https://magicbusstudios.com/api/entitlements/{slug}
+Authorization: Bearer <JWT>
+→ { success: true, hasAccess: true/false, reason: "product_pass"|"category_access"|"mbs_all_access"|"free_tier"|"none" }
+```
+Dashboard pages should check entitlement for `category_access` on category `innerlab` to verify Inner Lab All Access.
+
+### BTCPay Status (KNOWN ISSUE)
+BTCPay API key has insufficient permissions (403). Lightning payments don't work until the BTCPay API key is regenerated with full store permissions. This does NOT block Phase 2 (no payments in IL middleware).
+
+### Routes Deployed at MBS Platform
+See `phase-reports/PHASE_1_LEARNINGS.md` for the complete 40-route table.
