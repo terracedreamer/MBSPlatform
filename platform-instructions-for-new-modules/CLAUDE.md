@@ -74,9 +74,11 @@ il_consciousness_profiles   — User's spiritual assessment and archetype
 il_consciousness_snapshots  — Historical profile changes
 il_personal_histories       — User's life story for AI personalization
 il_check_ins                — Mood, energy, stress, intention (any module can write)
-il_user_memories            — AI-extracted facts about the user
+il_user_memories            — AI-extracted facts about the user (shared: false = private, shared: true = cross-module)
 il_user_wellness_profiles   — Health conditions, injuries, goals
 il_activity_feed            — Cross-module activity events
+il_blockchain_anchors       — OpenTimestamps data integrity proofs
+il_sync_backups             — Local-first storage sync infrastructure
 il_notifications            — Cross-module notifications
 il_analytics_events         — User event tracking (90-day TTL)
 ```
@@ -240,12 +242,12 @@ your-module/
 |--------|------|--------|--------|-------|
 | Conversations With God | `cwg` | `cwg_*` | Active | 56 collections, ~10 users, FastAPI (Python) |
 | FlowState | `flowstate` | `yoga_*` | Active | 7 collections, Express (Node.js) |
-| BreathArc | `breatharc` | `breath_*` | Not started | |
-| StarMap | `starmap` | `astro_*` | Not started | |
-| AstroCompass | `astrocompass` | TBD | Not started | |
-| Arcana | `arcana` | `tarot_*` | Not started | |
-| Archetypes | `archetypes` | TBD | Not started | |
-| DreamLens | `dreamlens` | `dream_*` | Not started | |
-| Rituals | `rituals` | `ritual_*` | Not started | |
-| InnerQuest | `innerquest` | `quest_*` | Not started | |
-| Nexus | `nexus` | `nexus_*` | Not started | |
+| BreathArc | `breatharc` | `breath_*` | Coming Soon | |
+| StarMap | `starmap` | `astro_*` | Coming Soon | |
+| AstroCompass | `astrocompass` | `astrocart_*` | Coming Soon | |
+| Arcana | `arcana` | `tarot_*` | Coming Soon | |
+| Archetypes | `archetypes` | `archetype_*` | Coming Soon | |
+| DreamLens | `dreamlens` | `dream_*` | Coming Soon | |
+| Rituals | `rituals` | `ritual_*` | Coming Soon | |
+| InnerQuest | `innerquest` | `quest_*` | Coming Soon | |
+| Nexus | `nexus` | `nexus_*` | Coming Soon | |

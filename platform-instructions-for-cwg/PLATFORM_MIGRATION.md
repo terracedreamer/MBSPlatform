@@ -50,9 +50,17 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 Run migration script (built in MBS/ project) that:
 
 **Copies to `mbs_platform.users`:**
-- email, name, picture, google_id, nostr_npub, lnurl_linking_key, auth_provider
+- email, name, picture → **rename to `avatar`** (platform model uses `avatar`, not `picture`)
+- google_id, nostr_npub, lnurl_linking_key, auth_provider
 - consent_preferences, is_admin, referral_code, referred_by, referral_count
+- preferred_language (set to `"en"` if not present), preferences (set to `{}` if not present)
+- stripe_customer_id (from CWG's Stripe integration, if exists)
 - created_at, updated_at, last_login
+
+**Field normalization rules:**
+- CWG `picture` → platform `avatar`
+- All field names must be snake_case in mbs_platform (CWG already uses snake_case ✓)
+- Fields not present in CWG data get sensible defaults: `preferred_language: "en"`, `preferences: {}`, `referral_count: 0`
 
 **Copies to `inner_lab` with `cwg_` prefix (39 collections):**
 - cwg_chat_sessions, cwg_messages, cwg_journal_entries, cwg_journal_insights
@@ -77,10 +85,20 @@ Run migration script (built in MBS/ project) that:
 - il_notifications
 
 **Moves to `mbs_platform` (platform-level):**
-- active_sessions, lnurl_challenges, nostr_challenges, nostr_events
-- consent_audit_log, data_requests, user_encryption, encrypted_backups
-- Friends and invites data (if any)
-- Push subscriptions, feature flags, promo codes
+- active_sessions → `ActiveSession` model
+- lnurl_challenges → `LnurlChallenge` model
+- nostr_challenges → `NostrChallenge` model
+- consent_audit_log → `ConsentAuditLog` model
+- data_requests → `DataRequest` model
+- Friends and invites data (if any) → `Friend` and `Invite` models
+- Push subscriptions → `PushSubscription` model
+- Feature flags → `FeatureFlag` model
+- Promo codes → `Promotion` model
+
+**CWG-specific collections that stay as cwg_* (not platform-level):**
+- nostr_events → `cwg_nostr_events` (CWG-specific Nostr event log, not a platform concern)
+- user_encryption → `cwg_user_encryption` (CWG's client-side encryption keys — platform will build its own encryption infrastructure)
+- encrypted_backups → `cwg_encrypted_backups` (CWG-specific backup data)
 
 ### Step 4: Update CWG Backend
 - Change database connection from `conversations_with_god` to `inner_lab`

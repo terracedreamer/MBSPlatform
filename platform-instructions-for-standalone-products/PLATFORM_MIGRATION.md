@@ -128,8 +128,10 @@ async function requireAuth(req, res, next) {
 - `PLATFORM_URL` — `https://magicbusstudios.com`
 - `PRODUCT_SLUG` — your product's slug (e.g., `brokenchain`)
 
-**Keep:**
-- All existing product-specific env vars (database, API keys, etc.)
+**Keep (do NOT remove):**
+- `MONGODB_URI` — your product's own database connection (NOT inner_lab, NOT mbs_platform)
+- `DB_NAME` — your product's own database name
+- All other existing product-specific env vars (OPENAI_API_KEY, etc.)
 
 ---
 

@@ -50,10 +50,30 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 Since FlowState has 0 real users, this is less critical than CWG. But follow the same pattern:
 
 **User identity fields → `mbs_platform.users`:**
-- email, name, picture, googleId
-- stripeCustomerId, subscription object
-- emailPreferences (streakReminders, weeklyDigest, marketing)
-- deviceId (deprecated — 90-day sunset)
+- email, name, picture → **rename to `avatar`** (platform model uses `avatar`)
+- googleId → **rename to `google_id`** (platform uses snake_case)
+- stripeCustomerId → **rename to `stripe_customer_id`** (platform uses snake_case)
+- emailPreferences → **normalize to `consent_preferences`** structure:
+  - `{ marketing_emails: emailPreferences.marketing, product_updates: true, billing_alerts: true, promotional_offers: true }`
+  - FlowState's `streakReminders` and `weeklyDigest` are product-level preferences, NOT platform-level. Keep them in `yoga_user_profiles`.
+
+**Fields NOT in FlowState but required by platform (set defaults):**
+- nostr_npub: `null` (FlowState has no Nostr support)
+- lnurl_linking_key: `null` (FlowState has no LNURL support)
+- auth_provider: `"google"` (FlowState only supports Google SSO)
+- preferred_language: `"en"`
+- preferences: `{}`
+- is_admin: `false`
+- referral_code: `null`
+- referred_by: `null`
+- referral_count: `0`
+- created_at: use FlowState's `joinedDate` from user profile, or migration timestamp
+- updated_at: migration timestamp
+- last_login: `null`
+
+**Do NOT migrate to platform:**
+- subscription object (platform creates its own Entitlement records via Stripe)
+- deviceId (deprecated — not a platform concept)
 
 **Product data → `inner_lab` with `yoga_` prefix:**
 - `yoga_user_profiles` — onboarded, settings, favorites, joinedDate, customFlows, dailyStreak, lastSessionDate, streakSaverUsed, activeCategory, breathworkFavorites, breathworkPersonalBests, breathworkSessions (embedded), breathworkAchievements (embedded), activePrograms (embedded), completedPrograms, meditationSessions (embedded), meditationFavorites, flowSessions (embedded)

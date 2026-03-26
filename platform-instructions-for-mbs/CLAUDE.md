@@ -61,6 +61,26 @@ The existing form handler endpoints continue to work alongside the new platform 
 
 No email/password auth. No "or" divider with email login.
 
+## JWT Payload Specification
+
+When the platform issues a JWT, it MUST contain exactly these fields:
+
+```javascript
+{
+  userId: String,         // MongoDB ObjectId as string — the _id from mbs_platform.users
+  email: String,          // user's email address
+  name: String,           // user's display name
+  avatar: String|null,    // user's avatar URL (from Google profile picture, etc.)
+  isAdmin: Boolean,       // whether user has admin privileges
+  iat: Number,            // issued-at timestamp (auto-set by JWT library)
+  exp: Number             // expiration timestamp (controlled by JWT_EXPIRY env var, default 7d)
+}
+```
+
+**All downstream services** (Inner Lab Middleware, CWG, FlowState, Arcade, Studio Works, new modules) decode this token and access `req.user.userId` to identify the user. This is the canonical user ID across the entire ecosystem.
+
+**Do NOT include** entitlements, subscription status, or other data that changes frequently — those are checked via API calls, not baked into the token.
+
 ## Branded Login
 The login page at `magicbusstudios.com/auth/login` changes branding based on the `?brand=` parameter:
 
