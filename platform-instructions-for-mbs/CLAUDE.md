@@ -425,29 +425,117 @@ This report is critical — the orchestrator session (MBSPlatform repo) uses it 
 
 ## Phase 1 Addendum (Added by Orchestrator after Phase 1 Report Review — 2026-03-26)
 
-The core Phase 1 build is complete and deployed. These are additional items identified during the orchestrator's review of the Phase 1 report. Complete these before Phase 2 begins.
+The core Phase 1 build is complete and deployed. Complete ALL items below before moving to Phase 2. These maximize what the platform can do before we start building the Inner Lab middleware.
 
-### 1. Add "Login" Button to MBS Marketing Site Nav
+### 1. Login Button in MBS Nav
 - Add a "Login" button to the marketing site navigation bar, next to the existing items (Inner Lab, Studio Works, The Arcade, About)
 - Link to `/auth/login?brand=mbs`
-- Simple nav button — no complex UX needed right now
+- Simple nav button — match existing nav styling
 
-### 2. Add Rate Limiting to Platform Routes
-- The existing form routes (`/api/contact`, `/api/subscribe`, `/api/waitlist`) already have rate limiting (10 requests per 15 minutes)
-- Platform routes (`/api/auth/*`, `/api/entitlements/*`, `/api/billing/*`, `/api/friends/*`) do NOT have rate limiting yet
-- Add appropriate rate limiting before production traffic increases
-- Suggested: auth routes 10/15min, entitlement checks 60/15min, billing 5/15min, friends 20/15min
+### 2. Rate Limiting on Platform Routes
+- The existing form routes already have rate limiting (10/15min)
+- Platform routes do NOT have rate limiting yet — add it now:
+  - Auth routes (`/api/auth/*`): 10 requests per 15 minutes
+  - Entitlement checks (`/api/entitlements/*`): 60 requests per 15 minutes
+  - Billing routes (`/api/billing/*`): 5 requests per 15 minutes
+  - Friends routes (`/api/friends/*`): 20 requests per 15 minutes
 
-### 3. Add Lightning Payment Option to Billing Page UI
-- Backend routes exist: `POST /api/billing/btcpay/checkout` and `POST /api/billing/btcpay/webhook`
-- The BillingPage.jsx currently only shows Stripe checkout buttons
+### 3. Lightning Payment Option in Billing UI
+- Backend routes exist (`POST /api/billing/btcpay/checkout`, `POST /api/billing/btcpay/webhook`)
+- BillingPage.jsx currently only shows Stripe checkout buttons
 - Add a "Pay with Lightning" option alongside Stripe on the billing page
-- BTCPay entitlements are 30-day non-recurring passes — make this clear in the UI
+- BTCPay entitlements are 30-day non-recurring passes — make this clear in the UI ("30-day access, no auto-renewal")
 
-### Deferred (do NOT build now — these need pricing decisions first)
-- Create real Stripe products and prices in Stripe Dashboard (need pricing structure decision)
+### 4. Nostr Authentication
+- Model already exists (`NostrChallenge`)
+- Build the route: `POST /api/auth/nostr`
+- Flow: client sends `{ npub, signature, challenge }` → server verifies signature against the challenge → creates/finds user → issues JWT
+- Challenge endpoint: `GET /api/auth/nostr/challenge` → returns `{ challenge }` (random string, stored in NostrChallenge with TTL)
+- On user creation, set `auth_provider: "nostr"` and `nostr_npub` field
+- If a user with the same email already exists (from Google SSO), link the Nostr identity to the existing account
+
+### 5. LNURL-Auth
+- Model already exists (`LnurlChallenge`)
+- Build the route: `POST /api/auth/lnurl`
+- Flow: server generates LNURL-auth URL with k1 challenge → user's Lightning wallet signs it → callback verifies → creates/finds user → issues JWT
+- `GET /api/auth/lnurl/challenge` → returns `{ lnurl }` (encoded LNURL-auth string)
+- `GET /api/auth/lnurl/callback?k1=...&sig=...&key=...` → verify signature, create/find user by `lnurl_linking_key`, issue JWT
+- On user creation, set `auth_provider: "lnurl"` and `lnurl_linking_key` field
+- If a user with the same linking key already exists, log them in
+
+### 6. Auth Method Linking
+- Users who logged in via Google should be able to link a Nostr identity and/or LNURL identity to their existing account
+- `POST /api/auth/link-nostr` (requires JWT) — verify Nostr signature, add `nostr_npub` to existing user
+- `POST /api/auth/link-lnurl` (requires JWT) — verify LNURL signature, add `lnurl_linking_key` to existing user
+- If the Nostr npub or LNURL key is already linked to a DIFFERENT account, return error
+
+### 7. Email Preferences
+- Model already exists (`EmailPreference`)
+- Build routes:
+  - `GET /api/email-preferences` (requires JWT) — get current preferences
+  - `PUT /api/email-preferences` (requires JWT) — update preferences
+  - `GET /api/email-preferences/unsubscribe?token=...` (no auth) — one-click unsubscribe via token
+- Fields: marketing_emails, product_updates, billing_alerts, promotional_offers
+- Generate `unsubscribe_token` on user creation, include in all outgoing emails
+- Create default EmailPreference record when a new user signs up (all opted in)
+
+### 8. Transactional Emails (SendGrid)
+SendGrid is already integrated for form handling. Add transactional emails:
+- **Welcome email** — sent on first signup (any auth method). Subject: "Welcome to Magic Bus Studios"
+- **Purchase confirmation** — sent after successful Stripe or BTCPay payment. Include product name, amount, receipt link
+- **Subscription cancelled** — sent when Stripe subscription is cancelled
+- **Subscription expiring** — sent 3 days before a subscription renewal date (Stripe) or BTCPay 30-day pass expiry
+- **Payment failed** — sent when Stripe payment fails (retry instructions)
+- **Account deleted** — sent after GDPR account deletion confirming data was removed
+- All emails: include unsubscribe link, respect EmailPreference settings, use `noreply@magicbusstudios.com` as sender
+- HTML email templates — clean, simple, branded. No complex layouts.
+
+### 9. Basic Admin Panel
+- `requireAdmin` middleware already exists
+- Build routes:
+  - `GET /api/admin/users` — paginated user list with search (by email, name)
+  - `GET /api/admin/users/:id` — full user detail with entitlements and transactions
+  - `POST /api/admin/entitlements/grant` — manually grant an entitlement `{ userId, type, product?, category? }`
+  - `DELETE /api/admin/entitlements/:id` — revoke an entitlement
+  - `GET /api/admin/stats` — basic counts (total users, active entitlements, revenue)
+- Frontend: add `/admin` route (auth-gated + admin check). Simple table UI — nothing fancy.
+- Admin check: verify `is_admin: true` from database, NOT from JWT (JWT isAdmin is a UI hint only)
+
+### 10. Promo Code Routes
+- Model already exists (`Promotion`)
+- Build routes:
+  - `POST /api/promos/validate` (requires JWT) — check if a code is valid `{ code }` → `{ valid, discount, applies_to }`
+  - `POST /api/admin/promos` (admin only) — create a promo code
+  - `GET /api/admin/promos` (admin only) — list all promo codes
+  - `DELETE /api/admin/promos/:id` (admin only) — deactivate a promo code
+- Integrate with billing checkout: if promo code is provided, apply discount before creating Stripe session
+- Track `current_uses` against `max_uses`
+
+### 11. Referral Routes
+- Model already exists (`Referral`)
+- Build routes:
+  - `GET /api/referrals` (requires JWT) — get user's referral code and stats
+  - `POST /api/referrals/apply` (requires JWT) — apply a referral code `{ code }` (only on first purchase)
+- On user creation, auto-generate a unique `referral_code` on the User model
+- When a referred user makes their first purchase, increment `referral_count` on the referrer and create a Referral record
+- Reward logic: deferred (just track referrals for now, rewards come later)
+
+### 12. Token Refresh
+- Currently tokens expire in 7 days with no refresh — user must re-authenticate via Google/Nostr/LNURL
+- Add `POST /api/auth/refresh` (requires valid JWT that hasn't expired) — issues a new JWT with fresh expiry
+- Frontend should call this silently when token is within 1 day of expiry
+- If token is already expired, redirect to login
+
+### Deferred (do NOT build now — needs pricing decision)
+- Create real Stripe products and prices in Stripe Dashboard
 - Design full product catalog billing page (22 products across 3 categories)
 - Wire Stripe Price IDs into the billing checkout flow
 
 ### When done
-Generate an updated report as `PHASE_1_ADDENDUM_REPORT.md` in the project root. Include what was changed and any new gotchas for downstream phases.
+Generate an updated report as `PHASE_1_ADDENDUM_REPORT.md` in the project root. Include:
+1. What was built (every file, grouped by backend/frontend)
+2. New API routes added (full table)
+3. New frontend routes added
+4. Env vars (any new ones needed?)
+5. Gotchas for downstream phases (anything Phase 2+ agents need to know)
+6. Testing commands for every new feature

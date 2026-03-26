@@ -52,28 +52,27 @@ These items don't belong to any specific phase and can be done anytime:
 
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
-- [ ] Add "Login" button to MBS marketing site nav (currently in Phase 1 addendum — UX refinement later)
 
-### Platform Enhancements (after all phases complete)
-- [ ] Welcome email on signup (SendGrid)
-- [ ] Purchase confirmation emails
-- [ ] Subscription change emails (cancelled, expiring, payment failed)
-- [ ] BTCPay expiry warning emails (30-day passes)
-- [ ] Basic admin panel: list users, view entitlements, grant/revoke
-- [ ] Email preferences (opt-in/out per category)
-- [ ] One-click unsubscribe (token-based)
-- [ ] Nostr authentication (models exist, routes deferred)
-- [ ] LNURL-Auth (models exist, routes deferred)
-- [ ] Auth method linking (POST /api/auth/link-nostr, link-lnurl)
-- [ ] Promo code engine (model exists)
-- [ ] Free trial support (X days free, auto-convert)
-- [ ] Referral program (model exists)
-- [ ] Win-back offers
+### Moved to Phase 1 Addendum (no longer future work)
+All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1 Addendum":
+- ~~Login button~~ → Phase 1 Addendum #1
+- ~~Rate limiting~~ → Phase 1 Addendum #2
+- ~~Lightning billing UI~~ → Phase 1 Addendum #3
+- ~~Nostr auth~~ → Phase 1 Addendum #4
+- ~~LNURL-Auth~~ → Phase 1 Addendum #5
+- ~~Auth method linking~~ → Phase 1 Addendum #6
+- ~~Email preferences~~ → Phase 1 Addendum #7
+- ~~Transactional emails~~ → Phase 1 Addendum #8
+- ~~Admin panel~~ → Phase 1 Addendum #9
+- ~~Promo codes~~ → Phase 1 Addendum #10
+- ~~Referrals~~ → Phase 1 Addendum #11
+- ~~Token refresh~~ → Phase 1 Addendum #12
 
-### Technical Debt (no phase dependency)
-- [ ] JWT upgrade to RS256 asymmetric signing (eliminates shared secret risk)
-- [ ] Token refresh endpoint (silent re-authentication)
-- [ ] User dashboard (My Products, billing history, manage subscriptions)
-- [ ] Admin dashboard (analytics, revenue, funnel tracking)
-- [ ] Email campaigns + announcements + newsletter
-- [ ] Multi-currency, family plan, teams, push notifications, enterprise SSO
+### Genuinely Future (no phase, needs multiple phases or decisions first)
+- [ ] Free trial support (X days free, auto-convert) — needs pricing decision
+- [ ] Win-back offers — needs email + promo system working together
+- [ ] JWT upgrade to RS256 asymmetric signing — technical debt, no rush
+- [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
+- [ ] Admin dashboard (analytics, revenue, funnel tracking) — needs real data
+- [ ] Email campaigns + announcements + newsletter — post-launch
+- [ ] Multi-currency, family plan, teams, push notifications, enterprise SSO — long-term
