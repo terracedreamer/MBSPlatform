@@ -4,6 +4,17 @@
 
 Each phase is a Claude Code session pointing to a project folder. You paste the prompt, the agent reads `platform-instructions/` and builds. You are the orchestrator.
 
+### Report-Back Workflow (IMPORTANT)
+
+Each phase agent auto-generates a `PHASE_X_REPORT.md` when it finishes. **Before starting the next phase:**
+
+1. Bring the report back to the orchestrator session (this repo — MBSPlatform)
+2. The orchestrator reviews for anything that changes downstream phases
+3. If needed, orchestrator updates platform-instructions and re-syncs to target folders
+4. Then proceed to the next phase with confidence
+
+This prevents Phase 1 decisions from silently breaking Phase 2-5 assumptions.
+
 ---
 
 ## Before You Start (Manual — One Time)

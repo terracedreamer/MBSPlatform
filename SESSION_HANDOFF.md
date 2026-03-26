@@ -1,8 +1,8 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 26, 2026 (Session 2 — complete)
+**Last Updated**: March 26, 2026 (Session 2 — ongoing)
 **Git Branch**: main
-**Last Commit**: 258654b
+**Last Commit**: c3ffe49
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
@@ -42,20 +42,38 @@
 - Entitlement cache spec (5min TTL, ?refresh=true invalidation)
 - CWG cutover sequence (simplified for ~10 users)
 - MongoDB-level JSON Schema validation recommendations
+- **Completion report requirements** — each phase agent auto-generates a PHASE_X_REPORT.md when done
+
+### Marketing Brief Updates
+- All 4 briefs updated to March 26, 2026
+- Arcade brief game descriptions synced with live magicbusstudios.com copy
+- Trivia Roast URL typo note added to Arcade brief
 
 ---
 
-## NEXT SESSION — START BUILDING
+## NEXT STEPS — BUILD PHASE 1
 
-Follow `ORCHESTRATION_GUIDE.md` for exact steps. Summary:
+JWT_SECRET has been generated. Follow `ORCHESTRATION_GUIDE.md` for exact prompts.
 
-1. **Generate JWT_SECRET** — one secret for all services
-2. **Phase 1: MBS Platform** — Open Claude Code in `MBS/`, paste prompt from orchestration guide
-3. **Set Coolify env vars** — JWT_SECRET, STRIPE, BTCPAY, GOOGLE, CORS_ORIGINS
-4. **Deploy + test** — Login flow, entitlement check, marketing pages still work
-5. **Phase 2: IL Middleware** — Open Claude Code in `Innerlab/`, paste prompt
-6. **Phase 3-4: CWG + FlowState** — Run migration scripts from MBS/, then refactor each
-7. **Phase 5: 11 Standalone Products** — Can all run in parallel after Phase 1
+### Orchestration Workflow
+1. Open Claude Code in project folder, paste prompt from orchestration guide
+2. Agent builds and pushes code (auto-deploys via Coolify)
+3. Agent generates `PHASE_X_REPORT.md` in project root
+4. **Bring report back to this orchestrator session** (MBSPlatform) before starting next phase
+5. Orchestrator reviews, updates downstream instructions if needed
+6. Proceed to next phase
+
+### Build Sequence
+1. **Phase 1: MBS Platform** → `MBS/` — SSO, billing, entitlements (START HERE)
+2. **Phase 2: IL Middleware** → `Innerlab/` — il_* APIs + dashboard
+3. **Phase 3: CWG Migration** → migration script from `MBS/`, then refactor `CWG/`
+4. **Phase 4: FlowState Migration** → migration script from `MBS/`, then refactor `YogaGhost/`
+5. **Phase 5: 11 Standalone Products** → can all run in parallel after Phase 1
+
+### Manual Steps Between Phases
+- Set env vars in Coolify for each service (JWT_SECRET, etc.)
+- Test the deployed service works
+- Bring the PHASE_X_REPORT.md back to the orchestrator for review
 
 ---
 

@@ -25,7 +25,7 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-----------|--------|-------|
 | MBS website (marketing + forms) | Deployed | `MBS/` → magicbusstudios.com |
 | Inner Lab website (marketing) | Deployed | `Innerlab/` → innerlab.ai |
-| MBS Platform (SSO + billing) | **Not started** | Will be added to `MBS/` |
+| MBS Platform (SSO + billing) | **Ready to build (Phase 1)** | Will be added to `MBS/` |
 | Inner Lab Middleware (il_* APIs) | **Not started** | Will be added to `Innerlab/` |
 | Inner Lab Dashboard (UI) | **Not started** | Will be added to `Innerlab/` |
 | CWG | Deployed, needs migration | `CWG/` → conversationswithgod.ai |
@@ -54,3 +54,23 @@ This repo contains architecture decisions, migration plans, and reference files.
 6. **Phase 6+: New IL modules** → use starter kit
 
 See `ORCHESTRATION_GUIDE.md` for exact prompts and steps.
+
+## Orchestration Workflow
+
+Each phase agent generates a `PHASE_X_REPORT.md` when done. Bring the report back to this orchestrator session before starting the next phase. The orchestrator reviews and updates downstream instructions if needed.
+
+## Pre-Build Checklist
+
+- [x] JWT_SECRET generated
+- [x] Platform-instructions synced to all 4 project folders (hash-verified)
+- [x] Project CLAUDE.md files updated to point agents to platform-instructions/
+- [x] Completion report requirements baked into all platform-instructions docs
+- [x] Marketing briefs updated and synced to Desktop/Marketing/Overview/
+- [x] Orchestration guide created with copy-paste prompts
+- [ ] Phase 1 started (MBS Platform)
+- [ ] Phase 1 report reviewed by orchestrator
+- [ ] Phase 2 started (IL Middleware)
+- [ ] Phase 2 report reviewed
+- [ ] Phase 3 started (CWG Migration)
+- [ ] Phase 4 started (FlowState Migration)
+- [ ] Phase 5 started (11 standalone products)
