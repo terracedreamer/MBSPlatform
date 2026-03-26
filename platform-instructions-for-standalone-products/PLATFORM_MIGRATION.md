@@ -177,7 +177,7 @@ Your product's backend is responsible for enforcing free tier limits (time, usag
 
 ## Completion Report (REQUIRED)
 
-When you finish the SSO migration, generate a file called `PHASE_5_REPORT.md` in the project root containing:
+When you finish the SSO migration, generate a file called `PHASE_5_REPORT.md` in the project root. **Also copy it to `../MBSPlatform/phase-reports/PHASE_5_REPORT_{product_name}.md`** (the orchestrator repo's phase-reports folder — use the product name to distinguish between the 11 standalone apps). The report must contain:
 
 1. **What was built/changed** — Every file created, modified, or deleted
 2. **What changed from the plan** — Any deviations from this document. Why?

@@ -404,7 +404,7 @@ Add new module/product domains as they launch. Subdomains of magicbusstudios.com
 
 ## Completion Report (REQUIRED)
 
-When you finish building, generate a file called `PHASE_1_REPORT.md` in the project root containing:
+When you finish building, generate a file called `PHASE_1_REPORT.md` in the project root. **Also copy it to `../MBSPlatform/phase-reports/PHASE_1_REPORT.md`** (the orchestrator repo's phase-reports folder). The report must contain:
 
 1. **What was built** — Every file created or modified, grouped by backend/frontend
 2. **What changed from the plan** — Any deviations from this document. Did you rename anything? Skip anything? Add anything not in the spec? Why?
