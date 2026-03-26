@@ -34,9 +34,10 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 ### Step 1: Update Auth Flow
 - Remove CWG's standalone auth (login, signup, password reset, TOTP)
 - Add JWT verification middleware that validates tokens from MBS Platform
-- Login button redirects to: `magicbusstudios.com/auth/login?redirect=conversationswithgod.ai&brand=innerlab`
+- Login button redirects to: `https://magicbusstudios.com/auth/login?redirect=https://conversationswithgod.ai&brand=innerlab`
 - After login, MBS Platform redirects back with `?token={JWT}`
 - Store JWT, send in Authorization header on all API calls
+- IMPORTANT: After extracting `?token={JWT}` from URL, immediately call `history.replaceState(null, '', window.location.pathname + window.location.hash)` to remove the token from the URL (prevents token leakage via browser history and referrer headers)
 
 ### Step 2: Remove Billing
 - Remove CWG's Stripe integration (checkout, webhooks, portal)
@@ -126,6 +127,24 @@ When migrating `user_memories` to `il_user_memories`:
 - Set `source_module: "cwg"` on every memory
 - Set `shared: false` on every memory (private by default)
 - User must explicitly opt-in to share memories across Inner Lab modules
+
+## Cutover Sequence (Migration Day)
+
+With ~10 real users (friends testing), a forced logout is acceptable. Follow this exact sequence:
+
+1. **Announce** — Tell the ~10 users: "CWG is getting an upgrade, expect a brief maintenance window"
+2. **Put CWG in maintenance mode** — Show a "Back shortly" page. This prevents new data from being written to the old DB during migration.
+3. **Run migration script** from `MBS/server/scripts/` — copies all data from `conversations_with_god` to `mbs_platform` + `inner_lab`
+4. **Verify migration** — Check that all ~10 users exist in `mbs_platform.users`, spot-check a few cwg_* collections and il_* collections in `inner_lab`
+5. **Deploy new CWG** — Backend (new DB, JWT middleware, no standalone auth) + Frontend (no login page, redirect to platform)
+6. **Verify deployment** — Test the full flow: visit CWG → click Login → redirect to MBS Platform → Google SSO → redirect back with JWT → use CWG
+7. **Remove maintenance mode** — CWG is live on the new architecture
+8. **Monitor for 48 hours** — Watch for errors, missing data, auth failures
+9. **Old database stays as backup** — Do not delete `conversations_with_god` for weeks/months
+
+**Important**: All existing CWG JWTs become invalid after deploy (different JWT_SECRET). Every user must re-login through the MBS Platform. With ~10 users, this is a non-issue.
+
+**Data written during maintenance window**: None — CWG is in maintenance mode. No data loss risk.
 
 ## User Dedup / Merge Logic
 The migration script MUST use **upsert on email** when creating `mbs_platform.users` records. If a user already exists (e.g., they were migrated from another product first), MERGE fields — do not overwrite. CWG data takes priority for fields like `nostr_npub` and `lnurl_linking_key` that FlowState doesn't have.

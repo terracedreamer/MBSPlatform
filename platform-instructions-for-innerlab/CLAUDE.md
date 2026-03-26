@@ -103,6 +103,96 @@ StarMap:   astro_charts, astro_transits, ... (future)
 - Modules **read** from `il_*` shared tables and their own prefix only
 - This middleware **reads** from all prefixes (for cross-module insights) and **writes** only to `il_*`
 
+## Schema Contracts for il_* Collections (CRITICAL)
+
+Every module writing to shared il_* collections MUST validate documents against these schemas. Node modules use Mongoose schemas, Python modules use Pydantic models. After collections are created, apply MongoDB JSON Schema validation as a safety net.
+
+### il_check_ins
+```javascript
+{
+  _id: ObjectId,
+  user_id: String,           // MBS Platform user ID (from JWT userId)
+  source_module: String,     // "cwg", "yoga", "breatharc", etc.
+  mood: Number,              // 1-10 scale
+  energy: Number,            // 1-10 scale
+  stress: Number,            // 1-10 scale
+  intention: String,         // optional — user's intention for the day
+  notes: String,             // optional — freeform notes
+  created_at: DateTime
+}
+```
+
+### il_consciousness_profiles
+```javascript
+{
+  _id: ObjectId,
+  user_id: String,           // unique per user
+  archetype: String,         // primary archetype from assessment
+  orientation: String,       // spiritual orientation
+  assessment_data: Object,   // full assessment Q&A (flexible structure)
+  source_module: String,     // which module last updated this
+  created_at: DateTime,
+  updated_at: DateTime
+}
+```
+
+### il_personal_histories
+```javascript
+{
+  _id: ObjectId,
+  user_id: String,           // unique per user
+  content: Object,           // structured personal history (flexible — normalized from CWG's dual formats)
+  source_module: String,
+  created_at: DateTime,
+  updated_at: DateTime
+}
+```
+
+### il_user_wellness_profiles
+```javascript
+{
+  _id: ObjectId,
+  user_id: String,           // unique per user
+  health_conditions: [String], // e.g., ["back pain", "anxiety"]
+  injuries: [String],          // e.g., ["left knee"]
+  goals: [String],             // e.g., ["flexibility", "stress reduction"]
+  source_module: String,       // which module last updated this
+  created_at: DateTime,
+  updated_at: DateTime
+}
+```
+
+### il_activity_feed
+```javascript
+{
+  _id: ObjectId,
+  user_id: String,
+  source_module: String,     // "cwg", "yoga", "breatharc", etc.
+  action: String,            // "session_complete", "achievement_earned", "journal_entry", etc.
+  title: String,             // human-readable title for the feed item
+  description: String,       // optional — additional detail
+  metadata: Object,          // optional — module-specific data
+  created_at: DateTime
+}
+```
+
+### MongoDB-Level Validation (Safety Net)
+After creating il_* collections, apply JSON Schema validation:
+```javascript
+db.runCommand({ collMod: 'il_user_memories', validator: {
+  $jsonSchema: {
+    required: ['user_id', 'source_module', 'memory_type', 'content', 'shared', 'created_at'],
+    properties: {
+      confidence: { bsonType: 'double', minimum: 0, maximum: 1 }
+    }
+  }
+}});
+```
+Apply similar validation to il_check_ins (mood/energy/stress: 1-10), il_activity_feed (required fields), etc.
+
+### Schema Enforcement Rule
+Every module MUST validate documents before writing to any il_* collection. Use Mongoose schemas (Node) or Pydantic models (Python) that match these contracts exactly. MongoDB-level validation is the backstop, not the primary defense.
+
 ## User Memory System (Critical Design)
 
 ### Privacy Model: Option C — User Opt-In Sharing

@@ -131,7 +131,7 @@ Both handled here. No per-product payment integration.
 
 ### Core Models
 - **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
-- **Entitlement**: user_id, category (innerlab|arcade|studioworks), type (product_pass|category_access|mbs_all_access), product (slug|null), status (active|expired|cancelled|trial), stripe_subscription_id?, stripe_customer_id, purchased_at, expires_at?, trial_ends_at?
+- **Entitlement**: user_id, category (innerlab|arcade|studioworks), type (product_pass|category_access|mbs_all_access), product (slug|null), status (active|expired|cancelled|trial), stripe_subscription_id?, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type, category, product?, amount (cents), currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type, value, applies_to, category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
 - **Referral**: referrer_id, referral_code, referred_email, referred_user_id?, status, reward_type, reward_value, created_at
@@ -309,6 +309,89 @@ The entitlement check endpoint (`GET /api/entitlements/:product`) is called by a
 - If the platform is unreachable, products SHOULD allow access based on the last cached response (graceful degradation)
 - The platform MUST respond fast (< 100ms) — this is a simple DB lookup with an index on `user_id`
 - Rate limiting: per-product, not per-user (each product backend makes one call per user request)
+
+## GDPR Account Deletion Cascade
+
+`DELETE /api/auth/account` triggers a full cascade across databases:
+
+1. **Cancel Stripe** — Cancel all active subscriptions via Stripe API
+2. **Delete from `mbs_platform`** — User, Entitlements, Transactions, ActiveSessions, PushSubscriptions, Referrals, Friends, Invites, EmailPreferences, DataRequests, NostrChallenges, LnurlChallenges, BtcpayInvoices, ActivityLog
+3. **Keep ConsentAuditLog** — Legal requirement. Anonymize `user_id` to a SHA-256 hash
+4. **Delete from `inner_lab`** — All il_* documents where `user_id` matches. The platform connects to the `inner_lab` database directly for this (same MONGODB_URI, different DB_NAME)
+5. **Delete module data** — All cwg_*, yoga_*, and other module-prefixed documents where `user_id` matches. Same direct DB connection approach.
+6. **Confirmation** — Return success. GDPR requires completion within 30 days; this should complete in seconds since it's all database deletes.
+
+The platform handles the ENTIRE cascade — individual products do NOT need deletion endpoints.
+
+## BTCPay → Entitlement Flow
+
+When BTCPay webhook reports invoice paid (`status: "settled"`):
+1. Update BtcpayInvoice `status` to `"settled"`
+2. Create Entitlement: `type: "product_pass"`, `status: "active"`, `product: invoice.product`, `expires_at: now + product catalog duration` (e.g., 30 days for monthly equivalent)
+3. Create Transaction record
+4. BTCPay does NOT support automatic recurring billing — user must manually repurchase when entitlement expires. Surface expiry warnings via email (Phase 2).
+
+## Entitlement Priority (Overlapping Access)
+
+When multiple entitlements grant access, return the BROADEST reason:
+`mbs_all_access > category_access > product_pass > free_tier`
+
+The product only cares about `hasAccess` — the `reason` is for UI display and analytics.
+
+## Entitlement Category Values
+
+Category values are lowercase slugs with no separators: `innerlab`, `arcade`, `studioworks`. NOT `inner_lab`, `Inner Lab`, or `inner-lab`. Validate on write.
+
+## Entitlement Cache (Products)
+
+Products SHOULD cache entitlement responses on their backend:
+- **Cache key**: `userId:productSlug`
+- **TTL**: 5 minutes (balances freshness vs load)
+- **Storage**: In-memory (Map or node-cache for Node, dict or cachetools for Python)
+- **Invalidation**: After billing success, redirect the user with `?refresh=true` to tell the product to bust its cache for that user
+- **Graceful degradation**: If the platform is unreachable, allow access based on last cached response
+
+## Admin Endpoint Security
+
+Admin endpoints (`/api/admin/*`) MUST verify `is_admin` from the **database**, not the JWT. The JWT's `isAdmin` field is for UI hints only (showing admin menu). Any actual admin action must re-check `mbs_platform.users.is_admin` on every request. Reason: if a user is demoted, their JWT still has `isAdmin: true` for up to 7 days.
+
+## JWT Security Model
+
+All services share a single JWT_SECRET. This is a deliberate tradeoff for simplicity at MVP scale.
+
+**Risk**: If any service's JWT_SECRET is exposed, all services are compromised.
+
+**Mitigations**:
+1. Rotate JWT_SECRET periodically (requires coordinated redeployment of all services)
+2. Monitor for suspicious admin access patterns
+3. Phase 2+: Consider asymmetric signing (RS256) — only the platform has the private key, products have the public key. Products can VERIFY but not FORGE tokens.
+
+## ALLOWED_REDIRECT_DOMAINS
+
+Derive programmatically from CORS_ORIGINS at startup. Parse the comma-separated list, extract hostnames, use as the redirect allowlist. Do NOT maintain a separate list — they must stay in sync.
+
+## Deployment Checklist
+
+1. Set ALL new env vars in Coolify FIRST (JWT_SECRET, STRIPE keys, BTCPAY, CORS_ORIGINS, DB_NAME, etc.)
+2. Verify env vars in Coolify UI (names only, not values)
+3. Ensure VITE_BACKEND_URL is set as a BUILD ARG for the frontend container
+4. Deploy backend container first — verify `/api/health` returns 200
+5. Verify existing form endpoints still work (POST /api/contact)
+6. Deploy frontend container
+7. Test: marketing pages load, login page loads, full login flow works
+8. **Defensive route loading**: Wrap new route imports in try/catch so a bug in auth.js doesn't crash the entire server and take down the existing marketing site.
+
+## CORS_ORIGINS — Complete Domain List
+
+Must include all product frontend domains:
+```
+https://magicbusstudios.com,https://www.magicbusstudios.com,https://innerlab.ai,https://www.innerlab.ai,https://conversationswithgod.ai,https://www.conversationswithgod.ai,https://yoga.magicbusstudios.com,https://brokenchain.magicbusstudios.com,https://mindhacker.magicbusstudios.com,https://triviaroast.magicbusstudios.com,https://whisperinghouse.magicbusstudios.com,https://fakeartist.magicbusstudios.com,https://wildlens.magicbusstudios.com,https://lazy-chef.magicbusstudios.com,https://tasktracker.magicbusstudios.com,https://tutor.magicbusstudios.com,https://smartcart.magicbusstudios.com,https://moviepicker.magicbusstudios.com
+```
+Add new module/product domains as they launch. Subdomains of magicbusstudios.com do not need www variants.
+
+## stripe_customer_id Placement
+
+`stripe_customer_id` lives on the **User** model only. It represents the Stripe customer (one per user). The Entitlement model has `stripe_subscription_id` (one per subscription). Do not duplicate the customer ID on Entitlement — join via `user_id` if needed.
 
 ## What NOT to Do
 - Do NOT remove existing marketing pages or form handler — they keep working

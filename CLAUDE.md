@@ -119,7 +119,7 @@ Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
 
 ## Core Data Models (mbs_platform DB)
 - **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
-- **Entitlement**: user_id, category, type, product, status, stripe_subscription_id?, stripe_customer_id, purchased_at, expires_at?, trial_ends_at?
+- **Entitlement**: user_id, category, type, product, status, stripe_subscription_id?, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type, category, product?, amount, currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type, value, applies_to, category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
 - **Referral**: referrer_id, referral_code, referred_email, referred_user_id?, status, reward_type, reward_value, created_at

@@ -36,7 +36,7 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 - Remove FlowState's standalone auth (login, signup, password reset, scrypt hashing)
 - Remove `/auth/signup`, `/auth/login`, `/auth/logout` routes
 - Add JWT verification middleware that validates tokens from MBS Platform
-- Login button redirects to: `magicbusstudios.com/auth/login?redirect=yoga.magicbusstudios.com&brand=innerlab`
+- Login button redirects to: `https://magicbusstudios.com/auth/login?redirect=https://yoga.magicbusstudios.com&brand=innerlab`
 - After login, MBS Platform redirects back with `?token={JWT}`
 - Store JWT, send in Authorization header
 
