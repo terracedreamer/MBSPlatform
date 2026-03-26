@@ -1,12 +1,25 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 25, 2026
+**Last Updated**: March 26, 2026
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
-This repo contains architecture decisions, migration plans, and reference files. No code is built here. Code gets built in the actual project folders (`MBS/`, `Innerlab/`, `CWG/`, `YogaGhost/`).
+This repo contains architecture decisions, migration plans, and reference files. No code is built here. Code gets built in the actual project folders.
 
-## What Exists
+## Architecture Readiness
+
+| Component | Status | Ready to Build? |
+|-----------|--------|-----------------|
+| MBS Platform instructions | 6 audit passes complete, all issues fixed | **Yes — Grade A** |
+| Inner Lab Middleware instructions | Schema contracts defined, write paths clarified | **Yes — Grade A** |
+| CWG Migration instructions | Cutover plan, field renames, dedup logic done | **Yes — Grade A-** |
+| FlowState Migration instructions | All fields mapped with defaults | **Yes — Grade A** |
+| Standalone Products instructions | SSO migration guide for all 11 apps | **Yes — Grade A** |
+| New Module Starter Kit | Full template with all context | **Yes — Grade A** |
+| Orchestration Guide | Step-by-step with copy-paste prompts | **Ready** |
+| Marketing briefs | Enhanced with website data, design language | **Up to date** |
+
+## What Exists (Live Products)
 
 | Component | Status | Where |
 |-----------|--------|-------|
@@ -17,25 +30,27 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Inner Lab Dashboard (UI) | **Not started** | Will be added to `Innerlab/` |
 | CWG | Deployed, needs migration | `CWG/` → conversationswithgod.ai |
 | FlowState | Deployed, needs migration | `YogaGhost/` → yoga.magicbusstudios.com |
-| Arcade games (5) | Deployed, no changes yet | Individual folders |
-| Studio Works tools (6) | Deployed, no changes yet | Individual folders |
+| Arcade games (5) | Deployed, needs SSO migration | Individual folders |
+| Studio Works tools (6) | Deployed, needs SSO migration | Individual folders |
 
-## Reference Files Ready
+## Reference Files (All Copied to Target Projects)
 
-| Folder in This Repo | Copy to | Purpose |
-|------|---------|---------|
-| `platform-instructions-for-mbs/` | `MBS/platform-instructions/` | Build Layer 1 (SSO, billing, entitlements) |
-| `platform-instructions-for-innerlab/` | `Innerlab/platform-instructions/` | Build Layer 2 (middleware + dashboard) |
-| `platform-instructions-for-cwg/` | `CWG/platform-instructions/` | CWG migration instructions |
-| `platform-instructions-for-yogaghost/` | `YogaGhost/platform-instructions/` | FlowState migration instructions |
-| `platform-instructions-for-standalone-products/` | Each Arcade/SW project as `platform-instructions/` | SSO migration for 11 standalone products |
-| `platform-instructions-for-new-modules/` | New module project as `platform-instructions/` | Starter kit for future modules |
+| Folder in This Repo | Copy to | Purpose | Synced? |
+|------|---------|---------|---------|
+| `platform-instructions-for-mbs/` | `MBS/platform-instructions/` | Build Layer 1 | Yes (verified via hash) |
+| `platform-instructions-for-innerlab/` | `Innerlab/platform-instructions/` | Build Layer 2 | Yes (verified via hash) |
+| `platform-instructions-for-cwg/` | `CWG/platform-instructions/` | CWG migration | Yes (verified via hash) |
+| `platform-instructions-for-yogaghost/` | `YogaGhost/platform-instructions/` | FlowState migration | Yes (verified via hash) |
+| `platform-instructions-for-standalone-products/` | Each Arcade/SW project | SSO migration | Not yet copied to individual projects |
+| `platform-instructions-for-new-modules/` | New module projects | Starter kit | Ready when needed |
 
-## Next Steps
+## Build Order
 
-1. Copy `platform-instructions-for-mbs/` into `MBS/` as `platform-instructions/` → build Layer 1
-2. Copy `platform-instructions-for-innerlab/` into `Innerlab/` as `platform-instructions/` → build Layer 2
-3. Run CWG + FlowState migration scripts (after both layers are built)
-4. Copy migration docs into `CWG/` and `YogaGhost/` as `platform-instructions/` → refactor to use platform
-5. Copy standalone-products instructions into each Arcade/SW project → SSO migration
-6. New modules use `platform-instructions-for-new-modules/` starter kit
+1. **Phase 1: MBS Platform** → `MBS/` (must be first — everything depends on it)
+2. **Phase 2: IL Middleware + Dashboard** → `Innerlab/` (must be before migrations)
+3. **Phase 3: CWG Migration** → migration script from `MBS/`, then refactor `CWG/`
+4. **Phase 4: FlowState Migration** → same pattern (can parallel with Phase 3)
+5. **Phase 5: 11 Standalone Products** → can ALL parallel after Phase 1
+6. **Phase 6+: New IL modules** → use starter kit
+
+See `ORCHESTRATION_GUIDE.md` for exact prompts and steps.

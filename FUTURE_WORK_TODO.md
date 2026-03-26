@@ -1,154 +1,153 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 25, 2026
+**Last Updated**: March 26, 2026
 
 ---
 
-## Priority 0 — Marketing Brief Enhancement (Next Session)
+## Priority 0 — Marketing Brief Enhancement ~~(Next Session)~~ DONE
 
-- [ ] Absorb Arcade brief content into MBS master doc (MagicBusStudios_Brand_And_Company.md)
-- [ ] Check innerlab.ai website for missing product info → update InnerLab_Product_Brief.md
-- [ ] Add Inner Lab dashboard vision, module connections, activity feed to IL brief
-- [ ] Check magicbusstudios.com for missing info → update MBS master doc
-- [ ] Add Studio Works detail to MBS master doc (currently minimal)
+- [x] Absorb Arcade brief content into MBS master doc
+- [x] Check innerlab.ai website for missing product info → updated IL brief
+- [x] Add Inner Lab dashboard vision, module connections, activity feed to IL brief
+- [x] Check magicbusstudios.com for missing info → updated MBS master doc
+- [x] Add Studio Works detail to MBS master doc
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
-- [ ] Sync updated briefs to Desktop/Marketing/Overview/
-- [ ] Focus on PRODUCT INFORMATION only — marketing strategy is the marketing agent's job
+- [x] Sync updated briefs to Desktop/Marketing/Overview/
 
 ---
 
 ## Priority 1 — MBS Platform Phase 1 (MVP)
 
 ### Auth
-- [ ] Google SSO login with JWT issuance
-- [ ] Nostr authentication (challenge → signature verification)
-- [ ] LNURL-Auth (k1 challenge → signature verification)
+- [ ] Google SSO login with JWT issuance (JWT spec defined: userId, email, name, avatar, isAdmin)
 - [ ] Branded login page (Inner Lab vs MBS branding via `?brand=` param)
+- [ ] Open redirect protection (validate ?redirect= against ALLOWED_REDIRECT_DOMAINS derived from CORS_ORIGINS)
+- [ ] Token-in-URL handling (extract, store, replaceState)
 - [ ] Active session management (track JWTs, device sign-out)
 - [ ] JWT verification middleware for product backends
+- [ ] Defer: Nostr auth, LNURL auth (Phase 2+)
 
 ### User Profiles
-- [ ] User model (email, name, avatar, google_id, nostr_npub, lnurl_linking_key, auth_provider, consent_preferences, is_admin)
+- [ ] User model (18 fields including stripe_customer_id — fully defined in platform-instructions)
 - [ ] Profile CRUD endpoints
 
 ### Entitlements
-- [ ] Entitlement model (user_id, category, type, product, status, dates)
-- [ ] GET /entitlements/:product → `{ hasAccess, reason }`
-- [ ] GET /entitlements/category/:cat
-- [ ] Admin grant/revoke endpoints
+- [ ] Entitlement model (stripe_customer_id removed — lives on User only)
+- [ ] GET /api/entitlements/:product → `{ success: true, hasAccess, reason }` (5 reason values defined)
+- [ ] GET /api/entitlements/category/:cat
+- [ ] Product catalog config with freeTier flags and freeTierLimits
+- [ ] Entitlement priority: mbs_all_access > category_access > product_pass > free_tier
+- [ ] Admin grant/revoke endpoints (verify is_admin from DB, not JWT)
 
 ### Billing — Stripe
 - [ ] Stripe checkout (product passes, category access, MBS all access)
-- [ ] Stripe webhook handler (payment success, subscription changes, refunds)
-- [ ] Stripe customer portal (manage subscriptions)
+- [ ] Stripe webhook → create/update Entitlement
+- [ ] Stripe customer portal
 - [ ] Transaction history
 
 ### Billing — BTCPay (Lightning)
-- [ ] BTCPay integration (invoice creation, payment verification)
+- [ ] BTCPay checkout → create invoice
+- [ ] BTCPay webhook → settled = create Entitlement with expiry (no auto-renew)
 - [ ] Lightning checkout flow
-- [ ] BTCPay webhook handler
 
 ### Social
-- [ ] Friends model (sorted user pair, source_product)
-- [ ] Invites model (code, from_user, product, TTL)
-- [ ] Friend/invite endpoints
+- [ ] Friends model + endpoints
+- [ ] Invites model + endpoints
 
 ### Platform Infrastructure
-- [ ] Push subscription storage (device tokens)
-- [ ] Feature flag system
-- [ ] GDPR consent audit log
-- [ ] Data request handling (access/deletion/portability)
-- [ ] Health check endpoint
-- [ ] CORS (all 22+ product domains), rate limiting, input validation
-- [ ] Product catalog config (slugs, categories, URLs — NOT hardcoded)
+- [ ] GDPR deletion cascade (DELETE /api/auth/account — deletes across mbs_platform + inner_lab + all module collections)
+- [ ] CORS (18 domains enumerated in platform-instructions)
+- [ ] Health check, rate limiting, input validation
+- [ ] Product catalog config (22 products, NOT hardcoded)
+- [ ] Push subscriptions, feature flags, consent audit log, data requests
+- [ ] Deployment: defensive route loading (try/catch on new routes), env vars first
+- [ ] JWT security: shared secret risk acknowledged, RS256 upgrade path for Phase 2+
+- [ ] Entitlement cache spec documented for downstream products (5min TTL, ?refresh=true)
 
-### Migration
-- [ ] CWG migration script (56 collections → mbs_platform users + inner_lab cwg_*)
-- [ ] FlowState migration script (7 collections → mbs_platform users + inner_lab yoga_*)
-- [ ] Verify migration with existing ~10 CWG users
+### Migration Scripts (built here, run once)
+- [ ] CWG migration script (56 collections → 3 buckets with field renames)
+- [ ] FlowState migration script (7 collections → 3 buckets with field renames)
 
 ### Deployment
-- [ ] Deploy updated MBS/ to Coolify (magicbusstudios.com — existing containers)
-- [ ] Configure new env vars in Coolify (JWT_SECRET, STRIPE, BTCPAY, etc.)
-- [ ] Test full login flow from CWG → magicbusstudios.com/auth/login → back to CWG
+- [ ] Follow deployment checklist in platform-instructions
+- [ ] Set all env vars in Coolify BEFORE deploying
+- [ ] Test: login flow, entitlement check, existing marketing pages still work
 
 ---
 
-## Priority 2 — MBS Platform Phase 2: Communication
+## Priority 2 — Inner Lab Middleware + Dashboard (Layer 2) — Build Immediately After Phase 1
 
-- [ ] Welcome email on signup
-- [ ] Purchase confirmation emails
-- [ ] Subscription change emails (cancelled, expiring, payment failed)
-- [ ] Basic admin panel: list users, view entitlements, manually grant/revoke
-- [ ] Email preferences (opt-in/out per category)
-- [ ] One-click unsubscribe (token-based)
+**Reference: `platform-instructions-for-innerlab/CLAUDE.md`**
 
----
-
-## Priority 3 — MBS Platform Phase 3: Growth
-
-- [ ] Promo code engine (create, validate, redeem, track usage)
-- [ ] Free trial support (X days free, auto-convert to paid)
-- [ ] Referral program (unique links, invite emails, automatic rewards)
-- [ ] Win-back offers (auto-send discount to churned/inactive users)
-
----
-
-## Priority 4 — CWG & FlowState Refactoring
-
-- [ ] Update CWG backend to verify MBS Platform JWTs (remove standalone auth)
-- [ ] Update CWG frontend to redirect to MBS Platform for login
-- [ ] Remove CWG's standalone Stripe integration
-- [ ] Remove CWG's standalone BTCPay integration
-- [ ] Update FlowState backend to verify MBS Platform JWTs
-- [ ] Update FlowState frontend to redirect to MBS Platform for login
-- [ ] Remove FlowState's standalone Stripe integration
-- [ ] Test full flow for both: login → purchase → access product
-
----
-
-## Priority 5 — Connect All Products (Phase 4)
-
-- [ ] Add checkAccess middleware to each Arcade game backend (5)
-- [ ] Add checkAccess middleware to each Studio Works backend (6)
-- [ ] Update each frontend to use MBS Platform JWT
-- [ ] Test full flow for each product: login → purchase → access
-
----
-
-## Priority 2B — Inner Lab Middleware + Dashboard (Layer 2) — Build NOW
-
-**Build immediately after MBS Platform so migrations write shared data correctly. Reference: `platform-instructions-for-innerlab/CLAUDE.md`**
-
-### Backend (add to existing server/ in Innerlab/ project)
-- [ ] Add Mongoose + inner_lab DB connection to existing Express server
-- [ ] JWT validation middleware (verifies MBS Platform tokens)
-- [ ] il_consciousness_profiles collection + API (GET/PUT)
-- [ ] il_personal_histories collection + API
-- [ ] il_check_ins collection + API (mood, energy, stress, intention)
-- [ ] il_user_memories collection + API (per-module + opt-in sharing)
-- [ ] il_user_wellness_profiles collection (health conditions, injuries, goals — shared by FlowState + BreathArc)
-- [ ] il_activity_feed collection + API
-- [ ] Encryption & data export infrastructure
+### Backend
+- [ ] Mongoose + inner_lab DB connection on existing Express server
+- [ ] JWT validation middleware
+- [ ] il_* Mongoose models matching schema contracts (check-ins, consciousness, histories, wellness, memories, activity feed)
+- [ ] MongoDB JSON Schema validation on critical collections
+- [ ] All API routes at /api/ prefix (20 endpoints defined)
 - [ ] Deploy to Coolify
 
-### Frontend (add dashboard pages to existing innerlab.ai React app)
-- [ ] Auth-gated routing (dashboard pages require JWT + entitlement check)
-- [ ] Dashboard page: module launcher, activity feed, check-in widget
-- [ ] Consciousness profile page: view/edit assessment, historical snapshots
-- [ ] Memories page: list by module, sharing toggles
-- [ ] Activity feed page: cross-module events
+### Frontend
+- [ ] Auth-gated routing (dashboard pages require JWT + category_access entitlement)
+- [ ] Dashboard, Consciousness, Memories, Activity pages
 - [ ] Upsell page for users without Inner Lab All Access
 
-### Deferred (build when 2-3 modules have data)
-- [ ] Daily briefing engine + view
+### Deferred
+- [ ] Daily briefing engine + view (need data from 2-3 modules)
 - [ ] Cross-module insights engine + view
 
 ---
 
-## Priority 8 — MBS Platform Advanced Phases
+## Priority 3 — CWG & FlowState Migration
+
+- [ ] Run CWG migration script from MBS/ (copy data, field renames, upsert on email)
+- [ ] Refactor CWG backend (inner_lab DB, JWT middleware in Python, cwg_* prefix, remove auth/billing)
+- [ ] Refactor CWG frontend (remove login/billing pages, redirect to platform)
+- [ ] Run FlowState migration script (0 users — mostly structural)
+- [ ] Refactor FlowState backend + frontend (same pattern as CWG)
+- [ ] Deploy and test both
+
+---
+
+## Priority 4 — Connect Standalone Products (11 apps)
+
+- [ ] Copy standalone-products instructions to each project
+- [ ] Add JWT middleware to each Arcade game (5) and Studio Works app (6)
+- [ ] Remove standalone auth from each
+- [ ] Set JWT_SECRET + PLATFORM_URL in each Coolify service
+- [ ] Test login → entitlement check for each product
+
+---
+
+## Priority 5 — MBS Platform Phase 2: Communication
+
+- [ ] Welcome email on signup
+- [ ] Purchase confirmation emails
+- [ ] Subscription change emails (cancelled, expiring, payment failed)
+- [ ] BTCPay expiry warning emails
+- [ ] Basic admin panel: list users, view entitlements, grant/revoke
+- [ ] Email preferences (opt-in/out per category)
+- [ ] One-click unsubscribe (token-based)
+- [ ] Auth method linking (POST /api/auth/link-nostr, link-lnurl)
+- [ ] Nostr authentication
+- [ ] LNURL-Auth
+
+---
+
+## Priority 6 — MBS Platform Phase 3: Growth
+
+- [ ] Promo code engine
+- [ ] Free trial support (X days free, auto-convert)
+- [ ] Referral program
+- [ ] Win-back offers
+
+---
+
+## Priority 7 — MBS Platform Advanced
 
 - [ ] Phase 5: User dashboard (My Products, billing history, manage subscriptions)
-- [ ] Phase 6: Admin dashboard (analytics, revenue, product stats, funnel tracking, audit log)
-- [ ] Phase 7: Email campaigns + announcements + surveys + newsletter
-- [ ] Phase 8: Multi-currency, family plan, teams, achievements, push notifications, enterprise SSO, API keys
+- [ ] Phase 6: Admin dashboard (analytics, revenue, funnel tracking)
+- [ ] Phase 7: Email campaigns + announcements + newsletter
+- [ ] Phase 8: Multi-currency, family plan, teams, push notifications, enterprise SSO
+- [ ] JWT upgrade to RS256 asymmetric signing
+- [ ] Token refresh endpoint (silent re-authentication)

@@ -1,5 +1,80 @@
 # CHANGELOG — MBS Platform
 
+## March 26, 2026 — Session 2: Full Audit, Marketing Briefs, Orchestration Guide
+
+### Summary
+6 audit passes, 50+ issues found and fixed. Architecture is now implementation-ready.
+
+### Marketing Brief Enhancements
+- Absorbed Arcade detail into MBS master doc (URLs, taglines, pricing, Time Banks, target audience)
+- Expanded Studio Works from one-liners to full feature descriptions
+- Added Inner Lab Dashboard section to IL brief (module launcher, activity feed, cross-module intelligence, memory privacy)
+- Enhanced FlowState description (breathwork, streaks, achievements, programs)
+- Added design language to IL brief (exact colors, typography from live innerlab.ai)
+- Added website state documentation to MBS brief (page listing, known issues)
+- Synced all briefs to Desktop/Marketing/Overview/
+
+### Architecture Fixes (across 6 audit passes)
+- Fixed stale folder names in CLAUDE.md, CURRENT_STATUS.md (copy-to-* → platform-instructions-for-*)
+- Fixed wrong MBS_PLATFORM_URL in IL middleware (platform.magicbusstudios.com → magicbusstudios.com)
+- Fixed contradictory build-later/build-now in IL middleware
+- Removed redundant il_shared_memories and il_daily_check_ins collections
+- Synced memory document schema across IL middleware and new-modules kit
+- Added friends API endpoints to main CLAUDE.md
+- Fixed entitlement check URLs (added https://)
+- Clarified IL middleware CORS (dashboard frontend only, modules use shared DB)
+- Assigned prefixes: AstroCompass → astrocart_*, Archetypes → archetype_*
+- Standardized status to "Coming Soon" across module tables
+- Added il_user_wellness_profiles and il_blockchain_anchors to collection lists
+- Fixed CWG collection count (39 → 42)
+- Added user dedup/merge logic (upsert on email) to both migration docs
+- Fixed avatar/picture, google_id/googleId, stripeCustomerId field renames in migrations
+- Added all 12 missing FlowState User model fields with defaults
+
+### New Architectural Specs Added
+- JWT payload specification (userId, email, name, avatar, isAdmin, iat, exp)
+- il_* schema contracts for 5 collections (check-ins, consciousness, histories, wellness, activity)
+- MongoDB JSON Schema validation recommendations
+- Open redirect protection (ALLOWED_REDIRECT_DOMAINS from CORS_ORIGINS)
+- Token-in-URL handling (extract → store → replaceState)
+- Deep link preservation through login redirect
+- Free tier entitlement logic (product catalog freeTier flag, 5 reason values)
+- BTCPay → Entitlement flow (webhook → create entitlement with expiry)
+- Entitlement priority order (mbs_all_access > category > product > free)
+- Entitlement cache spec (5min TTL, ?refresh=true invalidation)
+- Entitlement category validation (innerlab|arcade|studioworks, no underscores)
+- Admin endpoints: verify is_admin from DB not JWT
+- JWT security model (shared secret risk, RS256 upgrade path)
+- Token refresh strategy (Phase 1: simple expiry, Phase 2: refresh tokens)
+- Entitlement API resilience (cache, graceful degradation)
+- GDPR deletion cascade (cross-database: mbs_platform + inner_lab + all module prefixes)
+- CORS complete domain enumeration (18 domains)
+- Deployment checklist (env vars first, health check, defensive route loading)
+- Removed stripe_customer_id from Entitlement model (lives on User only)
+- stripe_customer_id placement clarification
+- Dual write path for il_* clarified (modules via DB, dashboard via HTTP)
+- userId → user_id mapping documented (JWT camelCase, DB snake_case)
+- CWG cutover sequence (simplified: run script, deploy, users re-login)
+- source_module field name fixed (was inconsistently "source" in one place)
+- FlowState friends/invites collection naming fixed (no mbs_ prefix needed)
+
+### New Files Created
+- `platform-instructions-for-standalone-products/` — SSO migration for 11 Arcade + Studio Works apps
+- `ORCHESTRATION_GUIDE.md` — Step-by-step with exact copy-paste prompts for each Claude Code session
+
+### Files Updated
+- CLAUDE.md (main), CURRENT_STATUS.md, FUTURE_WORK_TODO.md, SESSION_HANDOFF.md, CHANGELOG.md
+- platform-instructions-for-mbs/CLAUDE.md
+- platform-instructions-for-innerlab/CLAUDE.md
+- platform-instructions-for-cwg/PLATFORM_MIGRATION.md
+- platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md
+- platform-instructions-for-new-modules/CLAUDE.md
+- marketing-docs/MagicBusStudios_Brand_And_Company.md
+- marketing-docs/InnerLab_Product_Brief.md
+- marketing-docs/TheArcade_Marketing_Brief.md
+
+---
+
 ## March 25, 2026 — Session 1 (final): Merged Architecture + Think Tank Model
 
 ### Major decision: Merge platforms into existing website projects

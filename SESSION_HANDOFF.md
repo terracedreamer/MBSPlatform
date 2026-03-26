@@ -1,61 +1,61 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 25, 2026 (Session 1 — complete)
+**Last Updated**: March 26, 2026 (Session 2 — complete)
 **Git Branch**: main
-**Last Commit**: pending (end-of-session push)
+**Last Commit**: 258654b
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
 ---
 
-## WHAT WAS DONE THIS SESSION
+## WHAT WAS DONE THIS SESSION (Session 2)
 
-### Architecture Decisions (17 total, all finalized)
-- Three-layer architecture: MBS Platform (Layer 1) → Inner Lab Middleware (Layer 2) → Standalone Products (Layer 3)
-- MBS Platform merges into existing MBS/ website (magicbusstudios.com) — 2 containers
-- Inner Lab Middleware merges into existing Innerlab/ website (innerlab.ai) — 2 containers
-- Auth: Google SSO + Nostr + LNURL (all passwordless)
-- Payments: Stripe + BTCPay (Lightning) — both platform-level
-- Branded login: IL modules → Inner Lab branding, Arcade/SW → MBS branding
-- Friends/invites at platform level, activity feed at Inner Lab level
-- User memories: per-module private by default, user opt-in to share across IL
-- Fresh inner_lab database, old DBs stay as backups
-- All Inner Lab modules = separate containers, shared database
-- Reviewed CWG (56 collections) and FlowState (7 collections) schemas and migration plans
+### Full Architecture Review (6 audit passes, 50+ issues found and fixed)
+- Pass 1: Fixed 7 issues — stale folder names, wrong URLs, contradictory build-later/build-now
+- Pass 2: Fixed 6 cross-document inconsistencies — redundant collections, memory schema mismatch, missing API endpoints
+- Pass 3: Fixed 3 HIGH + 7 MEDIUM — open redirect protection, free_tier logic, dual write paths, /api/ prefixes
+- Pass 4: Fixed 4 stale docs + 3 architectural specs — deep links, token refresh, entitlement resilience
+- Pass 5: Fixed 11 field mismatches — avatar/picture, google_id/googleId, JWT payload undefined, CWG cutover
+- Pass 6 (adversarial): Fixed 3 CRITICAL + 11 HIGH + 10 MEDIUM — GDPR cascade, il_* schema contracts, deployment checklist, JWT security, BTCPay→Entitlement flow, CORS enumeration
 
-### Files Created
-- `platform-instructions-for-mbs/` — Layer 1 build instructions (copied to MBS/)
-- `platform-instructions-for-innerlab/` — Layer 2 build instructions (copied to Innerlab/)
-- `platform-instructions-for-cwg/` — CWG migration instructions (copied to CWG/)
-- `platform-instructions-for-yogaghost/` — FlowState migration instructions (copied to YogaGhost/)
-- `platform-instructions-for-new-modules/` — Starter kit for any new Inner Lab module
-- 4 marketing briefs converted from .docx to .md with platform context integrated
-- Marketing README.md with agent instructions
-- Global CLAUDE.md updated with end-session protocol and branch safety
+### Marketing Brief Enhancements
+- Absorbed Arcade detail into MBS master doc (URLs, taglines, pricing, target audience)
+- Expanded Studio Works from one-liners to full descriptions
+- Added Inner Lab Dashboard section (module launcher, activity feed, cross-module intelligence, memory privacy)
+- Enhanced FlowState description (breathwork, streaks, achievements, programs)
+- Added design language section to IL brief (exact colors, typography from live site)
+- Synced all briefs to Desktop/Marketing/Overview/
 
-### Issues Found & Fixed
-- JWT_SECRET must be shared across all projects
-- Migration scripts run from MBS/, not from individual products
-- CWG uses UUID strings (not ObjectId) — migration must map IDs
-- CWG is Python (FastAPI) — JWT middleware needs Python implementation
-- Inner Lab HAS a backend (corrected from earlier "no backend" error)
-- Added explicit prerequisites to CWG/FlowState migration docs
+### New Files Created
+- `platform-instructions-for-standalone-products/` — SSO migration guide for 11 Arcade + Studio Works apps
+- `ORCHESTRATION_GUIDE.md` — Step-by-step guide with exact copy-paste prompts for each Claude Code session
+
+### All Instruction Sets Now Include
+- JWT payload specification (userId, email, name, avatar, isAdmin)
+- il_* schema contracts (check-ins, consciousness, histories, wellness, activity feed)
+- Open redirect protection spec
+- GDPR deletion cascade (cross-database)
+- Entitlement response spec with full reason enum and free tier logic
+- BTCPay → Entitlement flow
+- Deployment checklist
+- CORS complete domain enumeration (18 domains)
+- Entitlement cache spec (5min TTL, ?refresh=true invalidation)
+- CWG cutover sequence (simplified for ~10 users)
+- MongoDB-level JSON Schema validation recommendations
 
 ---
 
-## NEXT SESSION TASKS
+## NEXT SESSION — START BUILDING
 
-### Immediate (start with these)
-- [ ] **Enhance marketing briefs** — check innerlab.ai and magicbusstudios.com for missing product info. Absorb Arcade brief into MBS master doc. Add Inner Lab dashboard/module connection details to IL brief. Focus on PRODUCT INFORMATION, not marketing strategy.
-- [ ] **Convert CWG marketing plan .docx to .md** in Desktop/Marketing/Inner Lab/Conversations with God/ (currently old .docx)
-- [ ] **Begin MBS Platform build** — open Claude Code in MBS/ folder, agent reads platform-instructions/CLAUDE.md
+Follow `ORCHESTRATION_GUIDE.md` for exact steps. Summary:
 
-### Implementation Order (strict sequence)
-1. Build MBS Platform (MBS/ folder) — SSO + billing + entitlements
-2. Build Inner Lab Middleware (Innerlab/ folder) — il_* collections + APIs + dashboard
-3. CWG Migration — scripts from MBS/, then CWG agent refactors
-4. FlowState Migration — scripts from MBS/, then FlowState agent refactors
-5. New modules — use platform-instructions-for-new-modules/ starter kit
+1. **Generate JWT_SECRET** — one secret for all services
+2. **Phase 1: MBS Platform** — Open Claude Code in `MBS/`, paste prompt from orchestration guide
+3. **Set Coolify env vars** — JWT_SECRET, STRIPE, BTCPAY, GOOGLE, CORS_ORIGINS
+4. **Deploy + test** — Login flow, entitlement check, marketing pages still work
+5. **Phase 2: IL Middleware** — Open Claude Code in `Innerlab/`, paste prompt
+6. **Phase 3-4: CWG + FlowState** — Run migration scripts from MBS/, then refactor each
+7. **Phase 5: 11 Standalone Products** — Can all run in parallel after Phase 1
 
 ---
 
@@ -63,13 +63,15 @@
 
 ```
 MBSPlatform/
-├── platform-instructions-for-mbs/          ← Copied to MBS/platform-instructions/
-├── platform-instructions-for-innerlab/     ← Copied to Innerlab/platform-instructions/
-├── platform-instructions-for-cwg/          ← Copied to CWG/platform-instructions/
-├── platform-instructions-for-yogaghost/    ← Copied to YogaGhost/platform-instructions/
-├── platform-instructions-for-new-modules/  ← Starter kit for future modules
-├── marketing-docs/                         ← Product briefs (synced to Desktop/Marketing/Overview/)
-├── archive/                                ← Old reference material
+├── platform-instructions-for-mbs/              ← Copied to MBS/platform-instructions/
+├── platform-instructions-for-innerlab/         ← Copied to Innerlab/platform-instructions/
+├── platform-instructions-for-cwg/              ← Copied to CWG/platform-instructions/
+├── platform-instructions-for-yogaghost/        ← Copied to YogaGhost/platform-instructions/
+├── platform-instructions-for-standalone-products/ ← Copied to each Arcade/SW project
+├── platform-instructions-for-new-modules/      ← Starter kit for future IL modules
+├── marketing-docs/                             ← Product briefs (synced to Desktop/Marketing/Overview/)
+├── archive/                                    ← Old reference material
+├── ORCHESTRATION_GUIDE.md                      ← Copy-paste prompts for each Claude Code session
 ├── CLAUDE.md, SESSION_HANDOFF.md, CHANGELOG.md, CURRENT_STATUS.md, FUTURE_WORK_TODO.md
 └── .gitignore
 ```
@@ -78,8 +80,10 @@ MBSPlatform/
 
 | Folder | Domain | What gets added | Database |
 |--------|--------|----------------|----------|
-| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login + admin | `mbs_platform` |
+| `MBS/` | magicbusstudios.com | SSO + billing + entitlements + login + migration scripts | `mbs_platform` |
 | `Innerlab/` | innerlab.ai | il_* APIs + dashboard + consciousness + memories | `inner_lab` |
 | `CWG/` | conversationswithgod.ai | Refactored to use platform auth + inner_lab DB | `inner_lab` (cwg_*) |
 | `YogaGhost/` | yoga.magicbusstudios.com | Refactored to use platform auth + inner_lab DB | `inner_lab` (yoga_*) |
-| New modules | TBD | Born into architecture using starter kit | `inner_lab` ({prefix}_*) |
+| 5 Arcade games | *.magicbusstudios.com | SSO migration (JWT middleware, remove standalone auth) | Own DBs |
+| 6 Studio Works apps | *.magicbusstudios.com | SSO migration (JWT middleware, remove standalone auth) | Own DBs |
+| New IL modules | TBD | Born into architecture using starter kit | `inner_lab` ({prefix}_*) |
