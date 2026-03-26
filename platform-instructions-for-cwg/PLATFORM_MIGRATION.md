@@ -150,7 +150,7 @@ The migration script MUST use **upsert on email** when creating `mbs_platform.us
 
 ## Completion Report (REQUIRED)
 
-When you finish the migration and refactor, generate a file called `PHASE_3_REPORT.md` in the project root. **Also copy it to `../MBSPlatform/phase-reports/PHASE_3_REPORT.md`** (the orchestrator repo's phase-reports folder). The report must contain:
+When you finish the migration and refactor, generate a file called `PHASE_3_REPORT.md` in the project root. The orchestrator will fetch it from here. The report must contain:
 
 1. **What was built/changed** — Every file created, modified, or deleted, grouped by backend/frontend
 2. **What changed from the plan** — Any deviations from this document. Why?
