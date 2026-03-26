@@ -4,7 +4,7 @@
 
 magicbusstudios.com | Toronto, Canada
 
-> **Last Updated**: March 25, 2026. Two original documents merged + platform decisions integrated.
+> **Last Updated**: March 26, 2026. Two original documents merged + platform decisions integrated.
 > Merged from: MagicBusStudios_Company_Overview.docx + MagicBusStudios_Brand_Architecture.docx
 
 ## Platform Context (New)

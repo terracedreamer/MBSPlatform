@@ -4,7 +4,7 @@
 
 *Marketing Brief & Website Content Guide — March 2026*
 
-> **Last Updated**: March 25, 2026. Platform decisions integrated.
+> **Last Updated**: March 26, 2026. Platform decisions integrated, game descriptions synced with live site.
 > **Note**: Arcade product information has been absorbed into `MagicBusStudios_Brand_And_Company.md` (the master doc). This file is kept as detailed reference for Arcade-specific marketing campaigns and content strategy. The master doc is the source of truth for product descriptions and pricing.
 
 ## Platform Context (New)
@@ -26,11 +26,13 @@ The Arcade sits alongside Inner Lab and Studio Works as one of three product lin
 
 | Game | Tagline | Description | URL |
 |------|---------|-------------|-----|
-| Broken Chain | Break free together | Cooperative puzzle game — solve chain-breaking challenges as a team | brokenchain.magicbusstudios.com |
-| MindHacker | Outsmart your friends | Psychological strategy — predict, manipulate, outthink opponents | mindhacker.magicbusstudios.com |
-| Trivia Roast | Knowledge meets comedy | Trivia with a twist — wrong answers get roasted | triviaroast.magicbusstudios.com |
-| Whispering House | Trust no one | Social deduction in a haunted house — find the ghost before time runs out | whisperinghouse.magicbusstudios.com |
-| Fake Artist | One player is faking it | Drawing game where one player doesn't know the prompt and must fake it | fakeartist.magicbusstudios.com |
+| Broken Chain | Break free together | Break free through strategy and deception. A game of alliances, betrayal, and escape. | brokenchain.magicbusstudios.com |
+| MindHacker | Outsmart your friends | Outsmart your friends with psychological strategy. Read minds, bluff, and decode hidden intentions. | mindhacker.magicbusstudios.com |
+| Trivia Roast | Knowledge meets comedy | Answer trivia, roast your rivals, and climb the leaderboard. Knowledge meets comedy. | triviaroast.magicbusstudios.com |
+| Whispering House | Trust no one | A social deduction game of secrets and suspicion. Share whispers, form alliances, and uncover the truth. | whisperinghouse.magicbusstudios.com |
+| Fake Artist | One player is faking it | One player doesn't know the prompt — but has to fake it. Spot the impostor before it's too late. | fakeartist.magicbusstudios.com |
+
+**Known issue:** Trivia Roast subdomain is misspelled as `trivaroast.magicbusstudios.com` (missing "i") in the live deployment. Needs DNS fix.
 
 ## 3. Target Audience
 

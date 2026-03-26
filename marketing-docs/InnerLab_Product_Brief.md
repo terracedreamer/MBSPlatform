@@ -6,7 +6,7 @@
 
 **innerlab.ai** | A MagicBusStudios Product
 
-> **Last Updated**: March 25, 2026. Platform decisions integrated.
+> **Last Updated**: March 26, 2026. Platform decisions integrated, website content absorbed.
 
 ## Platform Context (New)
 - Inner Lab modules share a database (inner_lab) with shared il_* collections for consciousness profiles, user memories (opt-in), check-ins, wellness profiles, and activity feed

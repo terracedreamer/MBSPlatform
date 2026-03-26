@@ -8,7 +8,7 @@
 
 ---
 
-> **Last Updated**: March 25, 2026. Platform decisions integrated.
+> **Last Updated**: March 26, 2026. Platform decisions integrated.
 
 ## Platform Context (New)
 - CWG is being migrated to the centralized MBS Platform for auth and billing
