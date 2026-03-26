@@ -106,7 +106,7 @@ StarMap:   astro_charts, astro_transits, ... (future)
 ## User Memory System (Critical Design)
 
 ### Privacy Model: Option C — User Opt-In Sharing
-- Each module creates memories in its own namespace by default (e.g., CWG writes to `il_user_memories` with `source: "cwg"`)
+- Each module creates memories in its own namespace by default (e.g., CWG writes to `il_user_memories` with `source_module: "cwg"`)
 - Memories are **private to the originating module** by default
 - User can explicitly opt-in to share specific memories (or all memories from a module) across Inner Lab
 - Shared memories get a `shared: true` flag and become readable by other modules

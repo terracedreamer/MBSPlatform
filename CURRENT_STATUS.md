@@ -28,11 +28,14 @@ This repo contains architecture decisions, migration plans, and reference files.
 | `platform-instructions-for-innerlab/` | `Innerlab/platform-instructions/` | Build Layer 2 (middleware + dashboard) |
 | `platform-instructions-for-cwg/` | `CWG/platform-instructions/` | CWG migration instructions |
 | `platform-instructions-for-yogaghost/` | `YogaGhost/platform-instructions/` | FlowState migration instructions |
+| `platform-instructions-for-standalone-products/` | Each Arcade/SW project as `platform-instructions/` | SSO migration for 11 standalone products |
 | `platform-instructions-for-new-modules/` | New module project as `platform-instructions/` | Starter kit for future modules |
 
 ## Next Steps
 
-1. Copy `platform-instructions-for-mbs/` into `MBS/` as `platform-instructions/` → start building Layer 1
-2. Copy `platform-instructions-for-innerlab/` into `Innerlab/` as `platform-instructions/` → start building Layer 2
+1. Copy `platform-instructions-for-mbs/` into `MBS/` as `platform-instructions/` → build Layer 1
+2. Copy `platform-instructions-for-innerlab/` into `Innerlab/` as `platform-instructions/` → build Layer 2
 3. Run CWG + FlowState migration scripts (after both layers are built)
 4. Copy migration docs into `CWG/` and `YogaGhost/` as `platform-instructions/` → refactor to use platform
+5. Copy standalone-products instructions into each Arcade/SW project → SSO migration
+6. New modules use `platform-instructions-for-new-modules/` starter kit

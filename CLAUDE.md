@@ -16,17 +16,22 @@
 ```
 MBSPlatform/ (THIS REPO — think tank, no code)
 │
-├── MBS-platform-reference/CLAUDE.md
-│     ↓ Copy into MBS/ project
+├── platform-instructions-for-mbs/CLAUDE.md
+│     ↓ Copy into MBS/platform-instructions/
 │     MBS/ adds: SSO, billing, entitlements, login page, account settings
 │     Deploys to: magicbusstudios.com (2 containers: frontend + backend)
 │
-├── InnerLab-middleware/CLAUDE.md
-│     ↓ Copy into Innerlab/ project
+├── platform-instructions-for-innerlab/CLAUDE.md
+│     ↓ Copy into Innerlab/platform-instructions/
 │     Innerlab/ adds: il_* APIs, consciousness, memories, dashboard
 │     Deploys to: innerlab.ai (2 containers: frontend + backend)
 │
-├── Architecture docs, migration plans, product briefs
+├── platform-instructions-for-cwg/ → CWG/platform-instructions/ (migration)
+├── platform-instructions-for-yogaghost/ → YogaGhost/platform-instructions/ (migration)
+├── platform-instructions-for-standalone-products/ → each Arcade/SW project (SSO migration)
+├── platform-instructions-for-new-modules/ → new IL module projects (starter kit)
+│
+├── marketing-docs/, archive/, session docs
 └── SESSION_HANDOFF.md for continuity across sessions
 ```
 

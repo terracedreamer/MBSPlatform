@@ -86,9 +86,9 @@ Since FlowState has 0 real users, this is less critical than CWG. But follow the
 - `il_user_wellness_profiles` — extract healthConditions + injuries from users doc
 - Goals → partially shared (currently FlowState-specific strings like 'balance', 'flexibility')
 
-**Platform-level → `mbs_platform`:**
-- `mbs_friends` (from `friends`) — add source_product field
-- `mbs_invites` (from `invites`) — add product field
+**Platform-level → `mbs_platform` database:**
+- `friends` collection (from `friends`) — add `source_product: "flowstate"` field
+- `invites` collection (from `invites`) — add `product: "flowstate"` field
 
 ### Step 4: Update FlowState Backend
 - Change database connection from `yogaghost` to `inner_lab`

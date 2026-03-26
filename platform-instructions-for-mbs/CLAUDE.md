@@ -288,6 +288,28 @@ Two migration scripts to build (run once, from this backend):
 - Same split pattern: identity → mbs_platform, product → yoga_*, shared → il_*
 - See `YogaGhost/MBS_DATABASE_MIGRATION_PLAN.md` in the FlowState project (or `MBSPlatform/platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` for the full migration doc)
 
+## Architectural Notes for Downstream Products
+
+### Deep Link Preservation
+The `?redirect=` parameter in the login flow MUST accept full URLs including paths:
+- Example: `?redirect=https://conversationswithgod.ai/chat/123`
+- The platform redirects back to the FULL URL: `https://conversationswithgod.ai/chat/123?token={JWT}`
+- Product frontends must handle the token extraction without losing the current path
+
+### Token Refresh Strategy (Phase 1 — Simple)
+Phase 1 uses short-lived JWTs with no refresh token. When the JWT expires (7 days):
+- Product frontends detect 401 responses
+- Redirect to MBS Platform login (same branded flow)
+- Google SSO typically auto-approves (no re-consent needed) so the user experience is a brief redirect, not a full re-login
+- **Phase 2+**: Add a `/api/auth/refresh` endpoint with refresh tokens for silent re-authentication
+
+### Entitlement API Resilience
+The entitlement check endpoint (`GET /api/entitlements/:product`) is called by all 22 products. To prevent it becoming a single point of failure:
+- Products SHOULD cache entitlement responses on the backend for 5-15 minutes
+- If the platform is unreachable, products SHOULD allow access based on the last cached response (graceful degradation)
+- The platform MUST respond fast (< 100ms) — this is a simple DB lookup with an index on `user_id`
+- Rate limiting: per-product, not per-user (each product backend makes one call per user request)
+
 ## What NOT to Do
 - Do NOT remove existing marketing pages or form handler — they keep working
 - Do NOT modify CWG or FlowState backends until platform is built and tested
