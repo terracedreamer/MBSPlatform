@@ -74,9 +74,7 @@ il_consciousness_profiles   — Spiritual assessment, archetype type, orientatio
 il_consciousness_snapshots  — Historical profile changes over time
 il_personal_histories       — User's life story for AI personalization
 il_check_ins                — Daily mood/energy/stress/intention (any module can write)
-il_daily_check_ins          — Aggregated daily check-in data
-il_user_memories            — Cross-session AI memory with opt-in sharing
-il_shared_memories          — Memories user has consented to share across modules
+il_user_memories            — Cross-session AI memory with opt-in sharing (shared: false = private to source module, shared: true = visible to all IL modules)
 il_user_wellness_profiles   — Health conditions, injuries, goals (shared by FlowState + BreathArc)
 il_activity_feed            — Cross-module activity events
 il_blockchain_anchors       — OpenTimestamps data integrity proofs
@@ -84,6 +82,10 @@ il_sync_backups             — Local-first storage sync infrastructure
 il_analytics_events         — User event tracking (TTL: 90 days)
 il_notifications            — Unified notifications across Inner Lab modules
 ```
+
+**Note on removed collections:**
+- `il_daily_check_ins` (aggregated) — removed. Use `il_check_ins` with date queries instead of a separate aggregation collection. Simpler, no sync issues.
+- `il_shared_memories` — removed. Shared memories are simply `il_user_memories` documents where `shared: true`. No need for a separate collection.
 
 ### Module Collections (owned by each module backend)
 
@@ -227,7 +229,7 @@ async function requireAuth(req, res, next) {
 | DB_NAME | `inner_lab` | Same DB all IL modules use |
 | JWT_SECRET | (same as MBS Platform) | To verify platform-issued JWTs |
 | PORT | TBD | Not 3002 (that's MBS Platform) |
-| CORS_ORIGINS | All Inner Lab frontend domains | CWG, FlowState, innerlab.ai, etc. |
+| CORS_ORIGINS | innerlab.ai frontend only | Modules access il_* data directly via shared DB, not HTTP. Only the IL dashboard frontend calls these APIs. |
 | MBS_PLATFORM_URL | https://magicbusstudios.com | For user lookups if needed |
 
 ## When to Build This

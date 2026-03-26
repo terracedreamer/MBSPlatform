@@ -150,6 +150,9 @@ Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
 - POST /api/billing/btcpay/checkout — BTCPay Lightning checkout
 - POST /api/billing/btcpay/webhook — BTCPay webhook
 - GET /api/billing/history — transaction history
+- GET /api/friends — list friends
+- POST /api/friends/invite — create invite
+- POST /api/friends/accept — accept invite
 - GET /api/health — health check
 
 **Phase 2+**

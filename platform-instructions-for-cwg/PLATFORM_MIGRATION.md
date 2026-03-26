@@ -42,7 +42,7 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 - Remove CWG's Stripe integration (checkout, webhooks, portal)
 - Remove CWG's BTCPay integration
 - Upgrade/billing buttons redirect to MBS Platform billing page
-- Check access via MBS Platform: `GET magicbusstudios.com/api/entitlements/cwg`
+- Check access via MBS Platform: `GET https://magicbusstudios.com/api/entitlements/cwg`
 - Free tier: `{ hasAccess: true, reason: "free_tier" }`
 - Premium: `{ hasAccess: true, reason: "product_pass" }` or `{ hasAccess: true, reason: "category_access" }`
 

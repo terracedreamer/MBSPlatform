@@ -100,13 +100,17 @@ When your module's AI learns something about the user:
 Memory document structure:
 ```javascript
 {
+  _id: ObjectId,
   user_id: String,           // platform user ID (from JWT)
   source_module: String,     // your module slug
   memory_type: String,       // "fact", "preference", "emotional_state", "insight"
   content: String,           // what the AI learned
-  shared: Boolean,           // false = private to your module
+  confidence: Number,        // 0-1, how certain the AI is about this memory
+  shared: Boolean,           // false = private to your module, true = visible to all IL modules
+  shared_at: DateTime,       // when user opted to share (null if not shared)
   created_at: DateTime,
-  updated_at: DateTime
+  updated_at: DateTime,
+  expires_at: DateTime       // optional TTL for transient memories like mood
 }
 ```
 

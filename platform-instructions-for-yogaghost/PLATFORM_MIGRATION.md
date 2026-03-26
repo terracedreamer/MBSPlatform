@@ -44,7 +44,7 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 - Remove FlowState's Stripe routes and webhook handler
 - Remove Stripe env vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_*)
 - Upgrade buttons redirect to MBS Platform billing page
-- Check access via: `GET magicbusstudios.com/api/entitlements/flowstate`
+- Check access via: `GET https://magicbusstudios.com/api/entitlements/flowstate`
 
 ### Step 3: Migrate Data
 Since FlowState has 0 real users, this is less critical than CWG. But follow the same pattern:
