@@ -175,7 +175,7 @@ If `hasAccess: false` and `reason: "no_subscription"`:
 
 | Variable | Value | Notes |
 |----------|-------|-------|
-| MONGODB_URI | (same as all MBS apps) | Shared MongoDB on Coolify |
+| MONGO_URL | (same as all MBS apps) | Shared MongoDB on Coolify |
 | DB_NAME | `inner_lab` | Same DB as all Inner Lab modules |
 | JWT_SECRET | (same as MBS Platform) | Must match for JWT validation |
 | PORT | (unique per module) | Don't conflict with other modules |
@@ -254,3 +254,21 @@ your-module/
 | Rituals | `rituals` | `ritual_*` | Coming Soon | |
 | InnerQuest | `innerquest` | `quest_*` | Coming Soon | |
 | Nexus | `nexus` | `nexus_*` | Coming Soon | |
+
+---
+
+## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
+
+### JWT Details (as actually implemented)
+- Header: `Authorization: Bearer <token>`
+- Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
+- `userId` is a **string** (ObjectId.toString()). Cast if needed: `new mongoose.Types.ObjectId(req.user.userId)`
+- Token stored in `localStorage.getItem("mbs_token")`, user in `localStorage.getItem("mbs_user")`
+- Token arrives via `?token=<JWT>` URL param after login redirect — extract, store, replaceState
+
+### Entitlement Check
+- `GET https://magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
+- Returns `{ success, hasAccess, reason }` — cache for 5 minutes
+
+### GDPR
+- MBS Platform cascade delete reaches into `inner_lab` database. All your {prefix}_* and il_* collections must use `user_id` field consistently (not `userId` or `user`).

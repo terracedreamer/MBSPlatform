@@ -166,3 +166,42 @@ When you finish the migration and refactor, generate a file called `PHASE_3_REPO
 12. **Testing steps** — How to verify the migration worked and the refactored app functions correctly
 
 This report is critical — the orchestrator session (MBSPlatform repo) uses it to track the migration and update downstream instructions if needed.
+
+---
+
+## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
+
+These are real-world implementation details from the MBS Platform build that affect this migration:
+
+### Env Var Name
+- The MBS Platform uses **`MONGO_URL`** (not `MONGODB_URI`). Use `MONGO_URL` for consistency.
+
+### JWT Details (as actually implemented)
+- Header: `Authorization: Bearer <token>`
+- Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
+- `userId` is a **string** (ObjectId.toString()). CWG uses UUID strings — the migration maps CWG UUIDs to platform ObjectId strings. In the refactored CWG backend, use `req.user.userId` from the JWT.
+- Python JWT library: use `PyJWT` (`import jwt`), algorithm `HS256`, verify with the shared `JWT_SECRET`.
+
+### Frontend Token Storage
+- After login redirect, the JWT arrives as `?token=<JWT>` in the URL
+- CWG frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
+- All API calls use header: `Authorization: Bearer ${localStorage.getItem("mbs_token")}`
+
+### First Platform User (Your Test Account)
+- `1984.abhinav@gmail.com` → platform ID: `69c53401fe8f1763b9046ae5`
+- This user exists in `mbs_platform` but has NO link to CWG data yet
+- During migration, match on `email` or `google_id` to link existing CWG users to platform accounts
+
+### Category Values
+- Categories are lowercase no-separator: `innerlab` (not `inner_lab`)
+
+### Entitlement Check
+- `GET https://magicbusstudios.com/api/entitlements/cwg` with `Authorization: Bearer <JWT>`
+- Returns `{ success, hasAccess, reason }` — reason `free_tier` means free access, `no_subscription` means blocked
+- Cache response for 5 minutes in-memory
+
+### GDPR
+- MBS Platform cascade delete reaches into `inner_lab` database. All cwg_* and il_* collections must use `user_id` field consistently.
+
+### BTCPay
+- BTCPay entitlements are 30-day non-recurring. CWG's existing BTCPay integration should be REMOVED — all payments go through the platform.

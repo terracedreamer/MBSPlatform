@@ -148,3 +148,34 @@ When you finish the migration and refactor, generate a file called `PHASE_4_REPO
 12. **Testing steps** — How to verify the migration worked and the refactored app functions correctly
 
 This report is critical — the orchestrator session (MBSPlatform repo) uses it to track the migration.
+
+---
+
+## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
+
+These are real-world implementation details from the MBS Platform build that affect this migration:
+
+### Env Var Name
+- The MBS Platform uses **`MONGO_URL`** (not `MONGODB_URI`). Use `MONGO_URL` for consistency.
+
+### JWT Details (as actually implemented)
+- Header: `Authorization: Bearer <token>`
+- Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
+- `userId` is a **string** (ObjectId.toString())
+- Node.js: use `jsonwebtoken` package, algorithm `HS256`, verify with shared `JWT_SECRET`
+
+### Frontend Token Storage
+- After login redirect, JWT arrives as `?token=<JWT>` in the URL
+- FlowState frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
+- All API calls use header: `Authorization: Bearer ${localStorage.getItem("mbs_token")}`
+
+### Entitlement Check
+- `GET https://magicbusstudios.com/api/entitlements/flowstate` with `Authorization: Bearer <JWT>`
+- Returns `{ success, hasAccess, reason }` — reason `free_tier` means free access
+- Cache response for 5 minutes in-memory
+
+### Category Values
+- Categories are lowercase no-separator: `innerlab` (not `inner_lab`)
+
+### GDPR
+- MBS Platform cascade delete reaches into `inner_lab` database. All yoga_* and il_* collections must use `user_id` field consistently.

@@ -129,7 +129,7 @@ async function requireAuth(req, res, next) {
 - `PRODUCT_SLUG` — your product's slug (e.g., `brokenchain`)
 
 **Keep (do NOT remove):**
-- `MONGODB_URI` — your product's own database connection (NOT inner_lab, NOT mbs_platform)
+- `MONGO_URL` — your product's own database connection (NOT inner_lab, NOT mbs_platform)
 - `DB_NAME` — your product's own database name
 - All other existing product-specific env vars (OPENAI_API_KEY, etc.)
 
@@ -190,3 +190,27 @@ When you finish the SSO migration, generate a file called `PHASE_5_REPORT.md` in
 9. **Testing steps** — How to verify the SSO migration works
 
 This report helps the orchestrator track which standalone products are fully migrated.
+
+---
+
+## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
+
+These are real-world implementation details from the MBS Platform build that affect this migration:
+
+### JWT Details (as actually implemented)
+- Header: `Authorization: Bearer <token>`
+- Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
+- `userId` is a **string** (ObjectId.toString())
+- Use `jsonwebtoken` (Node.js) or `PyJWT` (Python), algorithm `HS256`, verify with shared `JWT_SECRET`
+
+### Frontend Token Storage
+- After login redirect, JWT arrives as `?token=<JWT>` in the URL
+- Your frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
+
+### Entitlement Check
+- `GET https://magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
+- Returns `{ success, hasAccess, reason }`
+- Cache response for 5 minutes in-memory
+
+### Open Redirect Protection
+- The `?redirect=` URL in the login flow is validated against CORS_ORIGINS. Your product's domain MUST be in the MBS Platform's CORS_ORIGINS list, or users will be redirected to magicbusstudios.com instead of your product.

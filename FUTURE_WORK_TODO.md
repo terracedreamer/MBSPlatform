@@ -68,10 +68,18 @@
 - [ ] CWG migration script (56 collections → 3 buckets with field renames)
 - [ ] FlowState migration script (7 collections → 3 buckets with field renames)
 
+### Phase 1 Addendum (from Phase 1 Report review)
+- [ ] Add "Login" button to MBS marketing site nav bar → links to `/auth/login?brand=mbs` (UX refinement needed later)
+- [ ] Add rate limiting to platform routes (auth, entitlements, billing) — form routes already have it
+- [ ] Create Stripe products and prices in Stripe Dashboard (deferred — do before real payments needed)
+- [ ] Add Lightning payment option to BillingPage UI (backend ready, frontend missing)
+- [ ] Design full product catalog billing page (22 products across 3 categories)
+
 ### Deployment
-- [ ] Follow deployment checklist in platform-instructions
-- [ ] Set all env vars in Coolify BEFORE deploying
-- [ ] Test: login flow, entitlement check, existing marketing pages still work
+- [x] Follow deployment checklist in platform-instructions
+- [x] Set all env vars in Coolify
+- [x] Test: login flow, entitlement check, existing marketing pages still work
+- [x] Phase 1 deployed and passing all 15 tests
 
 ---
 

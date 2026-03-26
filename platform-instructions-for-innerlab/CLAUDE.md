@@ -332,7 +332,7 @@ async function requireAuth(req, res, next) {
 | Variable | Value | Notes |
 |----------|-------|-------|
 **NEW (add to Coolify):**
-| MONGODB_URI | (same as all MBS apps) | Shared MongoDB instance |
+| MONGO_URL | (same as all MBS apps) | Shared MongoDB instance |
 | DB_NAME | `inner_lab` | Same DB all IL modules use |
 | JWT_SECRET | (same as MBS Platform) | To verify platform-issued JWTs |
 | PORT | TBD | Not 3002 (that's MBS Platform) |
@@ -453,3 +453,48 @@ When you finish building, generate a file called `PHASE_2_REPORT.md` in the proj
 12. **Testing commands** — Exact curl commands or steps to verify each feature works
 
 This report is critical — the orchestrator session (MBSPlatform repo) uses it to update instructions for all downstream phases before they start.
+
+---
+
+## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
+
+These are real-world implementation details from the MBS Platform build that affect this phase:
+
+### Env Var Name
+- The MBS Platform uses **`MONGO_URL`** (not `MONGODB_URI`). Use `MONGO_URL` for consistency across all MBS apps.
+
+### JWT Details (as actually implemented)
+- Header: `Authorization: Bearer <token>`
+- Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
+- `userId` is a **string** (MongoDB ObjectId.toString()). If you need an ObjectId, cast it: `new mongoose.Types.ObjectId(req.user.userId)`
+- Token expiry: 7 days, no refresh endpoint yet
+
+### Frontend Token Storage
+- Products store the JWT in `localStorage.getItem("mbs_token")`
+- User profile in `localStorage.getItem("mbs_user")` — JSON: `{ id, email, name, avatar }`
+- Token is passed via URL param `?token=<JWT>` after login redirect. Product frontends must extract it, store it, and remove from URL with `history.replaceState`.
+
+### ConsentAuditLog.user_id is String
+- The GDPR consent audit log stores `user_id` as a **String**, not ObjectId. This is because GDPR deletion replaces the user_id with a SHA-256 hash. If Phase 2 writes to this collection, use `.toString()`.
+
+### GDPR Cascade
+- The MBS Platform DELETE /api/auth/account connects to the `inner_lab` database and deletes all documents where `user_id` matches. All il_* collections MUST use `user_id` consistently (not `userId` or `user`).
+
+### Category Values
+- Categories are lowercase no-separator: `innerlab`, `arcade`, `studioworks` (not `inner_lab` or `Inner Lab`)
+
+### Entitlement Response
+- `GET /api/entitlements/:product` returns `{ success, hasAccess, reason }`
+- Reason values: `mbs_all_access`, `category_access`, `product_pass`, `free_tier`, `no_subscription`
+- Products should cache entitlement responses for 5 minutes (in-memory, key: `userId:productSlug`)
+- After billing success, redirect with `?refresh=true` to bust cache
+
+### BTCPay
+- BTCPay entitlements are **30-day non-recurring passes**. No auto-renew. User must repurchase.
+- BTCPay webhook uses HMAC-SHA256 verification with `btcpay-sig` header and `BTCPAY_WEBHOOK_SECRET` env var.
+
+### First Platform User
+- Abhinav Gupta (`1984.abhinav@gmail.com`), platform ID: `69c53401fe8f1763b9046ae5`. This user exists ONLY in `mbs_platform` — no link to CWG or FlowState data yet.
+
+### Billing Page Status
+- Billing page is a skeleton with placeholder pricing. No real Stripe Price IDs configured. Stripe product creation deferred to a later phase. Lightning payment option not yet in the UI.
