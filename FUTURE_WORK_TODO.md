@@ -2,160 +2,78 @@
 
 **Last Updated**: March 26, 2026
 
+**RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
+
 ---
 
-## Priority 0 — Marketing Brief Enhancement ~~(Next Session)~~ DONE
+## Phase Completion Tracker
 
-- [x] Absorb Arcade brief content into MBS master doc
-- [x] Check innerlab.ai website for missing product info → updated IL brief
-- [x] Add Inner Lab dashboard vision, module connections, activity feed to IL brief
-- [x] Check magicbusstudios.com for missing info → updated MBS master doc
-- [x] Add Studio Works detail to MBS master doc
+| Phase | Status | Instructions Location | Items Tracked In |
+|-------|--------|----------------------|-----------------|
+| Phase 1: MBS Platform | ✅ Core done, addendum in progress | `platform-instructions-for-mbs/CLAUDE.md` | That doc (addendum section) |
+| Phase 2: IL Middleware | Not started | `platform-instructions-for-innerlab/CLAUDE.md` | That doc |
+| Phase 3: CWG Migration | Not started | `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` | That doc |
+| Phase 4: FlowState Migration | Not started | `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` | That doc |
+| Phase 5: Standalone Products | Not started | `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` | That doc |
+
+---
+
+## Cross-Phase Dependencies (CRITICAL — review before starting each phase)
+
+| Item | Depends On | Blocks | Notes |
+|------|-----------|--------|-------|
+| CWG migration script | Phase 1 (users table) + Phase 2 (il_* collections) | Phase 3 | Script writes to both mbs_platform AND inner_lab |
+| FlowState migration script | Phase 1 (users table) + Phase 2 (il_* collections) | Phase 4 | Same pattern as CWG |
+| Stripe product/price creation | Pricing decision (no phase dependency) | Real payments in any phase | Backend ready, needs Stripe Dashboard setup |
+| GDPR cascade delete testing | Phase 1 (delete endpoint) + Phase 2 (il_* data) | None (works now, test after Phase 2) | Phase 1 built the cascade, Phase 2 creates the data it deletes |
+
+---
+
+## Pricing Decision (BLOCKS: Real payments across all phases)
+
+**Status: Not decided. Deferred.**
+
+Before any product can charge real money, we need:
+- [ ] Decide pricing structure: per-product subscriptions vs category bundles vs all-access — what combinations?
+- [ ] Decide which products are free forever (Arcade? Studio Works?) vs freemium (CWG free tier) vs paid-only
+- [ ] Decide how existing CWG Stripe subscriptions appear on the platform
+- [ ] Create Stripe products in Dashboard (prefixed `[MBS]` per convention)
+- [ ] Create Stripe Price IDs and wire into billing checkout flow
+- [ ] Design full product catalog billing page (22 products, 3 categories)
+- [ ] Add Lightning as equal payment option alongside Stripe in billing UI
+
+**This does NOT block Phase 2, 3, 4, or 5.** Entitlement checks work. Free tier works. Products can launch and be used. Payments are the last mile.
+
+---
+
+## Phase-Independent Future Work
+
+These items don't belong to any specific phase and can be done anytime:
+
+### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
-- [x] Sync updated briefs to Desktop/Marketing/Overview/
+- [ ] Add "Login" button to MBS marketing site nav (currently in Phase 1 addendum — UX refinement later)
 
----
-
-## Priority 1 — MBS Platform Phase 1 (MVP)
-
-### Auth
-- [ ] Google SSO login with JWT issuance (JWT spec defined: userId, email, name, avatar, isAdmin)
-- [ ] Branded login page (Inner Lab vs MBS branding via `?brand=` param)
-- [ ] Open redirect protection (validate ?redirect= against ALLOWED_REDIRECT_DOMAINS derived from CORS_ORIGINS)
-- [ ] Token-in-URL handling (extract, store, replaceState)
-- [ ] Active session management (track JWTs, device sign-out)
-- [ ] JWT verification middleware for product backends
-- [ ] Defer: Nostr auth, LNURL auth (Phase 2+)
-
-### User Profiles
-- [ ] User model (18 fields including stripe_customer_id — fully defined in platform-instructions)
-- [ ] Profile CRUD endpoints
-
-### Entitlements
-- [ ] Entitlement model (stripe_customer_id removed — lives on User only)
-- [ ] GET /api/entitlements/:product → `{ success: true, hasAccess, reason }` (5 reason values defined)
-- [ ] GET /api/entitlements/category/:cat
-- [ ] Product catalog config with freeTier flags and freeTierLimits
-- [ ] Entitlement priority: mbs_all_access > category_access > product_pass > free_tier
-- [ ] Admin grant/revoke endpoints (verify is_admin from DB, not JWT)
-
-### Billing — Stripe
-- [ ] Stripe checkout (product passes, category access, MBS all access)
-- [ ] Stripe webhook → create/update Entitlement
-- [ ] Stripe customer portal
-- [ ] Transaction history
-
-### Billing — BTCPay (Lightning)
-- [ ] BTCPay checkout → create invoice
-- [ ] BTCPay webhook → settled = create Entitlement with expiry (no auto-renew)
-- [ ] Lightning checkout flow
-
-### Social
-- [ ] Friends model + endpoints
-- [ ] Invites model + endpoints
-
-### Platform Infrastructure
-- [ ] GDPR deletion cascade (DELETE /api/auth/account — deletes across mbs_platform + inner_lab + all module collections)
-- [ ] CORS (18 domains enumerated in platform-instructions)
-- [ ] Health check, rate limiting, input validation
-- [ ] Product catalog config (22 products, NOT hardcoded)
-- [ ] Push subscriptions, feature flags, consent audit log, data requests
-- [ ] Deployment: defensive route loading (try/catch on new routes), env vars first
-- [ ] JWT security: shared secret risk acknowledged, RS256 upgrade path for Phase 2+
-- [ ] Entitlement cache spec documented for downstream products (5min TTL, ?refresh=true)
-
-### Migration Scripts (built here, run once)
-- [ ] CWG migration script (56 collections → 3 buckets with field renames)
-- [ ] FlowState migration script (7 collections → 3 buckets with field renames)
-
-### Phase 1 Addendum (from Phase 1 Report review)
-- [ ] Add "Login" button to MBS marketing site nav bar → links to `/auth/login?brand=mbs` (UX refinement needed later)
-- [ ] Add rate limiting to platform routes (auth, entitlements, billing) — form routes already have it
-- [ ] Create Stripe products and prices in Stripe Dashboard (deferred — do before real payments needed)
-- [ ] Add Lightning payment option to BillingPage UI (backend ready, frontend missing)
-- [ ] Design full product catalog billing page (22 products across 3 categories)
-
-### Deployment
-- [x] Follow deployment checklist in platform-instructions
-- [x] Set all env vars in Coolify
-- [x] Test: login flow, entitlement check, existing marketing pages still work
-- [x] Phase 1 deployed and passing all 15 tests
-
----
-
-## Priority 2 — Inner Lab Middleware + Dashboard (Layer 2) — Build Immediately After Phase 1
-
-**Reference: `platform-instructions-for-innerlab/CLAUDE.md`**
-
-### Backend
-- [ ] Mongoose + inner_lab DB connection on existing Express server
-- [ ] JWT validation middleware
-- [ ] il_* Mongoose models matching schema contracts (check-ins, consciousness, histories, wellness, memories, activity feed)
-- [ ] MongoDB JSON Schema validation on critical collections
-- [ ] All API routes at /api/ prefix (20 endpoints defined)
-- [ ] Deploy to Coolify
-
-### Frontend
-- [ ] Auth-gated routing (dashboard pages require JWT + category_access entitlement)
-- [ ] Dashboard, Consciousness, Memories, Activity pages
-- [ ] Upsell page for users without Inner Lab All Access
-
-### Deferred
-- [ ] Daily briefing engine + view (need data from 2-3 modules)
-- [ ] Cross-module insights engine + view
-
----
-
-## Priority 3 — CWG & FlowState Migration
-
-- [ ] Run CWG migration script from MBS/ (copy data, field renames, upsert on email)
-- [ ] Refactor CWG backend (inner_lab DB, JWT middleware in Python, cwg_* prefix, remove auth/billing)
-- [ ] Refactor CWG frontend (remove login/billing pages, redirect to platform)
-- [ ] Run FlowState migration script (0 users — mostly structural)
-- [ ] Refactor FlowState backend + frontend (same pattern as CWG)
-- [ ] Deploy and test both
-
----
-
-## Priority 4 — Connect Standalone Products (11 apps)
-
-- [ ] Copy standalone-products instructions to each project
-- [ ] Add JWT middleware to each Arcade game (5) and Studio Works app (6)
-- [ ] Remove standalone auth from each
-- [ ] Set JWT_SECRET + PLATFORM_URL in each Coolify service
-- [ ] Test login → entitlement check for each product
-
----
-
-## Priority 5 — MBS Platform Phase 2: Communication
-
-- [ ] Welcome email on signup
+### Platform Enhancements (after all phases complete)
+- [ ] Welcome email on signup (SendGrid)
 - [ ] Purchase confirmation emails
 - [ ] Subscription change emails (cancelled, expiring, payment failed)
-- [ ] BTCPay expiry warning emails
+- [ ] BTCPay expiry warning emails (30-day passes)
 - [ ] Basic admin panel: list users, view entitlements, grant/revoke
 - [ ] Email preferences (opt-in/out per category)
 - [ ] One-click unsubscribe (token-based)
+- [ ] Nostr authentication (models exist, routes deferred)
+- [ ] LNURL-Auth (models exist, routes deferred)
 - [ ] Auth method linking (POST /api/auth/link-nostr, link-lnurl)
-- [ ] Nostr authentication
-- [ ] LNURL-Auth
-
----
-
-## Priority 6 — MBS Platform Phase 3: Growth
-
-- [ ] Promo code engine
+- [ ] Promo code engine (model exists)
 - [ ] Free trial support (X days free, auto-convert)
-- [ ] Referral program
+- [ ] Referral program (model exists)
 - [ ] Win-back offers
 
----
-
-## Priority 7 — MBS Platform Advanced
-
-- [ ] Phase 5: User dashboard (My Products, billing history, manage subscriptions)
-- [ ] Phase 6: Admin dashboard (analytics, revenue, funnel tracking)
-- [ ] Phase 7: Email campaigns + announcements + newsletter
-- [ ] Phase 8: Multi-currency, family plan, teams, push notifications, enterprise SSO
-- [ ] JWT upgrade to RS256 asymmetric signing
+### Technical Debt (no phase dependency)
+- [ ] JWT upgrade to RS256 asymmetric signing (eliminates shared secret risk)
 - [ ] Token refresh endpoint (silent re-authentication)
+- [ ] User dashboard (My Products, billing history, manage subscriptions)
+- [ ] Admin dashboard (analytics, revenue, funnel tracking)
+- [ ] Email campaigns + announcements + newsletter
+- [ ] Multi-currency, family plan, teams, push notifications, enterprise SSO
