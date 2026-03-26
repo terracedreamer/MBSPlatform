@@ -303,13 +303,12 @@ Each brand level has its own identity, voice, and messaging focus:
 - `/` — Homepage (hero, flagship section, module grid, newsletter/waitlist CTAs). Note: currently has a timed redirect to innerlab.ai — needs fixing when platform is built.
 - `/studio-works` — Studio Works grid (6 apps, all live)
 - `/arcade` — Arcade grid (5 games, all live)
-- `/about` — Currently redirects to innerlab.ai (no dedicated About page exists yet)
+- `/about` — About the Studio (hero, 4 core values, subscribe/contact CTAs)
 - `/contact`, `/subscribe`, `/waitlist` — Form pages (SendGrid)
 - `/privacy`, `/terms` — Legal pages
 
 **Known issues to fix when building the platform:**
-- Homepage redirect to innerlab.ai should be removed — MBS homepage should be the primary landing
-- `/about` needs a real About page (studio story, mission, team)
+- Homepage has a timed redirect to innerlab.ai — may need to be removed so MBS homepage stands on its own
 - No pricing visible anywhere — pricing pages come with the platform build
 - Trivia Roast subdomain typo: `trivaroast` should be `triviaroast`
 
