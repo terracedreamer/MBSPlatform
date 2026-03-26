@@ -53,23 +53,23 @@ Inner Lab is a unified system for reflection, practice, and awareness that adapt
 
 ## Section 3: How It Works (4-Step Framework)
 
-The Inner Lab experience follows a consistent 4-step cycle designed to deepen self-awareness over time. Each session is simple, short, and personal.
+The Inner Lab experience follows a consistent 4-step cycle designed to deepen self-awareness over time:
 
 ### Step 1: Observe
 
-Check in with your mood, energy, and intention. A 30-second snapshot of where you are right now. The system begins by meeting you where you are.
+Check in with your mood, energy, and intention. Capture your current state without judgment. The system begins by meeting you where you are.
 
 ### Step 2: Interpret
 
-The system reads your signals -- transits, journal themes, patterns -- and surfaces what matters today. It helps you understand what keeps showing up, what's shifting, what needs attention.
+The system reads your signals and surfaces relevant content. It helps you understand patterns — what keeps showing up, what's shifting, what needs attention.
 
 ### Step 3: Practice
 
-Follow a guided exercise tailored to your state: breathwork, reflection, yoga, or a focused prompt. Take guided action.
+Engage in a guided exercise tailored to your current state. This could be a conversation, a breathing session, a meditation, a journal prompt, or a movement practice. Take guided action.
 
 ### Step 4: Integrate
 
-Reflect on what shifted. Rate accuracy, capture insights, and help the system learn alongside you. This is where growth compounds.
+Reflect on what shifted. Help the system learn from your experience so future suggestions become more relevant. This is where growth compounds.
 
 ---
 
@@ -85,9 +85,9 @@ This cycle repeats and deepens over time as the system adapts to the user. Each 
 
 ---
 
-## Section 4B: A Day With Inner Lab
+## Section 4B: A Day With Inner Lab (Website Marketing Content)
 
-What a single session looks like across the day (presented as Morning / Midday / Evening tabs on the website):
+How the daily experience is presented on innerlab.ai (Morning / Midday / Evening tabs). This is aspirational marketing — actual implementation details live in the platform-instructions docs:
 
 | Step | What Happens |
 |------|-------------|
@@ -100,9 +100,9 @@ What a single session looks like across the day (presented as Morning / Midday /
 
 ---
 
-## Section 4C: The Intelligence Layer
+## Section 4C: The Intelligence Layer (Website Marketing Content)
 
-A shared intelligence layer connects every module -- making the whole greater than the sum of its parts. Visualized on the website as concentric layers with the user at the center:
+How the intelligence layer is presented on innerlab.ai. This is the marketing vision — actual collection schemas and API designs live in `platform-instructions-for-innerlab/CLAUDE.md`. Visualized on the website as concentric layers with the user at the center:
 
 | Layer | Components |
 |-------|-----------|
@@ -301,9 +301,9 @@ Inner Lab handles deeply personal data. The privacy model is built on explicit u
 
 ---
 
-## Section 7B: Privacy & Data Commitments
+## Section 7B: Privacy & Data Commitments (Website Marketing Content)
 
-Prominently displayed on the website with 6 specific commitments:
+Privacy promises displayed on innerlab.ai. Implementation details (encryption, GDPR, data export) are in the platform-instructions docs:
 
 1. **Encrypted by Default** -- AES-256, TLS. Journal entries never stored in plain text.
 2. **Privacy-First AI** -- Minimal context sent to AI, no persistent profiles shared with AI providers.
