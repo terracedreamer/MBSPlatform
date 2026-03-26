@@ -203,6 +203,14 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── PLATFORM_MIGRATION.md                   ← FlowState migration steps
 │   └── README.md                               ← Agent intro
 │
+├── platform-instructions-for-standalone-products/ ← Copied to each Arcade/Studio Works project
+│   ├── PLATFORM_MIGRATION.md                   ← SSO migration steps (simpler than IL modules)
+│   └── README.md                               ← Agent intro
+│
+├── platform-instructions-for-new-modules/      ← Starter kit for new Inner Lab modules
+│   ├── CLAUDE.md                               ← Full module template with architecture context
+│   └── README.md                               ← How to use
+│
 ├── marketing-docs/                             ← Source of truth — synced to Desktop/Marketing/Overview/
 │   ├── MagicBusStudios_Brand_And_Company.md    ← Master: company + brand + all products + pricing
 │   ├── InnerLab_Product_Brief.md               ← Inner Lab deep dive (11 modules, framework)
@@ -228,6 +236,8 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 - `platform-instructions-for-innerlab/` → copied to `Innerlab/platform-instructions/` — agent reads and builds Layer 2
 - `platform-instructions-for-cwg/` → copied to `CWG/platform-instructions/` — agent reads and migrates CWG
 - `platform-instructions-for-yogaghost/` → copied to `YogaGhost/platform-instructions/` — agent reads and migrates FlowState
+- `platform-instructions-for-standalone-products/` → copied to each Arcade game and Studio Works app as `platform-instructions/` — agent reads and does SSO migration
+- `platform-instructions-for-new-modules/` → copied to new Inner Lab module projects as `platform-instructions/` — agent reads and builds from template
 
 Each project's CLAUDE.md has been updated with a note to check `platform-instructions/` before starting work.
 
