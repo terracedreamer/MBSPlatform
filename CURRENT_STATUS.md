@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 26, 2026 (End of Session 2)
+**Last Updated**: March 26, 2026 (Session 3 — End of Session)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -10,11 +10,11 @@ This repo contains architecture decisions, migration plans, and reference files.
 
 | Phase | Status | Next Action |
 |-------|--------|-------------|
-| Phase 1: MBS Platform | **Core + Addendum DONE** (deployed at magicbusstudios.com) | Fix BTCPay API key, create Stripe bundle price IDs, regenerate package-lock.json |
-| Phase 2: IL Middleware | **Ready to build** (instructions synced) | Open Claude Code in `Innerlab/`, paste prompt from orchestration guide |
-| Phase 3: CWG Migration | Ready (instructions synced) | After Phase 1+2 are deployed |
-| Phase 4: FlowState Migration | Ready (instructions synced) | After Phase 1+2 are deployed (can parallel with Phase 3) |
-| Phase 5: Standalone Products | Ready (instructions synced) | After Phase 1 is deployed (can all parallel) |
+| Phase 1: MBS Platform | **ALL DONE — Addendum #1-15 complete** (deployed at magicbusstudios.com) | Nothing |
+| Phase 2: IL Middleware + Auth | **FULLY COMPLETE** (api.innerlab.ai + innerlab.ai/auth/*) | Nothing — all auth pages live, ProtectedRoute fixed |
+| Phase 3: CWG Migration | **READY TO START** — all blockers cleared | Step A: migration script from MBS/; Step B: CWG refactor |
+| Phase 4: FlowState Migration | **READY TO START** — can parallel with Phase 3 | Same pattern as CWG, simpler (0 users) |
+| Phase 5: Standalone Products | **READY TO START** — can parallel with Phase 3+4 | 11 independent products, all independent |
 
 ## Known Issues
 
@@ -22,7 +22,8 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| MBS server package-lock.json | Deploy will fail | Run `npm install` in MBS/server/ and push |
+| MBS /auth/forgot-password | May have been built by Phase 1 Addendum agent (AuthForgotPasswordPage.jsx in updated report) — verify on live site | Low priority if missing — IL has its own |
+| GDPR cascade incomplete | Account delete removes mbs_platform data but NOT il_* data | Phase 1 was built before Phase 2; MBS delete endpoint needs to call Innerlab to cascade — future work |
 
 ## What Exists (Live Products)
 
@@ -31,21 +32,22 @@ This repo contains architecture decisions, migration plans, and reference files.
 | MBS website (marketing + forms) | Deployed | `MBS/` → magicbusstudios.com |
 | MBS Platform (SSO + billing) | **Deployed — Phase 1 complete** | `MBS/` → magicbusstudios.com |
 | Inner Lab website (marketing) | Deployed | `Innerlab/` → innerlab.ai |
-| Inner Lab Middleware (il_* APIs) | **Not started** | Will be added to `Innerlab/` |
+| Inner Lab Middleware (il_* APIs) | **Deployed — Phase 2 complete** | `Innerlab/` → api.innerlab.ai |
+| Inner Lab Auth Pages (4 pages) | **Deployed** (login/signup/forgot-pw/reset-pw) | `Innerlab/` → innerlab.ai/auth/* |
+| Inner Lab Dashboard (4 pages) | **Deployed and unblocked** (full login flow working) | `Innerlab/` → innerlab.ai/dashboard |
 | CWG | Deployed, needs migration | `CWG/` → conversationswithgod.ai |
 | FlowState | Deployed, needs migration | `YogaGhost/` → yoga.magicbusstudios.com |
 | Arcade games (5) | Deployed, needs SSO migration | Individual folders |
 | Studio Works tools (6) | Deployed, needs SSO migration | Individual folders |
 
-## Sync Status (verified end of Session 2)
+## Sync Status (verified Session 3)
 
 | Target | Source → Target | Status |
 |--------|----------------|--------|
-| MBS/platform-instructions/ | platform-instructions-for-mbs/ | **IN SYNC** |
-| Innerlab/platform-instructions/ | platform-instructions-for-innerlab/ | **IN SYNC** |
-| CWG/platform-instructions/ | platform-instructions-for-cwg/ | **IN SYNC** |
-| YogaGhost/platform-instructions/ | platform-instructions-for-yogaghost/ | **IN SYNC** |
-| Desktop/Marketing/Overview/ | marketing-docs/ | **IN SYNC** |
+| MBS/platform-instructions/ | platform-instructions-for-mbs/ | **IN SYNC** (addendum #14-15 added) |
+| Innerlab/platform-instructions/ | platform-instructions-for-innerlab/ | **IN SYNC** (login/signup spec added) |
+| CWG/platform-instructions/ | platform-instructions-for-cwg/ | **IN SYNC** (user copy-across + auth_methods) |
+| YogaGhost/platform-instructions/ | platform-instructions-for-yogaghost/ | **IN SYNC** (login redirect updated) |
 
 ## Pre-Build Checklist
 
@@ -57,8 +59,11 @@ This repo contains architecture decisions, migration plans, and reference files.
 - [x] Orchestration guide created with copy-paste prompts
 - [x] Phase 1 built and deployed
 - [x] Phase 1 report reviewed, learnings cascaded to all downstream instructions
-- [ ] Phase 2 started (IL Middleware)
-- [ ] Phase 2 report reviewed
+- [x] Phase 2 built and deployed
+- [x] Phase 2 report reviewed, learnings noted
+- [x] Email/password auth + 2FA added to MBS Platform (addendum #14-15)
+- [x] Inner Lab login/signup pages built (Phase 2 Addendum — all 4 pages live)
+- [x] Phase 2 Addendum report reviewed and filed
 - [ ] Phase 3 started (CWG Migration)
 - [ ] Phase 4 started (FlowState Migration)
 - [ ] Phase 5 started (11 standalone products)

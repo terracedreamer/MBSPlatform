@@ -1,5 +1,75 @@
 # CHANGELOG — MBS Platform
 
+## March 26, 2026 — Session 3 (continued): Phase 1+2 Addendum Review, Live Fixes, Phase 3 Prep
+
+### Summary
+Reviewed both Phase 1 Addendum (email/password + 2FA) and Phase 2 Addendum (Inner Lab auth pages) reports. Made direct code fixes to MBS/ and Innerlab/ from the orchestrator. Full audit of Phase 3-5 instructions. All phases ready for execution.
+
+### Code Changes (from orchestrator — not from project agents)
+- **MBS/**: Added "Sign Up" button alongside "Login" in nav when logged out (Layout.jsx)
+- **Innerlab/**: Added "Sign In" + "Sign Up" buttons to nav when not authenticated (Layout.jsx — desktop + mobile)
+- **Innerlab/**: Branded auth page headings — "Sign in to Inner Lab" / "Join Inner Lab" with font-display italic gradient, tagline pill badge (AuthLoginPage.jsx, AuthSignupPage.jsx)
+- **Innerlab/**: ProtectedRoute redirect confirmed fixed (was magicbusstudios.com/login → now /auth/login)
+- **Both projects**: Created ORCHESTRATOR_CHANGES.md documenting all changes for future agents
+
+### Phase 3-5 Audit Results
+- CWG migration doc: CLEAN ✓
+- YogaGhost migration doc: CLEAN ✓
+- Standalone products doc: CLEAN ✓
+- New-modules template: FIXED (module domain → innerlab.ai, billing redirect cleaned)
+- Orchestration Guide: FIXED (FlowState redirect → innerlab.ai)
+
+### Live Verification (via Chrome extension)
+- innerlab.ai/auth/login: ✅ Live, branded heading visible
+- innerlab.ai nav: ✅ Sign In + Sign Up buttons showing
+- innerlab.ai/dashboard (unauthenticated): ✅ Redirects to /auth/login?redirect=%2Fdashboard
+- api.innerlab.ai/health: ✅ {"status":"ok","service":"innerlab-middleware"}
+- magicbusstudios.com nav: ✅ Login + Sign Up buttons showing
+- magicbusstudios.com/auth/login: ✅ API reachable, email/password + Google SSO functional
+
+### Future Work Added
+- Post-signup module picker (show all modules, let users pick subscriptions)
+
+---
+
+## March 26, 2026 — Session 3: Phase 2 Review, Email/Password Auth, 2FA, Login Pages
+
+### Summary
+Reviewed Phase 2 report (Inner Lab Middleware built and deployed). Added email/password authentication and 2FA/TOTP as 4th auth method across the entire platform. Added login/signup page specs to both MBS and Inner Lab. Updated all downstream instructions.
+
+### Architecture Decisions
+- **Email/Password auth** added as 4th method (alongside Google SSO, Nostr, LNURL)
+- **2FA/TOTP** with backup codes — optional, user-enabled from account settings
+- **Login/signup pages on TWO sites**: magicbusstudios.com (MBS branded) and innerlab.ai (Inner Lab branded). Both call MBS Platform auth APIs.
+- **Inner Lab modules** redirect to `innerlab.ai/auth/login` (not magicbusstudios.com)
+- **CWG users auto-become platform users** during migration (password hashes + 2FA data copied)
+- **Login = Signup for SSO methods** (auto-create on first auth). Email/password has a separate signup form.
+
+### Phase 2 Report Review
+- Phase 2 fully built and deployed at api.innerlab.ai + innerlab.ai
+- 11 Mongoose models, 22 API routes, 4 dashboard pages
+- Cross-project blocker found: Inner Lab ProtectedRoute redirects to `magicbusstudios.com/login` (should be `/auth/login`) — will be fixed when Inner Lab gets its own login page
+- Schema additions not in original spec: snapshot_reason, full schemas for blockchain_anchors, sync_backups, analytics_events, notifications
+- Phase 2 report copied to `phase-reports/PHASE_2_REPORT.md`
+
+### Files Updated
+- `platform-instructions-for-mbs/CLAUDE.md` — auth section rewritten (4 methods), User model updated (password_hash, email_verified, totp fields, auth_methods array), 11 new API routes, addendum #14 (email/password) + #15 (2FA/TOTP), signup page added
+- `platform-instructions-for-innerlab/CLAUDE.md` — login page, signup page, reset-password page specs added, VITE_PLATFORM_URL + VITE_GOOGLE_CLIENT_ID env vars, auth-gated routing updated, nav bar auth state
+- `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` — CWG users copied with password_hash + 2FA + auth_methods, login redirects to innerlab.ai
+- `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` — login redirects to innerlab.ai
+- `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` — auth method list updated
+- `platform-instructions-for-new-modules/CLAUDE.md` — auth method list updated, login points to Inner Lab
+- `CLAUDE.md` (main) — auth section, user model, login pages table, deployment table
+- `SESSION_HANDOFF.md`, `CURRENT_STATUS.md`, `CHANGELOG.md`
+
+### Synced To
+- MBS/platform-instructions/ ✅
+- Innerlab/platform-instructions/ ✅
+- CWG/platform-instructions/ ✅
+- YogaGhost/platform-instructions/ ✅
+
+---
+
 ## March 26, 2026 — Session 2: Full Audit, Marketing Briefs, Orchestration Guide, Build Prep
 
 ### Summary
