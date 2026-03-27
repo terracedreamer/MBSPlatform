@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 26, 2026 (Session 3 — End of Session)
+**Last Updated**: March 27, 2026 (Session 4)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -12,7 +12,8 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-------------|
 | Phase 1: MBS Platform | **ALL DONE — Addendum #1-15 complete** (deployed at magicbusstudios.com) | Nothing |
 | Phase 2: IL Middleware + Auth | **FULLY COMPLETE** (api.innerlab.ai + innerlab.ai/auth/*) | Nothing — all auth pages live, ProtectedRoute fixed |
-| Phase 3: CWG Migration | **READY TO START** — all blockers cleared | Step A: migration script from MBS/; Step B: CWG refactor |
+| Phase 3A: CWG Migration Script | **DONE** — 20 users migrated, 14 collections copied | Report filed in phase-reports/ |
+| Phase 3B: CWG Refactor | **NOT STARTED** — no report found in CWG/ | Run Step B prompt from ORCHESTRATION_GUIDE.md |
 | Phase 4: FlowState Migration | **READY TO START** — can parallel with Phase 3 | Same pattern as CWG, simpler (0 users) |
 | Phase 5: Standalone Products | **READY TO START** — can parallel with Phase 3+4 | 11 independent products, all independent |
 
@@ -35,7 +36,7 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Inner Lab Middleware (il_* APIs) | **Deployed — Phase 2 complete** | `Innerlab/` → api.innerlab.ai |
 | Inner Lab Auth Pages (4 pages) | **Deployed** (login/signup/forgot-pw/reset-pw) | `Innerlab/` → innerlab.ai/auth/* |
 | Inner Lab Dashboard (4 pages) | **Deployed and unblocked** (full login flow working) | `Innerlab/` → innerlab.ai/dashboard |
-| CWG | Deployed, needs migration | `CWG/` → conversationswithgod.ai |
+| CWG | Deployed, **data migrated** (Step A done), needs refactor (Step B) | `CWG/` → conversationswithgod.ai |
 | FlowState | Deployed, needs migration | `YogaGhost/` → yoga.magicbusstudios.com |
 | Arcade games (5) | Deployed, needs SSO migration | Individual folders |
 | Studio Works tools (6) | Deployed, needs SSO migration | Individual folders |
@@ -64,6 +65,7 @@ This repo contains architecture decisions, migration plans, and reference files.
 - [x] Email/password auth + 2FA added to MBS Platform (addendum #14-15)
 - [x] Inner Lab login/signup pages built (Phase 2 Addendum — all 4 pages live)
 - [x] Phase 2 Addendum report reviewed and filed
-- [ ] Phase 3 started (CWG Migration)
+- [x] Phase 3A: CWG data migration script run (20 users, 14+1 collections)
+- [ ] Phase 3B: CWG refactor (remove standalone auth/billing, switch to JWT + inner_lab DB)
 - [ ] Phase 4 started (FlowState Migration)
 - [ ] Phase 5 started (11 standalone products)

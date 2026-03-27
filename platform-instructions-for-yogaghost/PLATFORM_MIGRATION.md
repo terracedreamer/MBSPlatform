@@ -23,7 +23,8 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 - Zustand local storage + cloud sync pattern
 
 ## Target State
-- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Nostr + LNURL)
+- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Email/Password + Nostr + LNURL + 2FA/TOTP)
+- Login redirects to Inner Lab login page: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`
 - Billing handled by MBS Platform (Stripe + BTCPay)
 - User identity stored in `mbs_platform` database
 - FlowState product data stored in `inner_lab` database with `yoga_` prefix
@@ -36,8 +37,9 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 - Remove FlowState's standalone auth (login, signup, password reset, scrypt hashing)
 - Remove `/auth/signup`, `/auth/login`, `/auth/logout` routes
 - Add JWT verification middleware that validates tokens from MBS Platform
-- Login button redirects to: `https://magicbusstudios.com/auth/login?redirect=https://yoga.magicbusstudios.com&brand=innerlab`
-- After login, MBS Platform redirects back with `?token={JWT}`
+- Login button redirects to: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`
+  - FlowState is an Inner Lab module, so login goes through Inner Lab login page (which calls MBS Platform auth APIs — supports Google SSO, email/password, Nostr, LNURL, 2FA)
+- After login, user is redirected back with `?token={JWT}`
 - Store JWT, send in Authorization header
 
 ### Step 2: Remove Billing
@@ -60,7 +62,7 @@ Since FlowState has 0 real users, this is less critical than CWG. But follow the
 **Fields NOT in FlowState but required by platform (set defaults):**
 - nostr_npub: `null` (FlowState has no Nostr support)
 - lnurl_linking_key: `null` (FlowState has no LNURL support)
-- auth_provider: `"google"` (FlowState only supports Google SSO)
+- auth_methods: `["google"]` (FlowState only supports Google SSO currently)
 - preferred_language: `"en"`
 - preferences: `{}`
 - is_admin: `false`
@@ -182,7 +184,7 @@ These are real-world implementation details from the MBS Platform build that aff
 
 ### Additional Phase 1 Learnings (updated after live testing)
 - **email can be null** — Nostr/LNURL users have no email. Guard with `if (user.email)` everywhere.
-- **Entitlement reason values**: `"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"none"` — NOT `"no_subscription"`.
+- **Entitlement reason values**: `"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"no_subscription"` — confirmed from live code.
 - **Rate limiting on platform API**: 100 req/15min. Cache entitlement checks for 5 min.
 - **Billing page is live** at `magicbusstudios.com/billing` with CWG pricing and Lightning option. Redirect upgrade buttons there.
 - **BTCPay status**: Currently 403 due to API key permissions. Will be fixed separately — does not block FlowState migration.

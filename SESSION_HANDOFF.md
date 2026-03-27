@@ -1,15 +1,38 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 26, 2026 (Session 3 — FINAL)
+**Last Updated**: March 27, 2026 (Session 4)
 **Git Branch**: main
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
 ---
 
+## SESSION 4 SUMMARY (March 27, 2026)
+
+### What was done this session:
+1. Reviewed Phase 1 Addendum Report — email/password auth + 2FA confirmed deployed and working
+2. Reviewed Phase 2 Addendum Report — Inner Lab auth pages confirmed live
+3. Audited all Phase 3-5 instructions against current reality — all correct
+4. Added report generation instructions to ALL paste-ready prompts (was missing)
+5. Added addendum workflow + orchestrator direct changes docs to ORCHESTRATION_GUIDE.md
+6. Updated phase-reports/README.md with full workflow including addendum pattern
+7. Updated all 4 marketing docs — fixed "3 auth methods" → 4, updated "Pre-Platform" sections to reflect platform is live, fixed CWG login redirect
+8. Synced marketing docs to Desktop/Marketing/Overview/
+9. Synced Inner Lab platform-instructions to Innerlab/platform-instructions/
+10. Reviewed Phase 3A Migration Report — 20 users migrated, 14 collections copied, report filed
+11. Updated CLAUDE.md, ORCHESTRATION_GUIDE, CURRENT_STATUS with corrected collection count (28 not 56)
+12. Discussed: unified accounts, Google Play Store deployment (future), brainstorming context for new products
+
+### Open question discussed:
+- User wants to add "Sign Up" button to MBS nav to match Inner Lab (both sites should be consistent)
+- User wants Inner Lab login page branded similarly to MBS (heading with branded font)
+- These were discussed but code changes NOT made from this session (user will handle in project sessions)
+
+---
+
 ## WHERE WE ARE RIGHT NOW
 
-### Phase 1: MBS Platform — COMPLETE + New Addendum Items
+### Phase 1: MBS Platform — COMPLETE + All Addendum Items
 - **Built and deployed** at magicbusstudios.com: Google SSO, JWT auth, entitlements, Stripe checkout, BTCPay checkout, friends/invites, branded login page, GDPR delete cascade, health check
 - **Phase 1 Addendum** (13 items) — ALL DONE:
   1. Login button in nav (**DONE**)
@@ -58,36 +81,66 @@
 - **Innerlab/**: Added "Sign In" + "Sign Up" to nav, fixed ProtectedRoute redirect, branded auth page headings — `ORCHESTRATOR_CHANGES.md` documents this
 - **Both projects pushed and deployed via Coolify auto-deploy**
 
-### Phases 3-5: READY TO START
-- All instructions audited and corrected this session (FlowState redirect fixed, new-modules template fixed)
-- All synced to their target project folders
-- CWG migration doc: users copied with password_hash + 2FA fields + auth_methods array
-- FlowState migration doc: login redirects to innerlab.ai
-- Phase 3-5 prompts in ORCHESTRATION_GUIDE.md are accurate and ready to use
+### Phase 3A: CWG Migration Script — DONE
+- 20 users migrated (18 new + 2 merged), 14 cwg_* collections, 1 il_analytics_events
+- Report filed: `phase-reports/PHASE_3A_MIGRATION_REPORT.md`
+- Collection count corrected: 28 actual (not 56 as originally estimated)
+
+### Phase 3B: CWG Refactor — IN PROGRESS
+- User is actively working on this in a separate CWG/ Claude Code session
+- Prompt is in ORCHESTRATION_GUIDE.md Phase 3 Step B
+- When done, agent should generate PHASE_3_REPORT.md in CWG/ root
+- **Resume here**: bring the PHASE_3_REPORT.md back to this orchestrator session for review
+
+### Phase 4: FlowState Migration — READY (can parallel with Phase 3)
+- Same two-step pattern, simpler (0 users, 7 collections)
+- Login redirects to innerlab.ai/auth/login
+
+### Phase 5: Standalone Products — READY (can start anytime)
+- 11 independent products, all independent of each other and of Phase 3/4
 
 ---
 
 ## WHAT NEEDS TO HAPPEN NEXT
 
-### All immediate work is DONE. Next actions:
+### Phase 3: CWG Migration — NEXT UP (two steps)
 
-1. **Phase 3: CWG Migration** — READY. All blockers cleared.
-   - Step A: Run migration script from MBS/ (copies ~10 users + 56 collections to mbs_platform + inner_lab)
-   - Step B: Refactor CWG/ (JWT middleware, new DB, remove standalone auth + billing)
-   - See ORCHESTRATION_GUIDE.md Phase 3 section for exact prompts
+**Step A — Migration script** (run from `MBS/`):
+- Copies ~10 CWG users to `mbs_platform.users` (including password_hash, 2FA data, auth_methods array)
+- Copies 56 collections to `inner_lab` (42 as cwg_*, 7 as il_*, 7 to mbs_platform)
+- Upserts on email to avoid duplicates with existing platform users
+- Prompt: see ORCHESTRATION_GUIDE.md Phase 3 Step A
 
-2. **Phase 4: FlowState Migration** — READY. Can run in parallel with Phase 3.
-   - Same two-step pattern, simpler (0 users, 7 collections)
-   - See ORCHESTRATION_GUIDE.md Phase 4 section
+**Step B — CWG refactor** (run from `CWG/`):
+- Switch DB from `conversations_with_god` to `inner_lab`
+- Add Python JWT middleware (PyJWT, HS256, shared JWT_SECRET)
+- Update collection references to cwg_* prefix
+- Remove standalone auth routes, Stripe routes, BTCPay routes
+- Login redirects to `innerlab.ai/auth/login?redirect=https://conversationswithgod.ai`
+- Remove login/signup/billing pages from frontend
+- Prompt: see ORCHESTRATION_GUIDE.md Phase 3 Step B
 
-3. **Phase 5: Standalone Products** — READY. Can run in parallel with Phase 3+4.
-   - 11 independent products (5 Arcade + 6 Studio Works)
-   - SSO migration only — no data migration, no il_* involvement
-   - See ORCHESTRATION_GUIDE.md Phase 5 section for product list
+### Phase 4: FlowState Migration — Can run in parallel with Phase 3
+- Same two-step pattern (migration script + refactor), simpler (0 users, 7 collections)
+- Login redirects to `innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`
+- See ORCHESTRATION_GUIDE.md Phase 4 section
+
+### Phase 5: Standalone Products — Can run in parallel with Phase 3+4
+- 11 independent products (5 Arcade + 6 Studio Works)
+- SSO migration only — no data migration, no il_* involvement
+- See ORCHESTRATION_GUIDE.md Phase 5 section for product list
 
 ### Before Phase 3 — one manual prerequisite:
 - Create Stripe products for IL All Access + MBS All Access in Stripe Dashboard (CWG pricing already exists)
 - Without this, those checkout buttons fail — but CWG access (free_tier + product_pass) still works
+
+### Report Workflow (for next session)
+When a phase agent finishes, it generates `PHASE_X_REPORT.md` in its project root. The orchestrator:
+1. Copies the report to `phase-reports/` in this repo
+2. Reviews for deviations, new env vars, API response shapes, known gaps
+3. Updates downstream `platform-instructions-for-*/` if anything changed
+4. Re-syncs to target project folders
+5. For addendum work on completed phases, see ORCHESTRATION_GUIDE.md "Addendum Workflow" section
 
 ### Sync Status (verified this session)
 | Project | Sync Status |

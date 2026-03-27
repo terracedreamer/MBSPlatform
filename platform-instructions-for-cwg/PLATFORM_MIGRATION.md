@@ -18,11 +18,12 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 - CWG has its own auth (Google SSO + email/password + Nostr + LNURL)
 - CWG has its own Stripe integration (test keys)
 - CWG has its own BTCPay integration (experimental)
-- CWG database: `conversations_with_god` with 56 collections
+- CWG database: `conversations_with_god` with 28 collections (originally estimated 56 — actual count confirmed during migration)
 - ~10 real users (friends testing)
 
 ## Target State
-- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Nostr + LNURL)
+- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Email/Password + Nostr + LNURL + 2FA/TOTP)
+- All ~10 CWG users automatically become MBS Platform users (including their password hashes, so email/password login keeps working)
 - Billing handled by MBS Platform (Stripe + BTCPay)
 - User identity stored in `mbs_platform` database
 - CWG product data stored in `inner_lab` database with `cwg_` prefix
@@ -34,8 +35,10 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 ### Step 1: Update Auth Flow
 - Remove CWG's standalone auth (login, signup, password reset, TOTP)
 - Add JWT verification middleware that validates tokens from MBS Platform
-- Login button redirects to: `https://magicbusstudios.com/auth/login?redirect=https://conversationswithgod.ai&brand=innerlab`
-- After login, MBS Platform redirects back with `?token={JWT}`
+- Login button redirects to: `https://innerlab.ai/auth/login?redirect=https://conversationswithgod.ai`
+  - CWG is an Inner Lab module, so login goes through the Inner Lab login page (which calls MBS Platform auth APIs)
+  - Alternative: CWG can build its OWN login page following the same pattern (calls MBS Platform APIs directly) — but using Inner Lab's is simpler
+- After login, user is redirected back to CWG with `?token={JWT}`
 - Store JWT, send in Authorization header on all API calls
 - IMPORTANT: After extracting `?token={JWT}` from URL, immediately call `history.replaceState(null, '', window.location.pathname + window.location.hash)` to remove the token from the URL (prevents token leakage via browser history and referrer headers)
 
@@ -50,9 +53,13 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 ### Step 3: Migrate Data
 Run migration script (built in MBS/ project) that:
 
-**Copies to `mbs_platform.users`:**
+**Copies to `mbs_platform.users` (ALL ~10 CWG users become platform users):**
 - email, name, picture → **rename to `avatar`** (platform model uses `avatar`, not `picture`)
-- google_id, nostr_npub, lnurl_linking_key, auth_provider
+- **password** (hashed) → copy to `password_hash` field. CWG uses bcrypt — platform also uses bcrypt, so hashes are compatible. No re-hashing needed.
+- google_id, nostr_npub, lnurl_linking_key
+- **auth_methods**: build array from what exists — e.g. if user has password + google_id → `["email", "google"]`, if user has password + nostr_npub → `["email", "nostr"]`, etc.
+- **email_verified**: copy from CWG's `email_verified` field (default `true` for Google SSO users)
+- **totp_enabled, totp_secret, totp_backup_codes**: copy from CWG user if they have 2FA enabled
 - consent_preferences, is_admin, referral_code, referred_by, referral_count
 - preferred_language (set to `"en"` if not present), preferences (set to `{}` if not present)
 - stripe_customer_id (from CWG's Stripe integration, if exists)
@@ -235,7 +242,7 @@ if (token) {
 CWG's existing Stripe price IDs (`STRIPE_MONTHLY_PRICE_ID`, `STRIPE_ANNUAL_PRICE_ID`) are already configured in the MBS Platform backend. When CWG removes its Stripe integration, users who click "Upgrade" get redirected to `magicbusstudios.com/billing` which handles checkout using those same price IDs.
 
 ### Entitlement reason values (complete list)
-`"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"none"` — the value `"no_subscription"` mentioned earlier is NOT used. Use `"none"` to mean no access.
+`"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"no_subscription"` — confirmed from live MBS Platform code.
 
 ### Rate limiting
 MBS Platform rate limits: 100 req/15min. Cache entitlement checks for 5 min to avoid hitting the limit.

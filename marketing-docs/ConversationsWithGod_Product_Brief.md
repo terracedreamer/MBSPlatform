@@ -10,12 +10,13 @@
 
 > **Last Updated**: March 26, 2026. Platform decisions integrated.
 
-## Platform Context (New)
+## Platform Context (Migration Pending — Phase 3)
 - CWG is being migrated to the centralized MBS Platform for auth and billing
-- Login redirects to magicbusstudios.com/auth/login with Inner Lab branding
-- Three auth methods: Google SSO, Nostr identity, LNURL (Lightning wallet)
+- Login redirects to **innerlab.ai/auth/login** (CWG is an Inner Lab module, so it uses Inner Lab branding)
+- **Four auth methods**: Google SSO, Email/Password, Nostr identity, LNURL (Lightning wallet). Plus optional 2FA/TOTP.
 - Payments: Stripe + BTCPay (Lightning) -- handled by MBS Platform, not CWG
 - CWG has 56 database collections being migrated -- shared data (consciousness, memories, check-ins) goes to shared il_* tables, CWG-specific data stays as cwg_*
+- CWG's existing ~10 users automatically become MBS Platform users during migration (password hashes and 2FA data are copied -- no re-registration needed)
 - Data sovereignty features built into CWG (Nostr, Lightning, client encryption, blockchain anchors) are moving to the platform level
 - Users signing up from CWG see Inner Lab branding -- they know they're joining a bigger ecosystem
 - Tiered access: product_pass (just CWG), category_access (all Inner Lab), mbs_all_access (everything)

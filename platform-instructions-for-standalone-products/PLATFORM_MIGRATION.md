@@ -21,7 +21,7 @@ Before starting, the agent (or you) must fill in these product-specific values:
 | CURRENT_BILLING | ??? | What billing does this product currently have? (Stripe, none, etc.) |
 
 ## Target State
-- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Nostr + LNURL)
+- Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Email/Password + Nostr + LNURL + 2FA/TOTP)
 - Billing handled by MBS Platform (Stripe + BTCPay) — if product has premium features
 - Product keeps its own database (no migration to inner_lab)
 - Product keeps all its own backend logic
@@ -172,6 +172,9 @@ Your product's backend is responsible for enforcing free tier limits (time, usag
 - Do NOT build your own Stripe integration — the platform handles billing
 - Do NOT keep standalone auth after migration — remove it completely
 - Do NOT hardcode the product slug — use env var `PRODUCT_SLUG`
+
+## GDPR Compliance Note
+The MBS Platform's GDPR cascade delete (`DELETE /api/auth/account`) automatically deletes user data from `mbs_platform` and `inner_lab` databases. It does NOT reach into standalone product databases. If your product stores user-specific data (keyed by `userId` from JWT), you MUST implement a `DELETE /api/user-data` endpoint that deletes all user data when called. The MBS Platform will call this endpoint during account deletion (planned — not yet implemented). Until then, standalone products with user data have a GDPR gap for account deletion.
 
 ---
 

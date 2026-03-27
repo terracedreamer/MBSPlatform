@@ -5,6 +5,8 @@ This project is `Innerlab/` — the innerlab.ai website. It currently has a **fr
 
 **After the upgrade:**
 - `innerlab.ai` (public) — marketing pages (existing, unchanged)
+- `innerlab.ai/auth/login` — Inner Lab branded login page (NEW — calls MBS Platform auth APIs)
+- `innerlab.ai/auth/signup` — Inner Lab branded signup page (NEW — calls MBS Platform auth APIs)
 - `innerlab.ai/dashboard` — daily briefing, consciousness profile, memories, activity feed (NEW — requires Inner Lab All Access)
 - `innerlab.ai/modules` — module launcher (existing marketing → becomes functional)
 - `innerlab.ai/api/...` — all Inner Lab middleware API endpoints (NEW)
@@ -15,7 +17,7 @@ This project knows the user's **consciousness, state, memories, and cross-module
 Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate container with its own backend. They all connect to the same `inner_lab` database. This middleware owns the shared `il_*` collections and provides cross-module intelligence.
 
 ## What This Project Does NOT Do
-- Does NOT handle login or auth — MBS Platform (magicbusstudios.com) does that
+- Does NOT handle auth backend — MBS Platform (magicbusstudios.com) has all auth API routes. This project has login/signup PAGES that call MBS Platform APIs.
 - Does NOT handle billing — MBS Platform does that
 - Does NOT replace individual module backends (CWG, FlowState keep their own backends)
 - Does NOT own module-prefixed collections (cwg_*, yoga_*) — modules own their own data
@@ -279,7 +281,49 @@ All endpoints are mounted at `/api/` prefix (e.g., `POST /api/check-in`).
 
 The existing innerlab.ai React frontend has marketing pages. Add these authenticated pages:
 
-### New Pages
+### Auth Pages (NEW — call MBS Platform APIs, no local auth backend)
+- `innerlab.ai/auth/login` — Inner Lab branded login page
+  - Google SSO button on top ("Sign in with Google") — sends Google ID token to `POST ${VITE_PLATFORM_URL}/api/auth/google` with `{ idToken, source: "innerlab" }`. Returns `{ token, user }`. Store token as `mbs_token`, user as `mbs_user` in localStorage.
+  - "or" divider
+  - Nostr + Lightning (LNURL) buttons — call MBS Platform Nostr/LNURL challenge APIs
+  - "or use email" divider
+  - Email + Password form → `POST ${VITE_PLATFORM_URL}/api/auth/login` with `{ email, password }`. If response has `requires2FA: true`, show 6-digit TOTP input (+ "Use backup code" link) → `POST ${VITE_PLATFORM_URL}/api/auth/2fa/verify`
+  - "Don't have an account? Create one" link → `/auth/signup`
+  - "Forgot password?" link → calls `POST ${VITE_PLATFORM_URL}/api/auth/forgot-password`
+  - After successful auth, redirect to `/dashboard` (or `?redirect=` param if present)
+  - If user already logged in (valid `mbs_token`), auto-redirect to `/dashboard`
+  - Styled with Inner Lab branding (dark theme, IL logo, colors from existing marketing pages)
+
+- `innerlab.ai/auth/signup` — Inner Lab branded signup page
+  - Google SSO button on top ("Sign up with Google") — same flow as login, auto-creates account
+  - "or" divider
+  - Signup form: Name, Email, Password (8+ chars), Confirm Password
+  - Age confirmation checkbox (13+, 16+ in EU/EEA/UK)
+  - Terms of Service + Privacy Policy acceptance checkbox (required)
+  - "Create Account" button → `POST ${VITE_PLATFORM_URL}/api/auth/signup` with `{ name, email, password, age_confirmed: true, terms_accepted: true }`
+  - "Already have an account? Sign in" link → `/auth/login`
+  - After successful signup, redirect to `/dashboard` (or `?redirect=` param)
+  - Same Inner Lab branding as login page
+
+- `innerlab.ai/auth/reset-password` — Password reset page
+  - Reads `?token=` from URL
+  - Form: New Password + Confirm Password
+  - Calls `POST ${VITE_PLATFORM_URL}/api/auth/reset-password` with `{ token, password }`
+  - On success, redirect to `/auth/login?reset=true`
+
+**Auth env vars (frontend build args):**
+- `VITE_PLATFORM_URL` — `https://magicbusstudios.com` (all auth API calls go here)
+- `VITE_GOOGLE_CLIENT_ID` — same Google OAuth client ID as MBS Platform
+
+**Token handling on ANY page load:**
+On app initialization (e.g., in App.jsx or a top-level AuthProvider), check for `?token=` query param. If present: extract it, store as `mbs_token`, fetch user profile from `GET ${VITE_PLATFORM_URL}/api/auth/me`, store as `mbs_user`, then `history.replaceState` to remove token from URL. This handles redirects back from MBS Platform for edge cases.
+
+**Nav bar auth state:**
+- Not logged in: show "Sign In" button → `/auth/login`
+- Logged in: show user avatar/name + dropdown with "Dashboard", "Account" (links to MBS Platform account page), "Sign Out"
+- Sign Out: clear `mbs_token` and `mbs_user` from localStorage, redirect to `/`
+
+### Dashboard Pages
 - `innerlab.ai/dashboard` — Main dashboard (requires auth + Inner Lab All Access entitlement)
   - Module launcher: links to all active modules with status indicators
   - Recent activity feed (from il_activity_feed)
@@ -296,7 +340,9 @@ The existing innerlab.ai React frontend has marketing pages. Add these authentic
 
 ### Auth-Gated Routing
 - Marketing pages (/, /modules, /about) — public, no auth required
+- Auth pages (/auth/login, /auth/signup, /auth/reset-password) — public, redirect to /dashboard if already logged in
 - Dashboard pages (/dashboard, /consciousness, /memories, /activity) — require JWT + entitlement check
+- If user is not logged in: redirect to /auth/login (NOT to MBS Platform — Inner Lab has its own login page)
 - If user has no Inner Lab All Access: show upsell page linking to MBS Platform billing
 
 ### Entitlement Check
@@ -335,7 +381,7 @@ async function requireAuth(req, res, next) {
 | MONGO_URL | (same as all MBS apps) | Shared MongoDB instance |
 | DB_NAME | `inner_lab` | Same DB all IL modules use |
 | JWT_SECRET | (same as MBS Platform) | To verify platform-issued JWTs |
-| PORT | TBD | Not 3002 (that's MBS Platform) |
+| PORT | `3001` | Default for Inner Lab (MBS Platform defaults to 3001 locally too — Coolify assigns real ports in production) |
 | CORS_ORIGINS | innerlab.ai frontend only | Dashboard frontend is the only HTTP caller |
 | PLATFORM_URL | `https://magicbusstudios.com` | For entitlement checks |
 
@@ -390,9 +436,12 @@ Do NOT hardcode these. Store in config so new modules can be added.
 ```
 Innerlab/
 ├── src/                    # React frontend
-│   ├── pages/              # Existing marketing pages + NEW dashboard pages
+│   ├── pages/              # Existing marketing pages + NEW auth + dashboard pages
 │   │   ├── HomePage.jsx         # existing — marketing landing
 │   │   ├── ModulesPage.jsx      # existing — module catalog
+│   │   ├── AuthLoginPage.jsx    # NEW — Inner Lab branded login (calls MBS Platform APIs)
+│   │   ├── AuthSignupPage.jsx   # NEW — Inner Lab branded signup (calls MBS Platform APIs)
+│   │   ├── AuthResetPasswordPage.jsx # NEW — password reset
 │   │   ├── DashboardPage.jsx    # NEW — main dashboard (auth-gated)
 │   │   ├── ConsciousnessPage.jsx # NEW — consciousness profile
 │   │   ├── MemoriesPage.jsx     # NEW — user memories manager
@@ -418,7 +467,7 @@ Innerlab/
 ```
 
 ## What NOT to Do
-- Do NOT handle login or auth — MBS Platform does that
+- Do NOT build auth backend routes — MBS Platform owns all auth APIs. This project has login/signup PAGES that call MBS Platform APIs cross-origin.
 - Do NOT handle billing — MBS Platform does that
 - Do NOT write to module-prefixed collections (cwg_*, yoga_*) — modules own their own data
 - Do NOT hardcode module slugs — use config
@@ -485,7 +534,7 @@ These are real-world implementation details from the MBS Platform build that aff
 
 ### Entitlement Response
 - `GET /api/entitlements/:product` returns `{ success, hasAccess, reason }`
-- Reason values: `mbs_all_access`, `category_access`, `product_pass`, `free_tier`, `no_subscription`
+- Reason values: `mbs_all_access`, `category_access`, `product_pass`, `free_tier`, `no_subscription` (confirmed from live code)
 - Products should cache entitlement responses for 5 minutes (in-memory, key: `userId:productSlug`)
 - After billing success, redirect with `?refresh=true` to bust cache
 

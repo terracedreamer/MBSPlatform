@@ -380,11 +380,27 @@ Approved messaging themes and taglines for marketing use:
 - Numbered step indicators ("01", "02" format)
 - Green dot status badge for "live" modules
 
-### Current Website State (Pre-Platform)
+### Current Website State (Platform Built — March 2026)
+
+**Public pages:**
 - `/` — Homepage (hero, how it works, daily flow, intelligence layer, AI capabilities, privacy, module stats)
 - `/modules` — Module catalog with filter tabs (All/Active/Coming Soon)
 - `/about` — Redirects to magicbusstudios.com
 - `/waitlist`, `/subscribe`, `/contact` — Form pages
-- No login/dashboard UI yet (comes with platform build)
-- No pricing visible (comes with platform build)
+
+**Auth pages (NEW — live):**
+- `/auth/login` — Inner Lab branded login (Google SSO + email/password + 2FA step)
+- `/auth/signup` — Inner Lab branded signup (Google SSO + email/password registration)
+- `/auth/forgot-password` — Password reset request
+- `/auth/reset-password` — Set new password via email link
+
+**Authenticated pages (NEW — live, require login):**
+- `/dashboard` — Module launcher, activity feed, check-in widget
+- `/consciousness` — Consciousness profile view/edit
+- `/memories` — Cross-module memory manager with sharing toggles
+- `/activity` — Cross-module activity feed
+
+**Not yet built:**
+- No pricing visible (billing handled at magicbusstudios.com/billing)
 - No individual module detail pages
+- No daily briefing engine (needs data from multiple modules first)

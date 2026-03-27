@@ -6,6 +6,7 @@ This project is `MBS/` — the magicbusstudios.com website. It currently serves 
 **After the upgrade:**
 - `magicbusstudios.com` (public) — marketing pages (existing, unchanged)
 - `magicbusstudios.com/auth/login` — branded login page (NEW)
+- `magicbusstudios.com/auth/signup` — branded signup page (NEW)
 - `magicbusstudios.com/billing` — checkout, subscription management (NEW)
 - `magicbusstudios.com/account` — profile, settings, connected auth methods (NEW)
 - `magicbusstudios.com/admin` — user management, analytics (NEW, Phase 2+)
@@ -54,12 +55,13 @@ The existing form handler endpoints continue to work alongside the new platform 
 └──────────────────────┘
 ```
 
-## Auth: Three Methods (All Passwordless)
-- **Google SSO** — primary, existing across MBS
+## Auth: Four Methods
+- **Google SSO** — primary, fastest path (existing across MBS)
+- **Email/Password** — traditional signup + login with email verification, password reset, and optional 2FA/TOTP
 - **Nostr** — challenge → signature verification (experimental, from CWG)
 - **LNURL-Auth** — Lightning wallet login (experimental, from CWG)
 
-No email/password auth. No "or" divider with email login.
+Login and signup are the same page. Google SSO button on top, then "or" divider, then Nostr + LNURL buttons, then "or use email" divider with email/password form. "Don't have an account? Create one" link goes to the signup form (name + email + password + age confirmation + terms).
 
 ## JWT Payload Specification
 
@@ -68,7 +70,7 @@ When the platform issues a JWT, it MUST contain exactly these fields:
 ```javascript
 {
   userId: String,         // MongoDB ObjectId as string — the _id from mbs_platform.users
-  email: String,          // user's email address
+  email: String|null,     // user's email address (null for Nostr/LNURL-only users)
   name: String,           // user's display name
   avatar: String|null,    // user's avatar URL (from Google profile picture, etc.)
   isAdmin: Boolean,       // whether user has admin privileges
@@ -97,7 +99,7 @@ The login page at `magicbusstudios.com/auth/login` changes branding based on the
 User clicks "Login" on any product (e.g., conversationswithgod.ai)
   → Redirect to: https://magicbusstudios.com/auth/login?redirect=https://conversationswithgod.ai&brand=innerlab
   → User sees branded login page
-  → Authenticates via Google SSO / Nostr / LNURL
+  → Authenticates via Google SSO / Email-Password / Nostr / LNURL
   → Platform creates/finds user, issues JWT
   → Platform VALIDATES redirect domain against ALLOWED_REDIRECT_DOMAINS (see below)
   → Redirect back: https://{origin}?token={JWT}
@@ -130,7 +132,7 @@ Both handled here. No per-product payment integration.
 ## Database: `mbs_platform`
 
 ### Core Models
-- **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
+- **User**: email, name, avatar, password_hash?, google_id?, nostr_npub?, lnurl_linking_key?, auth_methods [String] (e.g. ["email","google","nostr","lnurl"]), email_verified (Boolean, default: true for Google, false for email signup), email_verification_token?, email_verification_expires?, password_reset_token?, password_reset_expires?, totp_enabled (Boolean, default: false), totp_secret?, totp_backup_codes [String]?, preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
 - **Entitlement**: user_id, category (innerlab|arcade|studioworks), type (product_pass|category_access|mbs_all_access), product (slug|null), status (active|expired|cancelled|trial), stripe_subscription_id?, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type, category, product?, amount (cents), currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type, value, applies_to, category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
@@ -186,6 +188,17 @@ The product's OWN backend enforces free tier limits (message caps, time caps) ba
 
 **Phase 1 (MVP)**
 - POST /api/auth/google — Google SSO, create/find user, return JWT
+- POST /api/auth/signup — email/password registration (name, email, password, age_confirmed, terms_accepted). Hash password with bcrypt. Send verification email. Return JWT.
+- POST /api/auth/login — email/password login. Verify bcrypt hash. If totp_enabled, return { requires2FA: true } instead of JWT — frontend must then call /api/auth/2fa/verify.
+- POST /api/auth/forgot-password — send password reset email via SendGrid (token with 1hr expiry)
+- POST /api/auth/reset-password — verify token, set new password_hash
+- GET /api/auth/verify-email/:token — verify email address, set email_verified: true
+- POST /api/auth/resend-verification — resend verification email (rate limited: 3/hr)
+- POST /api/auth/2fa/setup — (requires JWT) generate TOTP secret + QR code + 10 backup codes. Store secret but don't enable yet.
+- POST /api/auth/2fa/verify-setup — (requires JWT) verify TOTP code to confirm setup, then set totp_enabled: true
+- POST /api/auth/2fa/verify — verify TOTP code or backup code during login. On success, issue JWT. Backup codes are one-time-use (delete after use).
+- POST /api/auth/2fa/disable — (requires JWT + password) disable 2FA, clear totp_secret and backup codes
+- GET /api/auth/2fa/status — (requires JWT) returns { enabled: Boolean }
 - POST /api/auth/nostr — Nostr authentication
 - POST /api/auth/lnurl — LNURL-Auth
 - GET /api/auth/me — current user + entitlements summary
@@ -231,7 +244,8 @@ MBS/
 │   ├── pages/              # Existing marketing pages + NEW auth/billing/account pages
 │   │   ├── HomePage.jsx         # existing
 │   │   ├── AboutPage.jsx        # existing
-│   │   ├── AuthLoginPage.jsx    # NEW — branded SSO login
+│   │   ├── AuthLoginPage.jsx    # NEW — branded login (Google SSO + email/password + Nostr + LNURL + 2FA)
+│   │   ├── AuthSignupPage.jsx   # NEW — branded signup (Google SSO + email/password form)
 │   │   ├── BillingPage.jsx      # NEW — checkout, subscription management
 │   │   ├── AccountPage.jsx      # NEW — profile, settings, auth methods
 │   │   └── AdminPage.jsx        # NEW (Phase 2) — user management
@@ -259,7 +273,7 @@ MBS/
 
 ## Environment Variables (Add to Existing)
 **NEW (add to Coolify):**
-- MONGODB_URI (may already exist for other purposes)
+- MONGO_URL (may already exist for other purposes)
 - DB_NAME (`mbs_platform`)
 - JWT_SECRET (64-char)
 - JWT_EXPIRY (`7d`)
@@ -317,7 +331,7 @@ The entitlement check endpoint (`GET /api/entitlements/:product`) is called by a
 1. **Cancel Stripe** — Cancel all active subscriptions via Stripe API
 2. **Delete from `mbs_platform`** — User, Entitlements, Transactions, ActiveSessions, PushSubscriptions, Referrals, Friends, Invites, EmailPreferences, DataRequests, NostrChallenges, LnurlChallenges, BtcpayInvoices, ActivityLog
 3. **Keep ConsentAuditLog** — Legal requirement. Anonymize `user_id` to a SHA-256 hash
-4. **Delete from `inner_lab`** — All il_* documents where `user_id` matches. The platform connects to the `inner_lab` database directly for this (same MONGODB_URI, different DB_NAME)
+4. **Delete from `inner_lab`** — All il_* documents where `user_id` matches. The platform connects to the `inner_lab` database directly for this (same MONGO_URL, different DB_NAME)
 5. **Delete module data** — All cwg_*, yoga_*, and other module-prefixed documents where `user_id` matches. Same direct DB connection approach.
 6. **Confirmation** — Return success. GDPR requires completion within 30 days; this should complete in seconds since it's all database deletes.
 
@@ -451,7 +465,7 @@ The core Phase 1 build is complete and deployed. Complete ALL items below before
 - Build the route: `POST /api/auth/nostr`
 - Flow: client sends `{ npub, signature, challenge }` → server verifies signature against the challenge → creates/finds user → issues JWT
 - Challenge endpoint: `GET /api/auth/nostr/challenge` → returns `{ challenge }` (random string, stored in NostrChallenge with TTL)
-- On user creation, set `auth_provider: "nostr"` and `nostr_npub` field
+- On user creation, add `"nostr"` to `auth_methods` array, set `nostr_npub` field
 - If a user with the same email already exists (from Google SSO), link the Nostr identity to the existing account
 
 ### 5. LNURL-Auth
@@ -460,7 +474,7 @@ The core Phase 1 build is complete and deployed. Complete ALL items below before
 - Flow: server generates LNURL-auth URL with k1 challenge → user's Lightning wallet signs it → callback verifies → creates/finds user → issues JWT
 - `GET /api/auth/lnurl/challenge` → returns `{ lnurl }` (encoded LNURL-auth string)
 - `GET /api/auth/lnurl/callback?k1=...&sig=...&key=...` → verify signature, create/find user by `lnurl_linking_key`, issue JWT
-- On user creation, set `auth_provider: "lnurl"` and `lnurl_linking_key` field
+- On user creation, add `"lnurl"` to `auth_methods` array, set `lnurl_linking_key` field
 - If a user with the same linking key already exists, log them in
 
 ### 6. Auth Method Linking
@@ -575,6 +589,87 @@ The CWG Stripe products already exist (env vars `STRIPE_MONTHLY_PRICE_ID` and `S
 - These don't have paid tiers yet — just list them so the structure is in place
 
 **Lightning payment** should be shown as an equal option alongside Stripe for every paid plan (not hidden in a sub-menu). For Lightning plans, BTCPay creates a 30-day pass (no auto-renewal) — make this clear in the UI.
+
+### 14. Email/Password Authentication + Signup Page
+
+Add traditional email/password auth as a 4th method alongside Google SSO, Nostr, and LNURL.
+
+**Signup Page (`AuthSignupPage.jsx` at `/auth/signup`):**
+- Google SSO button on top (fastest path) — "Sign up with Google"
+- "or" divider
+- Signup form: Name, Email, Password (8+ chars), Confirm Password
+- Age confirmation checkbox (13+, 16+ in EU/EEA/UK)
+- Terms of Service + Privacy Policy acceptance checkbox (required)
+- "Create Account" button
+- "Already have an account? Sign in" link → `/auth/login`
+- Branded same as login page (`?brand=` param applies)
+- `?redirect=` param preserved — after signup, redirect to the product that sent them
+
+**Login Page (`AuthLoginPage.jsx` — update existing):**
+- Google SSO button on top — "Sign in with Google"
+- "or" divider
+- Nostr + LNURL buttons
+- "or use email" divider
+- Email + Password form
+- "Sign In" button
+- "Don't have an account? Create one" link → `/auth/signup` (preserve brand + redirect params)
+- "Forgot password?" link → inline or modal reset flow
+- If backend returns `{ requires2FA: true }` after password verify → show TOTP code input (6-digit field + "Use backup code" link)
+
+**Backend Routes (add to `routes/auth.js`):**
+- `POST /api/auth/signup` — `{ name, email, password, age_confirmed, terms_accepted }` → validate email format, check password 8+ chars, check email not already taken, hash with bcrypt (12 rounds), create user with `auth_methods: ["email"]`, `email_verified: false`, generate verification token, send verification email via SendGrid, return JWT
+- `POST /api/auth/login` — `{ email, password }` → find user by email, verify bcrypt hash, check `email_verified` (if false, return error "Please verify your email"), if `totp_enabled` return `{ success: true, requires2FA: true, tempToken: "..." }` (short-lived token for 2FA step), otherwise return JWT
+- `POST /api/auth/forgot-password` — `{ email }` → generate reset token (crypto.randomBytes), set `password_reset_token` + `password_reset_expires` (1 hour), send reset email. Always return success (even if email not found — prevents email enumeration).
+- `POST /api/auth/reset-password` — `{ token, password }` → find user by valid non-expired token, hash new password, clear reset token fields, return success
+- `GET /api/auth/verify-email/:token` — find user by `email_verification_token` where not expired, set `email_verified: true`, clear token fields. Redirect to login page with `?verified=true` message.
+- `POST /api/auth/resend-verification` — `{ email }` → generate new token, send new email. Rate limit: 3 per hour.
+
+**Auth Method Linking (cross-method):**
+When a user signs up with email/password and later clicks "Sign in with Google" using the SAME email:
+- Find existing user by email → add `google_id` to existing account, add "google" to `auth_methods` array
+- Do NOT create a duplicate user
+- Same logic applies in reverse: Google SSO user who later sets a password via account settings
+
+**Email templates (SendGrid — add to existing transactional email system):**
+- Verification email: "Verify your email address" — link to `GET /api/auth/verify-email/:token`
+- Password reset email: "Reset your password" — link to `magicbusstudios.com/auth/reset-password?token=:token`
+- Both branded (respect `?brand=` if available, default to MBS branding)
+
+**Frontend pages to add/update:**
+- `AuthSignupPage.jsx` — NEW signup page
+- `AuthLoginPage.jsx` — UPDATE to add email/password form + 2FA input
+- `AuthResetPasswordPage.jsx` — NEW page for setting new password (reads `?token=` from URL)
+
+**Env vars (no new ones needed — uses existing SENDGRID_API_KEY and JWT_SECRET)**
+
+### 15. Two-Factor Authentication (2FA/TOTP) with Backup Codes
+
+Add optional TOTP-based 2FA that users enable from their Account page.
+
+**Backend Routes (add to `routes/auth.js`):**
+- `POST /api/auth/2fa/setup` — (requires JWT) Generate TOTP secret using `otplib` or `speakeasy` npm package. Generate QR code URL (otpauth:// URI). Generate 10 backup codes (crypto.randomBytes, 8 chars each, hashed with bcrypt before storing). Return `{ secret, qrCodeUrl, backupCodes }`. Store `totp_secret` on user but do NOT set `totp_enabled: true` yet.
+- `POST /api/auth/2fa/verify-setup` — (requires JWT) `{ code }` → verify TOTP code against stored secret. If valid, set `totp_enabled: true`. This confirms the user has their authenticator app set up correctly.
+- `POST /api/auth/2fa/verify` — `{ tempToken, code }` → verify the short-lived temp token from login, then verify TOTP code OR backup code. If backup code, delete it from the array (one-time use). Return JWT on success.
+- `POST /api/auth/2fa/disable` — (requires JWT) `{ password }` → verify password, then set `totp_enabled: false`, clear `totp_secret` and `totp_backup_codes`. Password required to prevent unauthorized disable.
+- `GET /api/auth/2fa/status` — (requires JWT) → `{ enabled: Boolean }`
+- `POST /api/auth/2fa/regenerate-backup-codes` — (requires JWT + password) → generate new set of 10 backup codes, replace old ones
+
+**Frontend (Account page addition):**
+- Add "Two-Factor Authentication" section to AccountPage.jsx
+- If not enabled: "Enable 2FA" button → shows QR code + secret + backup codes → verify setup
+- If enabled: "Disable 2FA" button (requires password confirmation) + "Regenerate Backup Codes" button
+- Display backup codes ONCE during setup (user must save them — cannot be shown again)
+
+**Login flow with 2FA:**
+1. User enters email + password → `POST /api/auth/login`
+2. Backend verifies password, sees `totp_enabled: true`
+3. Returns `{ success: true, requires2FA: true, tempToken: "..." }` (tempToken is a short-lived JWT, 5 min expiry, with just `{ userId, purpose: "2fa" }`)
+4. Frontend shows 6-digit code input field + "Use backup code" toggle
+5. User enters code → `POST /api/auth/2fa/verify` with `{ tempToken, code }`
+6. Backend verifies tempToken + TOTP code → returns full JWT
+7. Note: Google SSO, Nostr, and LNURL bypass 2FA (those methods are inherently strong auth)
+
+**npm packages needed:** `otplib` (or `speakeasy`) for TOTP, `qrcode` for QR code generation
 
 ### Deferred (genuinely cannot build now)
 - FlowState pricing (no paid tier defined yet)

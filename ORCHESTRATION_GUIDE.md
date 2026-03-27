@@ -15,6 +15,26 @@ Each phase agent auto-generates a `PHASE_X_REPORT.md` when it finishes. **Before
 
 This prevents Phase 1 decisions from silently breaking Phase 2-5 assumptions.
 
+### Addendum Workflow (When a Completed Phase Needs More Work)
+
+Sometimes a completed phase needs additional features (e.g., Phase 1 needed email/password auth after the initial build). The pattern:
+
+1. **Orchestrator writes addendum items** into the phase's `platform-instructions` doc
+2. **Orchestrator generates a paste-ready prompt** with the new work scoped tightly
+3. **User pastes the prompt** into a Claude Code session in the project folder
+4. **Agent builds the addendum** and generates `PHASE_X_ADDENDUM_REPORT.md` in the project root
+5. **Orchestrator reviews the addendum report**, cascades changes to downstream instructions
+6. **Report is filed** in `phase-reports/` alongside the original phase report
+
+Naming: `PHASE_1_ADDENDUM_REPORT.md`, `PHASE_2_ADDENDUM_REPORT.md`, etc.
+
+### Orchestrator Direct Changes
+
+The orchestrator session sometimes makes small code changes directly to project folders (e.g., adding a nav button, fixing a branded heading). When this happens:
+- Changes are committed and pushed from the orchestrator session
+- An `ORCHESTRATOR_CHANGES.md` file is created in the project root documenting what changed
+- The next agent session in that project should check for this file
+
 ---
 
 ## Before You Start (Manual — One Time)
@@ -193,7 +213,29 @@ Build and run the CWG migration script in server/scripts/migrate-cwg.js:
 9. Log progress and counts for verification
 
 Run the script once. Verify a few users and collections look right.
+
+When done, generate PHASE_3A_MIGRATION_REPORT.md in the project root with:
+1. Users migrated — count, any skipped or errored
+2. Collections copied — old name → new name mapping as actually created
+3. Field renames applied — old → new for each
+4. Dedup results — any users merged by email match
+5. il_* collections — what shared data was created
+6. Platform-level data — what moved to mbs_platform
+7. Verification steps — how to confirm the migration worked
+8. Any errors, warnings, or data anomalies found
+9. Gotchas for the orchestrator — anything that affects Phase 3 Step B or other phases
 ```
+
+### Step A Results (Phase 3A Migration Report — 2026-03-27)
+- **20 users migrated** (not ~10 as estimated): 18 new + 2 merged with existing platform users
+- **28 collections found** in CWG DB (not 56 — the original count was overstated)
+- **14 cwg_* collections copied** to inner_lab, 9 empty collections skipped
+- **1 il_analytics_events** created (157 docs). Other il_* collections empty (expected — users haven't used IL features yet)
+- **UUID → ObjectId remapping** worked for all user_id foreign keys
+- **CWG doc `_id` fields kept as original UUIDs** — only user_id references were remapped
+- **`consciousness_profile_structured` and `personal_history_structured` don't exist** in CWG DB — dual-format normalization unnecessary
+- **27 feature flags** copied to mbs_platform — may need review for conflicts
+- **1 Google user has email_verified: false** — pre-existing CWG data quality issue
 
 ### Step B — Refactor CWG
 
@@ -202,7 +244,7 @@ Open Claude Code in `CWG/` and paste:
 ```
 Read platform-instructions/PLATFORM_MIGRATION.md completely before doing anything.
 
-CWG has been migrated to the MBS Platform. The data is already copied. Now refactor the app:
+CWG has been migrated to the MBS Platform. The data is already copied (20 users, 14 cwg_* collections, 1 il_* collection in inner_lab). Now refactor the app:
 
 1. Update backend:
    - Change DB connection from conversations_with_god to inner_lab
@@ -221,6 +263,8 @@ CWG has been migrated to the MBS Platform. The data is already copied. Now refac
    - Send JWT in Authorization: Bearer header on all API calls
 
 3. Remove standalone auth/billing code completely — don't leave dead code.
+
+When done, generate PHASE_3_REPORT.md in the project root following the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
 ```
 
 ### After CWG migration — Manual steps:
@@ -247,12 +291,22 @@ CWG has been migrated to the MBS Platform. The data is already copied. Now refac
 Same pattern as CWG but simpler (7 collections, 0 users):
 
 ```
+Read platform-instructions/CLAUDE.md, specifically the Migration Scripts section.
+Also read the FlowState migration doc at: ../MBSPlatform/platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md
+
 Build and run server/scripts/migrate-flowstate.js:
 1. Connect to yogaghost database (read-only)
 2. Copy to mbs_platform (users with renames: picture→avatar, googleId→google_id, stripeCustomerId→stripe_customer_id)
 3. Copy to inner_lab: 5 yoga_* collections + il_user_wellness_profiles
 4. Copy friends/invites to mbs_platform
 5. FlowState has 0 users — this is mostly setting up the collection structure.
+
+When done, generate PHASE_4A_MIGRATION_REPORT.md in the project root with:
+1. Collections copied — old name → new name mapping
+2. Field renames applied
+3. Any data found (FlowState may have 0 users but check)
+4. Verification steps
+5. Gotchas for the orchestrator
 ```
 
 ### Step B — Refactor FlowState
@@ -272,6 +326,8 @@ Refactor FlowState to use MBS Platform auth:
 7. Login redirects to: https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com
 8. Handle ?token= on redirect back
 9. Sunset deviceId routes (90-day window, then remove)
+
+When done, generate PHASE_4_REPORT.md in the project root following the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
 ```
 
 ---
@@ -307,6 +363,8 @@ Do the SSO migration:
 6. Check entitlement: GET https://magicbusstudios.com/api/entitlements/{SLUG}
 7. Add JWT_SECRET and PLATFORM_URL to env vars
 8. Keep everything else (own database, own features, own logic)
+
+When done, generate PHASE_5_REPORT.md in the project root following the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
 ```
 
 ### Product List (fill in the prompt above for each):

@@ -3,7 +3,7 @@
 ## Purpose of This Repo
 **This is NOT a deployable project.** This is the **architecture think tank** for the MBS Platform ecosystem. It contains:
 - All architecture decisions, specs, and planning documents
-- Migration plans for CWG (56 collections) and FlowState (7 collections)
+- Migration plans for CWG (28 collections) and FlowState (7 collections)
 - Reference CLAUDE.md files that get copied into the actual project folders for building
 - Marketing docs and product briefs for reference
 
@@ -74,14 +74,17 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 | Domain | Frontend | Backend | Database | Source Folder |
 |--------|----------|---------|----------|---------------|
 | magicbusstudios.com | Marketing + login + billing + account | Form handler + SSO API + entitlements + Stripe + BTCPay | `mbs_platform` | `MBS/` |
-| innerlab.ai | Marketing + dashboard + consciousness + memories + feed | Form handler + il_* middleware APIs | `inner_lab` | `Innerlab/` |
+| innerlab.ai | Marketing + login/signup + dashboard + consciousness + memories + feed | Form handler + il_* middleware APIs | `inner_lab` | `Innerlab/` |
 
 **These are the same Coolify deployments that already exist** — we're adding backend functionality to existing projects, not creating new containers.
 
-## Auth: Three Methods (All Passwordless)
+## Auth: Four Methods
 - Google SSO (primary — existing across MBS)
+- Email/Password (traditional signup + login, email verification, password reset, optional 2FA/TOTP with backup codes)
 - Nostr authentication (challenge → signature verification)
 - LNURL-Auth (Lightning wallet login)
+
+Auth API routes live on MBS Platform (magicbusstudios.com). Login/signup PAGES exist on both magicbusstudios.com and innerlab.ai (each with its own branding). Both call the same MBS Platform auth endpoints. Inner Lab modules redirect to innerlab.ai/auth/login. Standalone products redirect to magicbusstudios.com/auth/login.
 
 ## Payments: Dual System
 - Stripe (subscriptions + one-time) — primary
@@ -89,16 +92,14 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 
 Both handled at Layer 1. No per-product payment handling.
 
-## Branded Login
-Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
+## Login Pages (Two Sites)
 
-| User comes from | Brand shown | After login, redirect to |
-|---|---|---|
-| Any Inner Lab module | Inner Lab branding | Back to the module |
-| Any Arcade game | MBS branding | Back to the game |
-| Any Studio Works tool | MBS branding | Back to the tool |
-| innerlab.ai | Inner Lab branding | innerlab.ai |
-| magicbusstudios.com | MBS branding | magicbusstudios.com |
+| Site | Login URL | Signup URL | Branding | Used by |
+|---|---|---|---|---|
+| magicbusstudios.com | /auth/login | /auth/signup | MBS branding (or `?brand=innerlab` for IL) | Arcade, Studio Works, direct MBS visitors |
+| innerlab.ai | /auth/login | /auth/signup | Inner Lab branding | CWG, FlowState, all Inner Lab modules, innerlab.ai visitors |
+
+Both login pages call the SAME MBS Platform auth API endpoints. Both support all 4 auth methods (Google SSO, email/password, Nostr, LNURL) + 2FA. The user account is identical regardless of where they signed up.
 
 ## Entitlement Types
 - `product_pass` — access to one specific product (one-time or subscription)
@@ -118,7 +119,7 @@ Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
 **Do NOT hardcode slugs** — store in config or database.
 
 ## Core Data Models (mbs_platform DB)
-- **User**: email, name, avatar, google_id, nostr_npub?, lnurl_linking_key?, auth_provider (google|nostr|lnurl), preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
+- **User**: email, name, avatar, password_hash?, google_id?, nostr_npub?, lnurl_linking_key?, auth_methods [String] (e.g. ["email","google","nostr","lnurl"]), email_verified, email_verification_token?, password_reset_token?, totp_enabled, totp_secret?, totp_backup_codes?, preferred_language, preferences {}, consent_preferences {}, is_admin, stripe_customer_id?, referral_code?, referred_by?, referral_count, created_at, updated_at, last_login
 - **Entitlement**: user_id, category, type, product, status, stripe_subscription_id?, purchased_at, expires_at?, trial_ends_at?
 - **Transaction**: user_id, type, category, product?, amount, currency, stripe_payment_id, description, promo_code?, created_at
 - **Promotion**: code (unique), type, value, applies_to, category?, product?, max_uses, current_uses, valid_from, valid_until, created_by
@@ -165,7 +166,7 @@ Login page at `magicbusstudios.com/auth/login` changes branding based on origin:
 
 ## Data Migration
 
-### CWG (56 collections) — Analysis: `CWG/MBS_DATABASE_MIGRATION_PLAN.md`
+### CWG (28 collections) — Analysis: `CWG/MBS_DATABASE_MIGRATION_PLAN.md`
 - Bucket 1 → `mbs_platform`: User identity, Stripe, consent, sessions, Nostr/LNURL, GDPR
 - Bucket 2 → `inner_lab` with `cwg_*` prefix: 39 CWG-specific collections
 - Bucket 3 → `inner_lab` with `il_*` prefix: Consciousness, personal history, check-ins, memories, wellness

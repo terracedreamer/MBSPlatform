@@ -1,5 +1,31 @@
 # CHANGELOG — MBS Platform
 
+## March 27, 2026 — Session 4: Phase 3A Complete, Docs Hardened, Marketing Updated
+
+### Summary
+Reviewed Phase 3A migration report (CWG data migration — 20 users, 28 collections). Filed report. Corrected collection count across all docs (28 actual, not 56). Added report generation instructions to ALL paste-ready prompts. Updated all 4 marketing docs with current platform state (four auth methods, live pages, correct login redirects). Added addendum workflow documentation. Phase 3B (CWG refactor) in progress by user.
+
+### Documentation Changes
+- **ORCHESTRATION_GUIDE.md**: Added addendum workflow section, orchestrator direct changes section, Phase 3A results, report instructions to all phase prompts
+- **phase-reports/README.md**: Full rewrite — addendum pattern, orchestrator changes, review checklist
+- **CLAUDE.md**: Collection count corrected (28 not 56)
+- **CURRENT_STATUS.md**: Phase 3A done, Phase 3B not started
+- **SESSION_HANDOFF.md**: Session 4 summary, Phase 3B in progress
+- **platform-instructions-for-cwg/PLATFORM_MIGRATION.md**: Collection count corrected
+- **Marketing docs (all 4)**: "3 auth methods" → 4 + 2FA, "Pre-Platform" → "Platform Built", CWG login redirect fixed to innerlab.ai, unified account concept added
+
+### Phase Reports Filed
+- `phase-reports/PHASE_3A_MIGRATION_REPORT.md` — CWG data migration results
+
+### Key Findings from Phase 3A
+- CWG had 28 collections (not 56 as documented) — corrected everywhere
+- 20 users migrated (18 new + 2 merged by email)
+- `consciousness_profile_structured` and `personal_history_structured` don't exist — dual-format normalization was unnecessary
+- UUID → ObjectId remapping worked correctly for all foreign keys
+- Script is idempotent (safe to re-run)
+
+---
+
 ## March 26, 2026 — Session 3 (continued): Phase 1+2 Addendum Review, Live Fixes, Phase 3 Prep
 
 ### Summary

@@ -7,13 +7,15 @@ magicbusstudios.com | Toronto, Canada
 > **Last Updated**: March 26, 2026. Two original documents merged + platform decisions integrated.
 > Merged from: MagicBusStudios_Company_Overview.docx + MagicBusStudios_Brand_Architecture.docx
 
-## Platform Context (New)
+## Platform Context (Live — deployed March 2026)
 - MBS now has a centralized platform at magicbusstudios.com that handles SSO, billing, and entitlements for ALL 22 products
 - magicbusstudios.com serves as both the marketing site (public) AND the platform (login, billing, account management)
-- One account works across all products -- users sign up once
-- Three auth methods: Google SSO, Nostr identity, LNURL (Lightning wallet login)
+- **One account works across all products** -- users sign up once, access everything. Email is the merge key -- signing up with Google and later with email/password on the same email links to the same account.
+- **Four auth methods**: Google SSO, Email/Password, Nostr identity, LNURL (Lightning wallet login). Plus optional 2FA/TOTP with backup codes.
 - Payments: Stripe + BTCPay (Lightning) -- centralized, no per-product payment handling
-- Branded login: Inner Lab modules show Inner Lab branding at login; Arcade/Studio Works show MBS branding
+- **Two branded login pages** (both call the same MBS Platform auth APIs):
+  - magicbusstudios.com/auth/login — MBS branding, used by Arcade and Studio Works products
+  - innerlab.ai/auth/login — Inner Lab branding, used by CWG, FlowState, and all Inner Lab modules
 - Data sovereignty: users own their data. Nostr identity, Lightning payments, client-side encryption, GDPR/CCPA compliance
 - Three-layer architecture:
   - Layer 1 (magicbusstudios.com): SSO + billing + entitlements + friends + push notifications + feature flags
@@ -21,6 +23,7 @@ magicbusstudios.com | Toronto, Canada
   - Layer 3: Individual products (each module/game/tool has own backend)
 - Tiered subscriptions: product_pass (single product), category_access (all in a category), mbs_all_access (everything)
 - Friends and invites are platform-level -- friendships carry across products
+- **Post-signup experience**: After creating an account, users can browse all available modules and choose which ones to subscribe to
 
 ---
 
@@ -297,20 +300,26 @@ Each brand level has its own identity, voice, and messaging focus:
 | Inner Lab | innerlab.ai | Inner Lab product site + IL dashboard | Teal |
 | Conversations With God | conversationswithgod.ai | CWG standalone app | Own palette |
 
-### Current Website State (Pre-Platform)
+### Current Website State (Platform Built — March 2026)
 
 **magicbusstudios.com pages:**
-- `/` — Homepage (hero, flagship section, module grid, newsletter/waitlist CTAs). Note: currently has a timed redirect to innerlab.ai — needs fixing when platform is built.
+- `/` — Homepage (hero, flagship section, module grid, newsletter/waitlist CTAs)
 - `/studio-works` — Studio Works grid (6 apps, all live)
 - `/arcade` — Arcade grid (5 games, all live)
 - `/about` — About the Studio (hero, 4 core values, subscribe/contact CTAs)
 - `/contact`, `/subscribe`, `/waitlist` — Form pages (SendGrid)
 - `/privacy`, `/terms` — Legal pages
+- `/auth/login` — MBS-branded login page (Google SSO + email/password + Nostr + LNURL + 2FA) **NEW**
+- `/auth/signup` — MBS-branded signup page (Google SSO + email/password registration) **NEW**
+- `/auth/forgot-password` — Password reset request **NEW**
+- `/auth/reset-password` — Set new password via email link **NEW**
+- `/billing` — Structured billing page with category tabs (Inner Lab / Arcade / Studio Works) and real pricing **NEW**
+- `/account` — Account settings, 2FA setup, email verification, auth method management **NEW**
 
-**Known issues to fix when building the platform:**
-- Homepage has a timed redirect to innerlab.ai — may need to be removed so MBS homepage stands on its own
-- No pricing visible anywhere — pricing pages come with the platform build
-- Trivia Roast subdomain typo: `trivaroast` should be `triviaroast`
+**Known issues (as of March 2026):**
+- Trivia Roast subdomain typo: `trivaroast` should be `triviaroast` — needs DNS fix
+- BTCPay API key needs regeneration (403 error on Lightning payments)
+- IL All Access and MBS All Access Stripe products need creation in Stripe Dashboard
 
 ### Shared Design Language
 
