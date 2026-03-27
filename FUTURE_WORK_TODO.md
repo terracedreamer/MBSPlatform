@@ -10,11 +10,11 @@
 
 | Phase | Status | Instructions Location | Items Tracked In |
 |-------|--------|----------------------|-----------------|
-| Phase 1: MBS Platform | ✅ Core done, addendum in progress | `platform-instructions-for-mbs/CLAUDE.md` | That doc (addendum section) |
-| Phase 2: IL Middleware | Not started | `platform-instructions-for-innerlab/CLAUDE.md` | That doc |
-| Phase 3: CWG Migration | Not started | `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` | That doc |
-| Phase 4: FlowState Migration | Not started | `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` | That doc |
-| Phase 5: Standalone Products | Not started | `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` | That doc |
+| Phase 1: MBS Platform | ✅ DONE — all addendum items #1-15 deployed | `platform-instructions-for-mbs/CLAUDE.md` | That doc (addendum section) |
+| Phase 2: IL Middleware + Auth | ✅ DONE — middleware + 4 auth pages live at innerlab.ai | `platform-instructions-for-innerlab/CLAUDE.md` | That doc |
+| Phase 3: CWG Migration | 🟡 READY — all blockers cleared | `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` | That doc |
+| Phase 4: FlowState Migration | 🟡 READY — can parallel with Phase 3 | `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` | That doc |
+| Phase 5: Standalone Products | 🟡 READY — can parallel with Phase 3+4 | `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` | That doc |
 
 ---
 
@@ -70,6 +70,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - ~~Token refresh~~ → Phase 1 Addendum #12
 
 ### Genuinely Future (no phase, needs multiple phases or decisions first)
+- [ ] **Post-signup module picker** — after a user signs up, show them all available modules (CWG, FlowState, BreathArc, etc.) and let them pick which ones they want to subscribe to. Could live on innerlab.ai/modules as an authenticated experience or as a step in the signup flow. Needs: product catalog with descriptions + pricing for each module, Stripe checkout per module.
 - [ ] Free trial support (X days free, auto-convert) — needs pricing decision
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] JWT upgrade to RS256 asymmetric signing — technical debt, no rush

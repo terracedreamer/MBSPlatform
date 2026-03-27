@@ -215,7 +215,7 @@ CWG has been migrated to the MBS Platform. The data is already copied. Now refac
 
 2. Update frontend:
    - Remove login/signup pages
-   - Login button redirects to: https://magicbusstudios.com/auth/login?redirect=https://conversationswithgod.ai&brand=innerlab
+   - Login button redirects to: https://innerlab.ai/auth/login?redirect=https://conversationswithgod.ai
    - Handle ?token= on redirect back — extract, store, replaceState to remove from URL
    - Remove billing/pricing pages — upgrade buttons go to MBS Platform
    - Send JWT in Authorization: Bearer header on all API calls
@@ -269,7 +269,7 @@ Refactor FlowState to use MBS Platform auth:
 4. Remove standalone auth routes
 5. Remove Stripe routes
 6. Remove LoginPage, PricingPage
-7. Login redirects to: https://magicbusstudios.com/auth/login?redirect=https://yoga.magicbusstudios.com&brand=innerlab
+7. Login redirects to: https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com
 8. Handle ?token= on redirect back
 9. Sunset deviceId routes (90-day window, then remove)
 ```
@@ -365,4 +365,4 @@ CWG + FlowState additionally need:
 
 Standalone products additionally need:
 - `PLATFORM_URL=https://magicbusstudios.com`, `PRODUCT_SLUG`
-- Keep their own `DB_NAME` and `MONGODB_URI`
+- Keep their own `DB_NAME` and `MONGO_URL`

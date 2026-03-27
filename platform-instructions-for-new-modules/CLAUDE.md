@@ -9,7 +9,7 @@
 You are building a module within the **Inner Lab** ecosystem — a unified system for inner growth by Magic Bus Studios. Your module is one of up to 11 modules that share a database and user context.
 
 **Your module does NOT handle:**
-- Login/authentication — the MBS Platform at magicbusstudios.com handles this
+- Login/authentication — the Inner Lab login page at innerlab.ai/auth/login handles this (which calls MBS Platform auth APIs)
 - Billing/payments — the MBS Platform handles Stripe + BTCPay
 - User identity (email, name, avatar) — lives in `mbs_platform` database
 - Shared consciousness data — the Inner Lab Middleware at innerlab.ai handles this
@@ -28,8 +28,8 @@ You are building a module within the **Inner Lab** ecosystem — a unified syste
 ┌──────────────────────────────────────────────────────────────┐
 │  Layer 1: MBS Platform (magicbusstudios.com)                  │
 │  Database: mbs_platform                                       │
-│  Handles: SSO (Google + Nostr + LNURL), billing (Stripe +    │
-│           BTCPay), entitlements, friends, invites             │
+│  Handles: SSO (Google + Email/Password + Nostr + LNURL +     │
+│           2FA/TOTP), billing (Stripe + BTCPay), entitlements  │
 │  Your module calls: GET /api/entitlements/{your_slug}         │
 │  JWT_SECRET: must match the platform's secret                 │
 └──────────────────────┬───────────────────────────────────────┘
@@ -145,10 +145,10 @@ async function requireAuth(req, res, next) {
 
 ### Login Flow
 ```
-User visits your-module.magicbusstudios.com (or your-module.innerlab.ai)
+User visits your-module.innerlab.ai (Inner Lab modules live under innerlab.ai)
   → Clicks "Login"
-  → Redirect to: magicbusstudios.com/auth/login?redirect={your_domain}&brand=innerlab
-  → User authenticates (Google SSO / Nostr / LNURL)
+  → Redirect to: innerlab.ai/auth/login?redirect={your_domain}
+  → User authenticates (Google SSO / Email+Password / Nostr / LNURL)
   → MBS Platform redirects back: {your_domain}?token={JWT}
   → Your frontend stores JWT, sends in Authorization header
   → Your backend validates JWT on every request
@@ -167,7 +167,7 @@ const { hasAccess, reason } = await response.json();
 ```
 
 If `hasAccess: false` and `reason: "no_subscription"`:
-- Redirect user to `magicbusstudios.com/billing?product={YOUR_SLUG}&brand=innerlab`
+- Redirect user to `magicbusstudios.com/billing?product={YOUR_SLUG}`
 
 ---
 
