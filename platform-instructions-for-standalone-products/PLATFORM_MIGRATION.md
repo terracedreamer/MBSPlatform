@@ -74,7 +74,7 @@ async function requireAuth(req, res, next) {
   ```
 - After login, MBS Platform redirects back with `?token={JWT}`
 - Frontend stores JWT (localStorage or cookie), sends in `Authorization: Bearer {JWT}` header
-- Logout clears the stored JWT and optionally calls `POST https://magicbusstudios.com/api/auth/logout`
+- Logout clears the stored JWT and optionally calls `POST https://api.magicbusstudios.com/api/auth/logout`
 
 ### Step 3: Remove Standalone Billing (If Any)
 
@@ -91,7 +91,7 @@ async function requireAuth(req, res, next) {
 - Check access from your backend:
   ```javascript
   const response = await fetch(
-    `https://magicbusstudios.com/api/entitlements/${PRODUCT_SLUG}`,
+    `https://api.magicbusstudios.com/api/entitlements/${PRODUCT_SLUG}`,
     { headers: { Authorization: `Bearer ${userToken}` } }
   );
   const { hasAccess, reason } = await response.json();
@@ -109,15 +109,92 @@ async function requireAuth(req, res, next) {
 - Add "Login" button that redirects to MBS Platform
 - Handle `?token={JWT}` on redirect back from platform
 
-### Step 5: Update Backend
+### Step 5: Handle Legacy User Collision (CRITICAL)
+
+**If this product has existing users in its database**, you MUST handle the case where a platform user ID doesn't match the local user's `_id`. This is the #1 cause of "login appears to fail" bugs.
+
+**The problem:**
+1. User `you@gmail.com` exists locally with `_id: ObjectId("abc123...")` (from before SSO)
+2. Platform assigns `userId: "def456..."` (a different ID)
+3. `User.findById("def456...")` returns `null` — no user with that platform ID
+4. Auto-provisioning tries `User.create({ _id: "def456...", email: "you@gmail.com" })` — **CRASHES on unique email index**
+5. `/auth/me` returns 500, frontend sees no user → appears not signed in
+
+**The fix — add this to your `requireAuth` or `/auth/me` endpoint:**
+```javascript
+async function getOrProvisionUser(platformUser) {
+  // platformUser = { userId, email, name, avatar } from JWT
+
+  // 1. Try finding by platform ID (fast path — works after first login)
+  let user = await User.findById(platformUser.userId);
+  if (user) return user;
+
+  // 2. Check for legacy user with same email (migration path)
+  if (platformUser.email) {
+    const legacyUser = await User.findOne({ email: platformUser.email });
+    if (legacyUser) {
+      const oldId = legacyUser._id;
+
+      // Preserve user data from legacy record
+      const userData = legacyUser.toObject();
+      delete userData._id;
+      delete userData.__v;
+
+      // Delete old record, recreate with platform _id
+      await User.deleteOne({ _id: oldId });
+      user = await User.create({
+        _id: platformUser.userId,
+        ...userData,
+        name: platformUser.name || userData.name,
+        avatar: platformUser.avatar || userData.avatar,
+      });
+
+      // UPDATE ALL RELATED COLLECTIONS that reference the old _id
+      // Replace these with your actual collection names:
+      const collections = ['sessions', 'posts', 'bookmarks', 'notifications'];
+      for (const col of collections) {
+        await mongoose.connection.collection(col).updateMany(
+          { user_id: oldId.toString() },
+          { $set: { user_id: platformUser.userId } }
+        );
+        // Also check 'userId' field if your collections use camelCase
+        await mongoose.connection.collection(col).updateMany(
+          { userId: oldId.toString() },
+          { $set: { userId: platformUser.userId } }
+        );
+      }
+
+      return user;
+    }
+  }
+
+  // 3. Brand new user — create fresh profile
+  user = await User.create({
+    _id: platformUser.userId,
+    email: platformUser.email,
+    name: platformUser.name,
+    avatar: platformUser.avatar,
+  });
+  return user;
+}
+```
+
+**Important:**
+- This is a **one-time migration per user** — after the first login, `findById` hits directly
+- You MUST update ALL related collections that reference the old `_id`, or data (sessions, posts, progress, achievements, etc.) will be orphaned
+- Grep your codebase for `user_id`, `userId`, `user`, `author`, `created_by` fields to find all collections that need updating
+- If your product uses MongoDB ObjectId for `_id` (most do), the old ID is an ObjectId and the new one is a string — handle both types in your `updateMany` queries
+
+### Step 6: Update Backend
 
 - Add `requireAuth` middleware to all protected routes
+- Add `getOrProvisionUser` (Step 5) to your `/auth/me` or user-loading endpoint
 - Remove standalone auth routes
 - Remove Stripe/billing routes (if any)
 - Add `JWT_SECRET` to environment variables (must match MBS Platform)
 - Keep all product-specific routes and logic unchanged
 
-### Step 6: Update Environment Variables
+### Step 7: Update Environment Variables
 
 **Remove:**
 - Any auth-related env vars (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET — if handled locally)
@@ -211,9 +288,58 @@ These are real-world implementation details from the MBS Platform build that aff
 - Your frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
 
 ### Entitlement Check
-- `GET https://magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
+- `GET https://api.magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
 - Returns `{ success, hasAccess, reason }`
 - Cache response for 5 minutes in-memory
+- **This MUST be wired** — without it, there's no free/premium enforcement
 
 ### Open Redirect Protection
 - The `?redirect=` URL in the login flow is validated against CORS_ORIGINS. Your product's domain MUST be in the MBS Platform's CORS_ORIGINS list, or users will be redirected to magicbusstudios.com instead of your product.
+
+---
+
+## Phase 3B Learnings (Added by Orchestrator — 2026-03-27)
+
+These are real-world lessons from the CWG migration:
+
+### API URL: Use `api.magicbusstudios.com` NOT `magicbusstudios.com`
+The MBS Platform API lives at `https://api.magicbusstudios.com` (the backend container). `https://magicbusstudios.com` is the frontend (nginx). Calling the frontend URL for API requests causes CORS errors. All entitlement checks and API calls must use `api.magicbusstudios.com`.
+
+### After Deleting Auth Files — Grep for ALL Imports
+When you delete auth routes and services, other files may still import functions from them causing runtime crashes. **Before deploying, grep for all imports from deleted files.**
+
+### Legacy Auth Routes — Redirect to Platform Login, Not Homepage
+When removing `/login`, `/signup` pages, redirect those routes to `https://magicbusstudios.com/auth/login?redirect=https://{YOUR_DOMAIN}` — NOT to `/` (homepage). Users with bookmarks need to reach the platform login.
+
+---
+
+## Phase 4 Learnings (Added by Orchestrator — 2026-03-28)
+
+These are real-world lessons from the FlowState migration:
+
+### MONGO_URL / MONGODB_URI / MONGO_URI — Check All Three
+Coolify services may use `MONGO_URL`, `MONGODB_URI`, or `MONGO_URI` depending on when they were set up. Your code should support whichever one exists, or add fallbacks: `process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGO_URI`.
+
+### Remove Google GSI Script from index.html
+If your `index.html` loads `https://accounts.google.com/gsi/client` (Google Identity Services), remove it — Google SSO is now handled by the MBS Platform. Also update CSP headers in nginx.conf to remove `accounts.google.com` from `script-src`, `style-src`, `connect-src`, and `frame-src`.
+
+### Coolify Env Vars — Separate Lines
+When pasting env vars in Coolify, ensure each var is on its own line. A known issue: concatenated env vars cause JWT validation to fail silently.
+
+---
+
+## Phase 5 Learnings (Added by Orchestrator — 2026-03-28)
+
+These are real-world lessons from WildLens and other standalone product SSO migrations:
+
+### Legacy User Collision — The #1 SSO Migration Bug
+When an app has existing users, the platform assigns a different `userId` than the local `_id`. The auto-provisioning code tries to `create()` a new user with the platform `_id` but the same email → **unique index crash** → `/auth/me` returns 500 → frontend shows user as not logged in. See Step 5 for the complete fix pattern. This hit WildLens and will hit EVERY standalone app with existing users.
+
+### Python Apps: JWT_SECRET_KEY vs JWT_SECRET
+Python frameworks (Flask, FastAPI) commonly use `JWT_SECRET_KEY` in their config files. Coolify has the env var as `JWT_SECRET` (matching the MBS Platform). If your app's `config.py` reads `JWT_SECRET_KEY`, the JWT verification silently fails because the secret is empty/None. Fix: add a fallback in your config: `os.environ.get("JWT_SECRET_KEY") or os.environ.get("JWT_SECRET") or ""`. This caused a login loop in a Python app — user authenticates on platform, gets redirected back, JWT verification fails, gets sent back to login.
+
+### After Legacy Migration — Update ALL Related Collections
+When migrating a legacy user's `_id` to the platform ID, you must also update every collection that references the old ID. Grep for fields like `user_id`, `userId`, `user`, `author`, `created_by`, `owner` across all collections. Missing even one causes data loss (orphaned records). WildLens had to update 8+ collections (discoveries, posts, bookmarks, chat sessions, collections, expeditions, notifications, challenges).
+
+### CORS_ORIGINS — Both Platform AND Product Domains
+The MBS Platform's `CORS_ORIGINS` must include your product domain (e.g., `https://wildlens.magicbusstudios.com`), otherwise the `?token=` redirect never arrives. Check this BEFORE debugging login issues — it's the second most common cause of "SSO doesn't work".

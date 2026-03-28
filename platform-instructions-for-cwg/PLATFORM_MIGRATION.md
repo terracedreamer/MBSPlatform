@@ -46,7 +46,7 @@ CWG (Conversations With God) is being migrated to use the centralized MBS Platfo
 - Remove CWG's Stripe integration (checkout, webhooks, portal)
 - Remove CWG's BTCPay integration
 - Upgrade/billing buttons redirect to MBS Platform billing page
-- Check access via MBS Platform: `GET https://magicbusstudios.com/api/entitlements/cwg`
+- Check access via MBS Platform: `GET https://api.magicbusstudios.com/api/entitlements/cwg`
 - Free tier: `{ hasAccess: true, reason: "free_tier" }`
 - Premium: `{ hasAccess: true, reason: "product_pass" }` or `{ hasAccess: true, reason: "category_access" }`
 
@@ -203,7 +203,7 @@ These are real-world implementation details from the MBS Platform build that aff
 - Categories are lowercase no-separator: `innerlab` (not `inner_lab`)
 
 ### Entitlement Check
-- `GET https://magicbusstudios.com/api/entitlements/cwg` with `Authorization: Bearer <JWT>`
+- `GET https://api.magicbusstudios.com/api/entitlements/cwg` with `Authorization: Bearer <JWT>`
 - Returns `{ success, hasAccess, reason }` — reason `free_tier` means free access, `no_subscription` means blocked
 - Cache response for 5 minutes in-memory
 
@@ -237,6 +237,9 @@ if (token) {
   window.history.replaceState(null, '', window.location.pathname);
 }
 ```
+
+### CRITICAL: JWT_SECRET_KEY vs JWT_SECRET (Python-Specific Bug)
+Python frameworks commonly read `JWT_SECRET_KEY` in config files. Coolify and the MBS Platform use `JWT_SECRET`. If CWG's `config.py` reads `JWT_SECRET_KEY`, JWT verification silently fails because the secret is empty/None → login loop (user authenticates, gets redirected back, JWT fails, sent back to login). Fix: `jwt_secret = os.environ.get("JWT_SECRET_KEY") or os.environ.get("JWT_SECRET") or ""` — or better yet, update config to read `JWT_SECRET` directly and drop `JWT_SECRET_KEY`.
 
 ### Stripe price IDs for CWG
 CWG's existing Stripe price IDs (`STRIPE_MONTHLY_PRICE_ID`, `STRIPE_ANNUAL_PRICE_ID`) are already configured in the MBS Platform backend. When CWG removes its Stripe integration, users who click "Upgrade" get redirected to `magicbusstudios.com/billing` which handles checkout using those same price IDs.

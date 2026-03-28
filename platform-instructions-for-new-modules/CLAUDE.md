@@ -231,7 +231,7 @@ your-module/
 ## What NOT to Do
 - Do NOT build your own login/signup — use MBS Platform SSO
 - Do NOT build your own payment/billing — use MBS Platform
-- Do NOT create a `users` collection — user identity lives in `mbs_platform`
+- Do NOT create a `users` collection — user identity lives in `mbs_platform`. If you DID build local auth before SSO integration, see the "Legacy User Collision" section in `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` — you must handle the case where existing local user `_id` values don't match the platform-assigned `userId`.
 - Do NOT write to other modules' prefixed collections (`cwg_*`, `yoga_*`)
 - Do NOT read another module's unshared memories
 - Do NOT hardcode your product slug — use env var `PRODUCT_SLUG`
@@ -267,7 +267,7 @@ your-module/
 - Token arrives via `?token=<JWT>` URL param after login redirect — extract, store, replaceState
 
 ### Entitlement Check
-- `GET https://magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
+- `GET https://api.magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
 - Returns `{ success, hasAccess, reason }` — cache for 5 minutes
 
 ### GDPR
