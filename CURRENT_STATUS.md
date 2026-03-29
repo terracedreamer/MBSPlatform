@@ -72,6 +72,7 @@ Both fixes confirmed working across all affected apps.
 - [x] Phase 5 learnings cascaded to instructions (commit `0aa6711`)
 - [x] All 11 standalone products verified live via Chrome browser
 - [x] Phase 5 reports collected from all 11 project folders
+- [x] Platform-instructions synced to all 15 project folders (Session 6)
 - [x] CWG stays on `test` branch (owner decision — intentional)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

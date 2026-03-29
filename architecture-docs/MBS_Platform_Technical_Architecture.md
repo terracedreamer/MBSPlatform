@@ -535,3 +535,49 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - Admin dashboard with analytics and revenue tracking
 - Free trial support with auto-conversion
 - Multi-currency support, family plans, push notifications
+
+---
+
+## Appendix A: Per-Product Deployment Reference
+
+Deployment details for every product in the ecosystem, sourced from Phase 5 reports and live verification (March 28, 2026).
+
+### Platform (Layer 1 + 2)
+
+| Product | Domain (Frontend) | Domain (Backend) | Containers | Stack | Database | Quirks |
+|---------|------------------|-------------------|------------|-------|----------|--------|
+| MBS Platform | magicbusstudios.com | api.magicbusstudios.com | 2 | Express + React (Vite) | mbs_platform | — |
+| Inner Lab | innerlab.ai | api.innerlab.ai | 2 | Express + React (Vite) | inner_lab | Backend Dockerfile is `Dockerfile.server` (not `Dockerfile`) |
+| CWG | conversationswithgod.ai | api.conversationswithgod.ai | 2 | FastAPI + React (Vite) | inner_lab (cwg_*) | Python app — JWT_SECRET_KEY vs JWT_SECRET fallback needed. Running on `test` branch. |
+| FlowState | yoga.magicbusstudios.com | api.yoga.magicbusstudios.com | 2 | Express + React (Vite) | inner_lab (yoga_*) | — |
+
+### The Arcade (Layer 3)
+
+| Product | Domain (Frontend) | Domain (Backend) | Containers | Stack | Database | Quirks |
+|---------|------------------|-------------------|------------|-------|----------|--------|
+| BrokenChain | brokenchain.magicbusstudios.com | api.brokenchain.magicbusstudios.com | 2 | Express + React (Vite) | brokenchain | WebSocket (Socket.io) — must keep WS support enabled in Traefik |
+| MindHacker | mindhacker.magicbusstudios.com | api.mindhacker.magicbusstudios.com | 2 | Express + React (Vite) | mindhacker | Traefik strips `/api` prefix — routes mounted without it. Backend domain uses dots not hyphens. Frontend healthcheck must be DISABLED in Coolify. |
+| Trivia Roast | triviaroast.magicbusstudios.com | api.trivia.magicbusstudios.com | 2 | Express + vanilla HTML/JS | triviaroast | Coolify services on SEPARATE Docker networks — nginx proxy_pass uses public domain, not internal hostname. `authSource=admin` required in MONGO_URL. |
+| Fake Artist | fakeartist.magicbusstudios.com | api-fakeartist.magicbusstudios.com | 2 | Express + React (Vite) | fakeartist | Socket connections remain UNAUTHENTICATED (party game UX). Backend domain uses HYPHEN (api-fakeartist), not dot. |
+| Whispering House | whisperinghouse.magicbusstudios.com | api-whisperinghouse.magicbusstudios.com | 2 | FastAPI + React (Vite) | whispering_house | Python app. Auth only on create+join, not in-game. WebSocket stays unauthenticated. Backend domain uses HYPHEN. |
+
+### Studio Works (Layer 3)
+
+| Product | Domain (Frontend) | Domain (Backend) | Containers | Stack | Database | Quirks |
+|---------|------------------|-------------------|------------|-------|----------|--------|
+| WildLens | wildlens.magicbusstudios.com | api.wildlens.magicbusstudios.com | 2 | Express + Next.js | wildlens | Next.js (not Vite) — uses `NEXT_PUBLIC_*` build args, not `VITE_*`. Full legacy user migration across 10+ collections. |
+| Lazy Chef | lazy-chef.magicbusstudios.com | lazy-chef-backend.magicbusstudios.com | 2 | FastAPI + React (Vite) | lazy_chef | Python app. Backend domain convention differs (lazy-chef-backend, not api-lazy-chef). CI uses GitHub Actions. |
+| Movie Picker | moviepicker.magicbusstudios.com | (check Coolify) | 2 | Express + React (Vite) | moviepicker | Uses TMDB API for movie data. resolveUser middleware with in-memory Set cache for legacy migration. |
+| SmartCart | smartcart.magicbusstudios.com | (same container) | **1** | Express serves frontend + API | smartcart | SINGLE CONTAINER — Express builds Vite frontend and serves from `/public`. No separate frontend service. Dockerfile has `ARG` for VITE_* vars. |
+| TaskTracker | tasktracker.magicbusstudios.com | (same service) | 1 (Nixpacks) | Express + React (CRA) | tasktracker | Uses Nixpacks (not Dockerfile). `CI=true` treats ESLint warnings as errors. React app uses `REACT_APP_*` (not `VITE_*`). Legacy migration uses MongoDB TRANSACTIONS — requires replica set, fails on standalone. |
+| AI Tutor | tutor.magicbusstudios.com | api.tutor.magicbusstudios.com | 2 | FastAPI + React (Vite) | ai_tutor | Python app. Both SSO bugs confirmed here (JWT_SECRET naming + legacy user collision). Onboarding flow kept for new users. |
+
+### Deployment Learnings (Phase 5)
+
+1. **Coolify env vars must be on separate lines** — concatenated vars (e.g., `JWT_SECRET=xxxLOG_LEVEL=INFO`) cause silent JWT validation failures.
+2. **`authSource=admin` required** — when MongoDB uses `root` credentials, the connection string must include `authSource=admin` or auth fails silently.
+3. **Coolify services are on separate Docker networks** — internal Docker hostnames (e.g., `backend:3001`) don't resolve between services. Use public domains for inter-service communication.
+4. **Frontend healthcheck may need disabling** — Coolify's probe can't reach nginx in some configurations and kills the container.
+5. **Backend domain conventions vary** — some use `api.X` (dots), some use `api-X` (hyphens), one uses `X-backend`. Check Coolify config per service.
+6. **Traefik may strip `/api` prefix** — if routes return 404, check whether Traefik is stripping the prefix. Mount routes without `/api` if so.
+7. **`VITE_BACKEND_URL` must NOT include `/api`** — if Traefik strips it, the URL should be just the domain.
