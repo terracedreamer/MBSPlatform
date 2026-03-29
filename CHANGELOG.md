@@ -1,5 +1,66 @@
 # CHANGELOG — MBS Platform
 
+## March 28, 2026 — Session 6: Phase 5 Complete, All Products Verified, Architecture Docs Created
+
+### Summary
+All 5 build phases complete. Reviewed WildLens SSO login loop — identified two root causes (legacy user collision + Python JWT_SECRET naming) and cascaded fixes to all instructions. Collected and reviewed all 11 Phase 5 reports. Verified all 13 products live via Chrome browser automation. Established three-level GDPR deletion architecture. Created architecture reference documents.
+
+### Key Decisions
+- **GDPR three-level deletion**: App-level (within app only), category-level, and full account (both from magicbusstudios.com only). A user deleting data from WildLens does NOT delete their MBS account or other apps' data.
+- **CWG stays on `test` branch**: Owner decision — not promoted to `main`.
+
+### Documentation Created
+- `architecture-docs/MBS_Platform_Technical_Architecture.md` — comprehensive technical reference
+- `architecture-docs/MBS_Platform_Overview.md` — non-technical overview for marketing/executive use
+
+### Learnings Cascaded
+- `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` — Added Step 5 (getOrProvisionUser pattern for legacy user collision), Phase 5 Learnings section (4 lessons), updated GDPR section to three-level model
+- `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` — Added Python JWT_SECRET_KEY vs JWT_SECRET warning
+- `platform-instructions-for-new-modules/CLAUDE.md` — Added cross-reference to legacy user collision fix
+
+### Phase 5 Reports Collected (11 total)
+| Product | Key Finding |
+|---------|------------|
+| BrokenChain | Both SSO bugs hit and fixed (JWT_SECRET fallback + legacy user) |
+| Fake Artist | N/A — stateless JWT, no User model |
+| Lazy Chef | Python app, safe pattern ($set platformUserId, not delete/recreate) |
+| MindHacker | visitorId → platformUserId redesign, route prefix issue found |
+| Movie Picker | resolveUser middleware pattern, rekeys Watchlist + UserMovieInteraction |
+| SmartCart | ensureUser + migrateLegacyUser across 5 collections, Mixed _id type |
+| TaskTracker | Transactional migration across 14 collections (needs replica set) |
+| Trivia Roast | N/A — no User model, auth on POST only |
+| AI Tutor | Confirmed BOTH bugs (JWT_SECRET naming + legacy user), both fixed |
+| Whispering House | N/A — no standalone auth, auth on create+join only |
+| WildLens | Full migration across 10+ collections including followers/following |
+
+### Live Verification (Chrome browser — all 13 products)
+- BrokenChain, SmartCart, TaskTracker, AI Tutor, WildLens, Whispering House, Lazy Chef, Movie Picker, Trivia Roast: **Authenticated** (showing user name/avatar)
+- MindHacker, Fake Artist: **SSO Ready** (Sign In button — correct per-subdomain behavior)
+- FlowState (yoga): **Authenticated** (full dashboard with user profile)
+- CWG: **Authenticated** (guides page with Unlock Better Guidance modal)
+
+### Memory Saved
+- SSO login loop pattern (two root causes + fix)
+- GDPR deletion architecture (three levels)
+
+---
+
+## March 27, 2026 — Session 5: Phase 3B + Phase 4 Reports Reviewed
+
+### Summary
+Reviewed Phase 3B (CWG refactor) completion report. Filed to phase-reports/. Cascaded Phase 3B learnings to FlowState instructions (User ID Resolution, Cross-Origin Login Redirect). Confirmed CWG running on `test` branch at cwg.magicbusstudios.com intentionally.
+
+### Learnings Cascaded to FlowState
+- User ID Resolution section (platform ObjectId vs module-specific IDs)
+- Cross-Origin Login Redirect confirmation (already works via Inner Lab commit `efebe36`)
+
+### Known Issues Added
+- CWG Settings page crash ("Illegal constructor" — pre-existing)
+- CWG admin stats show 0 (old data under UUID, queries use platform ID)
+- CWG entitlements not wired (no free/premium enforcement)
+
+---
+
 ## March 27, 2026 — Session 4: Phase 3A Complete, Docs Hardened, Marketing Updated
 
 ### Summary

@@ -69,12 +69,24 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - ~~Referrals~~ → Phase 1 Addendum #11
 - ~~Token refresh~~ → Phase 1 Addendum #12
 
+### Reminders (Owner Action Required)
+- [ ] **Create Stripe products in Dashboard** — IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr). CWG prices already exist.
+- [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
+
+### Post-Phase 5 Cleanup
+- [ ] **Dead code cleanup across Phase 5 apps** — Old auth files, unused npm/pip deps (bcryptjs, passport, etc.) still on disk in most apps. Harmless but messy. Cleanup prompt ready in SESSION_HANDOFF.md Session 6.
+- [ ] **GDPR `DELETE /api/user-data` endpoint** — Needs implementing on: BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker. Already exists on: Lazy Chef, SmartCart, TaskTracker, AI Tutor, Whispering House.
+- [ ] **MBS Platform deletion UI** — magicbusstudios.com/settings needs UI for three-level deletion (app, category, full account) + logic to call each product's delete endpoint.
+- [ ] **CWG entitlements** — CWG doesn't call the entitlements API yet. No free/premium enforcement.
+- [ ] **TaskTracker MongoDB transactions** — Legacy user migration uses transactions (requires replica set). May fail on standalone MongoDB. Needs non-transactional fallback.
+
 ### Genuinely Future (no phase, needs multiple phases or decisions first)
-- [ ] **Consolidate friends/invites to MBS Platform API** — CWG and FlowState currently have product-level friends in `inner_lab` DB. MBS Platform has platform-level friends API (`/api/friends/*`) in `mbs_platform` DB, built but unused. Migrate product-level friends to platform-level so one system manages all friendships cross-product. Involves: changing CWG + FlowState social routes to call MBS Platform API, migrating existing friend records, removing `friends`/`invites` collections from `inner_lab`.
-- [ ] **Post-signup module picker** — after a user signs up, show them all available modules (CWG, FlowState, BreathArc, etc.) and let them pick which ones they want to subscribe to. Could live on innerlab.ai/modules as an authenticated experience or as a step in the signup flow. Needs: product catalog with descriptions + pricing for each module, Stripe checkout per module.
+- [ ] **Premium feature gating** — Entitlement infrastructure wired in all 13 apps but nothing enforces free vs paid. Needs per-product decisions on what's free vs premium.
+- [ ] **Consolidate friends/invites to MBS Platform API** — CWG and FlowState currently have product-level friends in `inner_lab` DB. MBS Platform has platform-level friends API (`/api/friends/*`) in `mbs_platform` DB, built but unused. Migrate product-level friends to platform-level so one system manages all friendships cross-product.
+- [ ] **Post-signup module picker** — after a user signs up, show them all available modules (CWG, FlowState, BreathArc, etc.) and let them pick which ones they want to subscribe to. Could live on innerlab.ai/modules as an authenticated experience or as a step in the signup flow.
 - [ ] Free trial support (X days free, auto-convert) — needs pricing decision
 - [ ] Win-back offers — needs email + promo system working together
-- [ ] JWT upgrade to RS256 asymmetric signing — technical debt, no rush
+- [ ] JWT upgrade to RS256 asymmetric signing — all products share same HS256 secret, leaked key = forge tokens for all apps. Important before real users.
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Admin dashboard (analytics, revenue, funnel tracking) — needs real data
 - [ ] Email campaigns + announcements + newsletter — post-launch

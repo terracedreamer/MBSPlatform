@@ -161,8 +161,23 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 - POST /api/friends/accept — accept invite
 - GET /api/health — health check
 
-**Phase 2+**
-- Email preferences, admin, promos, referrals (see FUTURE_WORK_TODO.md)
+**Phase 1 Addendum (all deployed)**
+- POST /api/auth/signup — email/password registration
+- POST /api/auth/login — email/password login
+- POST /api/auth/forgot-password — send reset email
+- POST /api/auth/reset-password — reset with token
+- POST /api/auth/2fa/setup — enable TOTP 2FA
+- POST /api/auth/2fa/verify — verify TOTP code
+- POST /api/auth/refresh — refresh JWT
+- GET /api/auth/email-preferences — get email preferences
+- PUT /api/auth/email-preferences — update email preferences
+- GET /api/auth/unsubscribe/:token — one-click unsubscribe
+- GET /api/admin/stats — admin dashboard stats
+- GET /api/admin/users — admin user list
+- POST /api/promos — create promo code
+- POST /api/promos/validate — validate promo code
+- POST /api/referrals — create referral
+- GET /api/referrals/stats — referral stats
 
 ## Data Deletion (Three-Level Architecture)
 
@@ -198,13 +213,17 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 - Old databases stay untouched as backups (copy, not move)
 - Only delete old DBs after weeks/months of verified operation
 
-## Build Order (Final — 2026-03-25)
-1. **MBS Platform** — add SSO + billing + entitlements to `MBS/` project (magicbusstudios.com)
-2. **Inner Lab Middleware** — add il_* APIs + dashboard to `Innerlab/` project (innerlab.ai)
-3. **CWG Migration** — shared data → il_*, product data → cwg_*, identity → mbs_platform
-4. **FlowState Migration** — same pattern
-5. **New Inner Lab modules** — born into the architecture
-6. **Inner Lab Frontend enhancements** — daily briefing, cross-module insights (when enough data)
+## Build Order (All 5 Phases Complete — 2026-03-28)
+1. **Phase 1: MBS Platform** — SSO + billing + entitlements at magicbusstudios.com ✅ DONE
+2. **Phase 2: Inner Lab Middleware** — il_* APIs + dashboard + auth pages at innerlab.ai ✅ DONE
+3. **Phase 3: CWG Migration** — data (20 users, 28 collections) + backend/frontend refactor ✅ DONE (on `test` branch)
+4. **Phase 4: FlowState Migration** — backend/frontend refactor, 0 users ✅ DONE (live on production)
+5. **Phase 5: Standalone Products** — all 11 Arcade + Studio Works apps SSO migrated ✅ DONE (all verified live)
+
+### Future Build Work
+6. **Premium feature gating** — entitlement infrastructure wired, enforcement TBD per product
+7. **New Inner Lab modules** — born into the architecture using `platform-instructions-for-new-modules/`
+8. **Inner Lab Frontend enhancements** — daily briefing, cross-module insights (when enough data)
 
 ## Folder Structure
 
@@ -241,6 +260,17 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── ConversationsWithGod_Product_Brief.md   ← CWG deep dive (21 guides, features, pricing)
 │   └── TheArcade_Marketing_Brief.md            ← Arcade deep dive (5 games, campaigns)
 │
+├── architecture-docs/                           ← Human-readable reference documents
+│   ├── MBS_Platform_Technical_Architecture.md  ← Comprehensive technical reference
+│   └── MBS_Platform_Overview.md                ← Non-technical overview (marketing-ready)
+│
+├── phase-reports/                               ← Completion reports from each build phase
+│   ├── PHASE_1_REPORT.md, PHASE_1_LEARNINGS.md, PHASE_1_ADDENDUM_REPORT.md
+│   ├── PHASE_2_REPORT.md, PHASE_2_ADDENDUM_REPORT.md
+│   ├── PHASE_3A_MIGRATION_REPORT.md, PHASE_3B_REPORT.md
+│   ├── PHASE_4_REPORT.md
+│   └── README.md                               ← Report workflow documentation
+│
 ├── archive/                                    ← Old reference (absorbed)
 │   ├── ChatGPT-architecture/
 │   └── MBS_Platform_Technical_Architecture.docx
@@ -250,6 +280,7 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 ├── CHANGELOG.md                                ← Decision history
 ├── CURRENT_STATUS.md                           ← Current state
 ├── FUTURE_WORK_TODO.md                         ← Prioritized tasks
+├── ORCHESTRATION_GUIDE.md                      ← Build workflow + paste-ready prompts
 └── .gitignore
 ```
 
@@ -292,6 +323,8 @@ When ANY file in `marketing-docs/` changes in this repo:
 
 ## What NOT to Do
 - Do NOT write code in this repo — this is architecture/planning only
-- Do NOT modify existing product backends (CWG, FlowState) until after platform + middleware are built
+- Do NOT build auth into any product directly — all auth through MBS Platform SSO
 - Do NOT build Stripe into CWG or any product directly — all billing through MBS Platform
 - Do NOT hardcode product slugs — config or database
+- Do NOT modify another module's prefixed collections (e.g., CWG should never write to yoga_*)
+- Do NOT assume email exists on all users — Nostr/LNURL users are pseudonymous
