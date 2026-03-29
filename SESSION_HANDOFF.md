@@ -2,7 +2,7 @@
 
 **Last Updated**: March 28, 2026 (Session 6)
 **Git Branch**: main
-**Last Commit**: `0aa6711` (docs: add legacy user collision fix pattern)
+**Last Commit**: `c8a3dce` (docs: add architecture-docs)
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
@@ -25,7 +25,11 @@
    - 2 showing "Sign In" button (correct — per-subdomain localStorage, not yet logged in on those domains)
    - Sign Out verified working on Whispering House
 6. **Updated all session docs** — CURRENT_STATUS, FUTURE_WORK_TODO, SESSION_HANDOFF
-7. **Saved memory** about SSO login loop pattern for future reference
+7. **Saved memory** about SSO login loop pattern + GDPR deletion architecture
+8. **GDPR three-level deletion architecture** decided and documented — app-level (within app only), category-level, full account (both from magicbusstudios.com only)
+9. **Created `architecture-docs/` folder** with two reference documents:
+   - `MBS_Platform_Technical_Architecture.md` — comprehensive technical reference
+   - `MBS_Platform_Overview.md` — non-technical overview for marketing/executive use
 
 ### Key findings:
 - AI Tutor (Python) confirmed BOTH bugs — JWT_SECRET naming AND legacy user collision
