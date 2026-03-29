@@ -1,27 +1,38 @@
 # CHANGELOG — MBS Platform
 
-## March 29, 2026 — Session 7: Full Documentation Review & Next-Steps Assessment
+## March 29, 2026 — Session 7: Architectural Decisions + GDPR Deletion Built
 
 ### Summary
-Review-only session. Read all documentation (SESSION_HANDOFF, CURRENT_STATUS, FUTURE_WORK_TODO, CHANGELOG, CLAUDE.md, ORCHESTRATION_GUIDE, phase-reports listing) to assess current state post-Phase 5 completion. Compiled and prioritized all remaining work. No code or architecture changes.
+Full doc review, prioritized all 16 remaining items, made major architectural decisions, then built GDPR deletion endpoints across 6 apps + cascade service + deletion UI in MBS Platform. Code is written but NOT committed/pushed to individual project repos yet.
 
-### Key Decisions
+### Architectural Decisions
 - **Three-tier subscription model**: Not Subscribed → Free Subscriber → Premium Subscriber. Users must explicitly subscribe (even free) to access any product.
-- **Subscribe gating for all apps**: Subscription click required for access. Premium gating only for products with defined free/premium split (currently CWG only).
-- **Product picker for entire catalog**: Not just Inner Lab — covers all Arcade games, Studio Works tools, and IL modules.
-- **Friends consolidation: Option A (MBS Platform level)**: Remove product-level friends from CWG/FlowState, use existing platform friends API.
-- **Admin dashboard: hierarchical at MBS level**: Drill-down from MBS → category → individual product. Absorbs CWG's existing admin data.
+- **Subscribe gating for all apps**: Subscription click required. Premium gating only for CWG (only product with defined free/premium split).
+- **Product picker for entire catalog**: All products (IL, Arcade, Studio Works). Users subscribe individually.
+- **Friends consolidation: Option A (MBS Platform level)**: Remove from CWG/FlowState, use existing platform friends API.
+- **Admin dashboard: hierarchical at MBS level**: Drill-down MBS → category → product. Absorbs CWG's existing admin data.
 - **Admin accounts**: `terracedreamer@gmail.com` + `1984.abhinav@gmail.com` both `is_admin: true`. Future: `ADMIN_EMAILS` env var.
-- **Free trial: 7 days premium per product** on subscription. Future: credit card required upfront.
-- **RS256 JWT upgrade**: Moved to future (pre-launch).
-- **Enterprise SSO**: Removed from roadmap entirely.
-- **CWG `test` branch**: Stays indefinitely — not merging to `main` until everything is 100%.
+- **Free trial: 7 days premium per product** on subscription. Future: credit card upfront.
+- **RS256 JWT upgrade**: Deferred to pre-launch.
+- **Enterprise SSO**: Removed from roadmap.
+- **CWG `test` branch**: Stays indefinitely.
 
-### Files Updated
-- SESSION_HANDOFF.md — Session 7 summary + all decisions
+### Code Built (NOT yet committed to individual repos)
+| Project | Files Changed |
+|---------|--------------|
+| Fakeartist/ | new `server/routes/userData.js`, modified `server/server.js` |
+| Trivia/ | new `server/routes/userData.js`, modified `server/index.js` |
+| Movie/ | new `server/routes/userData.js`, modified `server/index.js` |
+| Mindhacker/ | new `server/src/routes/userData.js`, modified `server/src/index.js` |
+| Brokenchain/ | new `server/src/routes/userData.js`, modified `server/src/app.js` |
+| Wildlife/ | new `server/routes/userData.js`, modified `server/index.js` |
+| MBS/ | modified `server/config/products.js` (apiUrl), new `server/services/gdprCascade.js`, modified `server/routes/auth.js` (2 new routes + cascade on account delete), modified `src/pages/AccountPage.jsx` (deletion UI) |
+
+### Files Updated (MBSPlatform repo)
+- SESSION_HANDOFF.md — Full session 7 summary + uncommitted code reminder
 - CHANGELOG.md — This entry
-- CURRENT_STATUS.md — Date updated
-- FUTURE_WORK_TODO.md — Restructured: "Decided — Ready to Build" section + "Future Work (Deferred)" section. Enterprise SSO removed.
+- CURRENT_STATUS.md — GDPR status updated
+- FUTURE_WORK_TODO.md — Restructured with decided + deferred items
 
 ---
 

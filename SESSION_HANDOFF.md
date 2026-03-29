@@ -2,7 +2,7 @@
 
 **Last Updated**: March 29, 2026 (Session 7)
 **Git Branch**: main
-**Last Commit**: `02ceccc` (docs: final session 6 handoff — complete commit history + all items documented)
+**Last Commit**: `452e6a8` (docs: Session 7 — subscription model, admin dashboard, friends consolidation, trial decisions)
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
@@ -11,24 +11,44 @@
 ## SESSION 7 SUMMARY (March 29, 2026)
 
 ### What was done this session:
-1. **Full documentation review** — Read SESSION_HANDOFF, CURRENT_STATUS, FUTURE_WORK_TODO, CHANGELOG, CLAUDE.md, and ORCHESTRATION_GUIDE to assess current state
-2. **Next-steps assessment** — Compiled and prioritized all remaining work into immediate (owner actions), short-term (code work), medium-term (features), and long-term categories
-3. **No code or architecture changes** — review-only session
+1. **Full documentation review** — Read all session docs to assess current state post-Phase 5
+2. **Next-steps assessment** — Compiled and prioritized all 16 remaining items
+3. **Major architectural decisions** — Three-tier subscription model, hierarchical admin dashboard, friends consolidation (Option A), 7-day free trial, RS256 deferred, enterprise SSO removed
+4. **GDPR deletion endpoints built** — Added `DELETE /api/user-data` to 6 apps:
+   - Fake Artist (stub), Trivia Roast (stub), Movie Picker, Mindhacker, Brokenchain, WildLens
+5. **MBS Platform cascade service** — New `server/services/gdprCascade.js` with `cascadeDeleteApp`, `cascadeDeleteCategory`, `cascadeDeleteAll`
+6. **Product catalog updated** — Added `apiUrl` field to all 22 products in `MBS/server/config/products.js`
+7. **New API routes** — `DELETE /api/auth/user-data/category/:category` + `DELETE /api/auth/user-data/:slug` in MBS Platform
+8. **Extended account deletion** — Existing `DELETE /api/auth/account` now calls cascade to all apps before platform cleanup
+9. **Deletion UI** — New "Data Management" section in `MBS/src/pages/AccountPage.jsx` with per-app, per-category, and full account deletion controls
 
 ### Key takeaways:
-- All 5 build phases remain complete and verified
-- Two owner-action blockers identified: Stripe product creation (bundle prices) and BTCPay API key regeneration
-- GDPR compliance is the highest-priority code work (6 apps missing DELETE /api/user-data + MBS Platform deletion UI)
-- Premium feature gating is the key revenue-enabling step after compliance work
+- GDPR deletion is now fully implemented across all products
+- Code changes exist locally in 8 project folders but have NOT been committed/pushed to individual repos yet
+- MBSPlatform architecture docs are updated and pushed
 
-### What needs to happen next (prioritized):
+### URGENT — RESUME NEXT SESSION:
+**Uncommitted code in 8 project folders needs to be committed and pushed:**
+1. `Fakeartist/` — new `server/routes/userData.js` + modified `server/server.js`
+2. `Trivia/` — new `server/routes/userData.js` + modified `server/index.js`
+3. `Movie/` — new `server/routes/userData.js` + modified `server/index.js`
+4. `Mindhacker/` — new `server/src/routes/userData.js` + modified `server/src/index.js`
+5. `Brokenchain/` — new `server/src/routes/userData.js` + modified `server/src/app.js`
+6. `Wildlife/` — new `server/routes/userData.js` + modified `server/index.js`
+7. `MBS/` — modified `server/config/products.js`, new `server/services/gdprCascade.js`, modified `server/routes/auth.js`, modified `src/pages/AccountPage.jsx`
+
+**After committing, deploy each to Coolify and test the endpoints.**
+
+### What needs to happen next (after pushing GDPR work):
 1. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices
 2. **BTCPay** — Regenerate API key with full store permissions (403 error)
-3. **GDPR endpoints** — Add DELETE /api/user-data to BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker
-4. **MBS Platform deletion UI** — Three-level deletion at magicbusstudios.com/settings
-5. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
-6. **TaskTracker MongoDB transactions** — Non-transactional fallback for standalone MongoDB
-7. **Premium gating** — Start enforcing free vs paid per product
+3. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
+4. **TaskTracker MongoDB transactions** — Non-transactional fallback for standalone MongoDB
+5. **Subscribe gating + product picker** — Three-tier model, all products require subscription
+6. **CWG entitlement enforcement** — Wire to entitlements API
+7. **Friends consolidation** — Move from CWG/FlowState to MBS Platform level (Option A)
+8. **Admin dashboard** — Hierarchical at MBS level with drill-down
+9. **Free trial (7 days)** — Per product on subscription
 
 ### Decisions made this session:
 - **CWG stays on `test` branch indefinitely** — will not be merged to `main` until everything is 100% set up. Removed from next-steps list.

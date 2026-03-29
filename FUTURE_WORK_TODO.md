@@ -75,8 +75,8 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 
 ### Post-Phase 5 Cleanup
 - [ ] **Dead code cleanup across Phase 5 apps** — Old auth files, unused npm/pip deps (bcryptjs, passport, etc.) still on disk in most apps. Harmless but messy. Cleanup prompt ready in SESSION_HANDOFF.md Session 6.
-- [ ] **GDPR `DELETE /api/user-data` endpoint** — Needs implementing on: BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker. Already exists on: Lazy Chef, SmartCart, TaskTracker, AI Tutor, Whispering House.
-- [ ] **MBS Platform deletion UI** — magicbusstudios.com/settings needs UI for three-level deletion (app, category, full account) + logic to call each product's delete endpoint.
+- [x] **GDPR `DELETE /api/user-data` endpoint** — Built for all 6 missing apps (Session 7). Code NOT yet committed/pushed to individual repos.
+- [x] **MBS Platform deletion UI + cascade service** — Built in Session 7. Cascade service, new routes, AccountPage UI. Code NOT yet committed/pushed.
 - [ ] **CWG entitlements** — CWG doesn't call the entitlements API yet. No free/premium enforcement.
 - [ ] **TaskTracker MongoDB transactions** — Legacy user migration uses transactions (requires replica set). May fail on standalone MongoDB. Needs non-transactional fallback.
 
