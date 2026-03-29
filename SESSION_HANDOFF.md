@@ -11,6 +11,8 @@
 ## SESSION 8 SUMMARY (March 29, 2026)
 
 ### What was done this session:
+
+**Part 1 — GDPR Cleanup (from Session 7)**
 1. **Committed and pushed GDPR deletion code to all 7 project repos:**
    - Fakeartist (`2775399`) — stub endpoint (no persistent user data)
    - Trivia (`4dc33c8`) — stub endpoint (no persistent user data)
@@ -20,19 +22,39 @@
    - Wildlife (`65f6be7`) — deletes Discovery, CommunityPost, ChatSession, Collection, Bookmark, UserChallenge, Notification, uploaded files, User
    - MBS (`b0edb9b`) — cascade service, new GDPR routes, deletion UI on AccountPage
 
+**Part 2 — Additional fixes**
+8. **Built Whispering House GDPR endpoint** (`117dbfd`) — Python/FastAPI DELETE /api/user-data
+9. **Removed dead bcryptjs from Wildlife** (`c9323d6`)
+10. **Fixed TaskTracker transaction fallback** (`8053c11`) — non-transactional migration for standalone MongoDB
+11. **Triggered Coolify redeploys** for all 8 backend services + MBS frontend — all successful
+12. **Dead code audit** — all Phase 5 apps clean (only bcryptjs in Wildlife was dead)
+
+**Part 3 — 5 Roadmap Features Built**
+13. **Subscribe gating + product picker** (MBS `ca7fac6`):
+    - New public products catalog API (`GET /api/products`)
+    - Subscribe-free endpoint with 7-day premium trial (`POST /api/entitlements/subscribe-free`)
+    - Refactored `checkAccess()` — three-tier model (not_subscribed / free_tier / paid)
+    - My-subscriptions endpoint with enriched metadata
+    - Lazy trial downgrade (expired trials auto-convert to active free tier)
+    - ProductPickerPage frontend with category tabs and trial badges
+14. **Admin dashboard** (MBS `ca7fac6`):
+    - AdminPage with Overview (stats, auth breakdown), Users (search, paginate, detail panel), Entitlements (filter, grant, revoke)
+    - Admin link on AccountPage for admin users
+15. **CWG entitlement enforcement** (CWG `f9c38ab` on `test` branch):
+    - Wired existing check_entitlement() to profile endpoint
+    - Syncs plan from MBS Platform, graceful degradation if unreachable
+    - Adds isTrialing and trialDaysRemaining to profile response
+16. **Friends consolidation** — NO WORK NEEDED (MBS already has it, CWG has no friends code)
+
 ### What needs to happen next:
-1. **Deploy all 7 repos to Coolify** — rebuild containers to pick up GDPR endpoints
-2. **Test GDPR endpoints** — curl DELETE /api/user-data on each app with valid JWT
-3. **Test cascade** — trigger category-level and full-account deletion from MBS Platform
-4. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices
-5. **BTCPay** — Regenerate API key with full store permissions (403 error)
-6. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
-7. **TaskTracker MongoDB transactions** — Non-transactional fallback for standalone MongoDB
-8. **Subscribe gating + product picker** — Three-tier model, all products require subscription
-9. **CWG entitlement enforcement** — Wire to entitlements API
-10. **Friends consolidation** — Move from CWG/FlowState to MBS Platform level (Option A)
-11. **Admin dashboard** — Hierarchical at MBS level with drill-down
-12. **Free trial (7 days)** — Per product on subscription
+1. **Log in to MBS** — token expired, need fresh session to test
+2. **Test GDPR endpoints** — delete data from Fake Artist or similar from Account page
+3. **Test subscribe-free flow** — visit /products, subscribe to a product, verify trial created
+4. **Test admin dashboard** — visit /admin, verify stats/users/entitlements tabs
+5. **Test CWG entitlement enforcement** — verify profile endpoint now syncs plan from MBS Platform
+6. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices (OWNER ACTION)
+7. **BTCPay** — Regenerate API key with full store permissions (OWNER ACTION)
+8. **Redeploy MBS B + MBS F** — Coolify webhook should auto-deploy, but verify new features are live
 
 ### Decisions made this session:
 - **CWG stays on `test` branch indefinitely** — will not be merged to `main` until everything is 100% set up. Removed from next-steps list.
