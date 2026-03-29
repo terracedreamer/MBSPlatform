@@ -1,7 +1,7 @@
 # Magic Bus Studios — Platform Technical Architecture
 
-**Version**: 1.0
-**Date**: March 28, 2026
+**Version**: 1.1
+**Date**: March 29, 2026
 **Author**: Magic Bus Studios Engineering
 **Status**: All 5 build phases complete. Platform live and operational.
 
@@ -524,7 +524,7 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - Entitlement check is wired but no product enforces premium gating yet
 - BTCPay API key has insufficient permissions (Lightning payments non-functional)
 - Stripe bundle price IDs (IL All Access, MBS All Access) not yet created in Dashboard
-- GDPR category-level and cross-product deletion not yet wired (endpoints exist, orchestration doesn't)
+- GDPR cascade service built locally (Session 7) but not yet committed/deployed to individual repos
 - CWG running on `test` branch (intentional)
 
 ### Planned Improvements
@@ -567,7 +567,7 @@ Deployment details for every product in the ecosystem, sourced from Phase 5 repo
 |---------|------------------|-------------------|------------|-------|----------|--------|
 | WildLens | wildlens.magicbusstudios.com | api.wildlens.magicbusstudios.com | 2 | Express + Next.js | wildlens | Next.js (not Vite) — uses `NEXT_PUBLIC_*` build args, not `VITE_*`. Full legacy user migration across 10+ collections. |
 | Lazy Chef | lazy-chef.magicbusstudios.com | lazy-chef-backend.magicbusstudios.com | 2 | FastAPI + React (Vite) | lazy_chef | Python app. Backend domain convention differs (lazy-chef-backend, not api-lazy-chef). CI uses GitHub Actions. |
-| Movie Picker | moviepicker.magicbusstudios.com | (check Coolify) | 2 | Express + React (Vite) | moviepicker | Uses TMDB API for movie data. resolveUser middleware with in-memory Set cache for legacy migration. |
+| Movie Picker | moviepicker.magicbusstudios.com | (same container) | **1** | Express + React (Vite) | moviepicker | SINGLE CONTAINER — Express builds Vite frontend and serves from `/client/dist`. Uses TMDB API. resolveUser middleware with in-memory Set cache for legacy migration. |
 | SmartCart | smartcart.magicbusstudios.com | (same container) | **1** | Express serves frontend + API | smartcart | SINGLE CONTAINER — Express builds Vite frontend and serves from `/public`. No separate frontend service. Dockerfile has `ARG` for VITE_* vars. |
 | TaskTracker | tasktracker.magicbusstudios.com | (same service) | 1 (Nixpacks) | Express + React (CRA) | tasktracker | Uses Nixpacks (not Dockerfile). `CI=true` treats ESLint warnings as errors. React app uses `REACT_APP_*` (not `VITE_*`). Legacy migration uses MongoDB TRANSACTIONS — requires replica set, fails on standalone. |
 | AI Tutor | tutor.magicbusstudios.com | api.tutor.magicbusstudios.com | 2 | FastAPI + React (Vite) | ai_tutor | Python app. Both SSO bugs confirmed here (JWT_SECRET naming + legacy user collision). Onboarding flow kept for new users. |

@@ -353,9 +353,10 @@ MBS Platform is Layer 1 and **orchestrates** the data deletion cascade. It does 
 GDPR status by product:
 | Status | Products |
 |--------|----------|
-| Implemented | Lazy Chef, SmartCart, TaskTracker, AI Tutor |
-| Missing | BrokenChain, MindHacker, Whispering House, WildLens, Movie Picker |
-| Not needed | Trivia Roast (no persistent user data), Fake Artist (24hr TTL) |
+| Implemented (deployed) | Lazy Chef, SmartCart, TaskTracker, AI Tutor |
+| Built (pending commit/deploy) | BrokenChain, MindHacker, WildLens, Movie Picker, Fake Artist (stub), Trivia Roast (stub) |
+| Missing | Whispering House |
+| Not needed | Consciousness (no user accounts — email capture only) |
 
 ## Testing
 

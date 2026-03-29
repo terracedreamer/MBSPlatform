@@ -104,8 +104,8 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 
 > Reference: Check global CLAUDE.md and ~/.claude/rules/ for full standards.
 
-- [ ] **Verify Architecture Docs**: Ensure MBS_Platform_Technical_Architecture.md is up to date with current system state
-- [ ] **Verify GDPR Status Table**: Cross-reference data-sovereignty.md with actual implementation across all products
-- [ ] **Verify Deployment Quirks**: Cross-reference deployment-quirks.md with actual Coolify configuration
+- [x] **Verify Architecture Docs**: Fixed Movie Picker (single container, not 2), updated GDPR limitation note for Session 7 cascade service, bumped version to 1.1 (2026-03-29)
+- [x] **Verify GDPR Status Table**: Updated data-sovereignty.md and CLAUDE.md — 6 apps moved from "Missing" to "Built (pending deploy)", Whispering House still missing
+- [x] **Verify Deployment Quirks**: Added Movie Picker (single container, TMDB API) and AI Tutor (Python/FastAPI, JWT fallback chain) entries. Fixed Lazy Chef DB name in env-standards.md (`lazychef` → `lazy_chef`)
 
 > Note: This is an architecture-only repo — no application code to audit.
