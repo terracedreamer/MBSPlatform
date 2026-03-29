@@ -1,9 +1,11 @@
 # CHANGELOG — MBS Platform
 
-## March 29, 2026 — Session 8: GDPR Code Committed & Pushed to All Repos
+## March 29, 2026 — Session 8: GDPR Deployed + 5 Roadmap Features Built
 
 ### Summary
-Committed and pushed all GDPR deletion code that was built in Session 7 to their respective GitHub repos. All 7 project repos now have the deletion endpoints on their `main` branches.
+Massive session: pushed all GDPR code from Session 7, built Whispering House endpoint, fixed TaskTracker transactions, deployed everything to Coolify, then built all 5 remaining roadmap features (subscribe gating, product picker, free trial, CWG entitlement enforcement, admin dashboard). Friends consolidation was already done.
+
+### GDPR — Committed and Pushed
 
 ### Commits pushed
 | Repo | Commit | What |
@@ -16,7 +18,24 @@ Committed and pushed all GDPR deletion code that was built in Session 7 to their
 | Wildlife | `65f6be7` | Deletes Discovery, CommunityPost, ChatSession, Collection, Bookmark, UserChallenge, Notification, uploads, User |
 | MBS | `b0edb9b` | Cascade service, GDPR routes, deletion UI on AccountPage |
 
-### Next: Deploy to Coolify and test
+### Additional Fixes
+| Item | Commit | What |
+|------|--------|------|
+| Whispering House GDPR | `117dbfd` | New Python/FastAPI DELETE /api/user-data endpoint |
+| Wildlife dead code | `c9323d6` | Removed unused bcryptjs dependency |
+| TaskTracker transactions | `8053c11` | Non-transactional fallback for standalone MongoDB |
+
+### Coolify Deploys
+All 9 services (8 backends + MBS frontend) redeployed via Coolify. All successful. MBS has webhook auto-deploy enabled.
+
+### 5 Roadmap Features
+| Feature | Repo | Commit | Details |
+|---------|------|--------|---------|
+| Subscribe gating + product picker + free trial | MBS | `ca7fac6` | Products API, subscribe-free with 7-day trial, checkAccess refactor (three-tier), ProductPickerPage, lazy trial downgrade |
+| Admin dashboard | MBS | `ca7fac6` | AdminPage with overview/users/entitlements tabs, admin link on AccountPage |
+| CWG entitlement enforcement | CWG | `f9c38ab` | Wired check_entitlement() to profile endpoint, syncs plan from MBS Platform |
+| Friends consolidation | N/A | N/A | No work needed — MBS already has friends, CWG has none |
+| Free trial (7 days) | MBS | `ca7fac6` | Bundled with subscribe-free, lazy downgrade after expiry |
 
 ---
 

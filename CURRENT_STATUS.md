@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 29, 2026 (Session 7)
+**Last Updated**: March 29, 2026 (Session 8)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -39,13 +39,14 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| GDPR deletion (three-level design) | All endpoints committed and pushed to 7 repos. Pending Coolify deploy + testing. | Deploy, then test with curl + cascade test from MBS |
-| CWG on `test` branch | Running on test, not main — intentional | Owner decision (Session 7): stay on `test` indefinitely until everything is 100% set up. Do NOT merge to main. |
+| GDPR deletion | All endpoints deployed to Coolify. Cascade service + deletion UI live on MBS Platform. | Test with fresh login |
+| Subscribe gating | Three-tier model built — checkAccess requires explicit subscription. ProductPickerPage + subscribe-free + 7-day trial. | Test /products page |
+| Admin dashboard | AdminPage built with overview/users/entitlements tabs. | Test /admin page |
+| CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch. | Verify on CWG test site |
+| CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
-| CWG entitlements not wired | No free/premium enforcement | Future work |
-| TaskTracker MongoDB transactions | Legacy user migration uses transactions (requires replica set) | May fail on standalone MongoDB — needs non-transactional fallback |
-| Dead auth code on disk | Several apps kept old auth files (not imported, harmless) | Cleanup pass per app |
-| Unused npm deps | bcryptjs, passport, etc. still in package.json on several apps | Cleanup pass per app |
+| BTCPay API key 403 | Lightning payments fail | Regenerate API key (OWNER ACTION) |
+| Stripe bundle price IDs | IL All Access + MBS All Access checkout fail | Create in Stripe Dashboard (OWNER ACTION) |
 
 ## What Exists (Live Products)
 

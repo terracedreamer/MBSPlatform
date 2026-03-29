@@ -74,20 +74,20 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
 
 ### Post-Phase 5 Cleanup
-- [ ] **Dead code cleanup across Phase 5 apps** — Old auth files, unused npm/pip deps (bcryptjs, passport, etc.) still on disk in most apps. Harmless but messy. Cleanup prompt ready in SESSION_HANDOFF.md Session 6.
-- [x] **GDPR `DELETE /api/user-data` endpoint** — Built for all 6 missing apps (Session 7). Code NOT yet committed/pushed to individual repos.
-- [x] **MBS Platform deletion UI + cascade service** — Built in Session 7. Cascade service, new routes, AccountPage UI. Code NOT yet committed/pushed.
-- [ ] **CWG entitlements** — CWG doesn't call the entitlements API yet. No free/premium enforcement.
-- [ ] **TaskTracker MongoDB transactions** — Legacy user migration uses transactions (requires replica set). May fail on standalone MongoDB. Needs non-transactional fallback.
+- [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
+- [x] **GDPR `DELETE /api/user-data` endpoint** — All 8 apps (including Whispering House). Committed, pushed, deployed to Coolify.
+- [x] **MBS Platform deletion UI + cascade service** — Deployed. AccountPage has Data Management section.
+- [x] **CWG entitlements** — check_entitlement() wired to profile endpoint (Session 8, `f9c38ab` on test branch).
+- [x] **TaskTracker MongoDB transactions** — Non-transactional fallback added (Session 8, `8053c11`).
 
 ### Decided — Ready to Build (Session 7 Decisions, 2026-03-29)
-- [ ] **Three-tier subscription model** — All products require explicit subscription before access (even free tier). Three states: Not Subscribed → Free Subscriber → Premium Subscriber. Gives owner engagement/interest data.
-- [ ] **Subscribe gating for all apps** — Every product gates access behind subscription. Users must click "Subscribe" to get free access. Premium gating only on products with defined free/premium splits (currently only CWG).
-- [ ] **CWG entitlement enforcement** — CWG has free/premium defined but doesn't call entitlements API yet. Wire it up to enforce free vs premium.
-- [ ] **Product/module picker (all products)** — Authenticated page showing ALL products (Inner Lab modules, Arcade games, Studio Works tools). Users subscribe to each individually. Not just Inner Lab — covers entire catalog.
-- [ ] **Consolidate friends to MBS Platform level (Option A)** — Remove friends code from CWG and FlowState. Point both to MBS Platform friends API (`/api/friends/*`), already built but unused. Can evolve to Option C (product-context tags) later.
-- [ ] **Admin dashboard (hierarchical)** — Master dashboard at magicbusstudios.com/admin. Top level: all users, revenue, signups, subscriptions. Drill-down: MBS → Inner Lab → CWG, MBS → Arcade → per-game, MBS → Studio Works → per-tool. Absorbs CWG's existing admin dashboard data.
-- [ ] **Free trial (7 days premium)** — On subscription, users get 7 days premium free for that product. Only applies to products with premium features (currently CWG only). Future: require credit card upfront, auto-charge after 7 days.
+- [x] **Three-tier subscription model** — Built in Session 8 (`ca7fac6`). checkAccess() refactored to require explicit subscription.
+- [x] **Subscribe gating for all apps** — ProductPickerPage at /products with subscribe-free endpoint.
+- [x] **CWG entitlement enforcement** — Wired in Session 8 (`f9c38ab` on test branch).
+- [x] **Product/module picker (all products)** — ProductPickerPage covers all 22 products with category tabs.
+- [x] **Consolidate friends to MBS Platform level (Option A)** — No work needed. MBS already has friends API, CWG has no friends code.
+- [x] **Admin dashboard (hierarchical)** — AdminPage at /admin with overview, users, entitlements tabs.
+- [x] **Free trial (7 days premium)** — Bundled with subscribe-free. Lazy downgrade after trial expires.
 
 ### Future Work (Decided but Deferred)
 - [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
