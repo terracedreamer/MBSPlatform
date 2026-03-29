@@ -328,3 +328,69 @@ When ANY file in `marketing-docs/` changes in this repo:
 - Do NOT hardcode product slugs — config or database
 - Do NOT modify another module's prefixed collections (e.g., CWG should never write to yoga_*)
 - Do NOT assume email exists on all users — Nostr/LNURL users are pseudonymous
+
+---
+
+## Env Var Standards (Canonical Names)
+
+This repo is architecture-only (no code), but when writing instructions for child apps, always use canonical env var names:
+
+| Legacy Name | Canonical Name |
+|-------------|---------------|
+| `MONGODB_URI` / `MONGO_URI` | `MONGO_URL` |
+| `JWT_SECRET_KEY` / `SECRET_KEY` | `JWT_SECRET` |
+| `CORS_ORIGIN` / `CLIENT_URL` / `ALLOWED_ORIGINS` | `CORS_ORIGINS` |
+| `MONGODB_DATABASE` | `DB_NAME` |
+| `MBS_PLATFORM_URL` / `PLATFORM_API_URL` | `PLATFORM_URL` |
+| `SENDGRID_FROM_EMAIL` | `FROM_EMAIL` |
+
+Full reference: `~/.claude/rules/env-standards.md`
+
+## GDPR — MBS Platform Role
+
+MBS Platform is Layer 1 and **orchestrates** the data deletion cascade. It does NOT expose `DELETE /api/user-data` itself — instead, it **calls** each child app's `DELETE /api/user-data` endpoint during category-level and full-account deletion.
+
+GDPR status by product:
+| Status | Products |
+|--------|----------|
+| Implemented | Lazy Chef, SmartCart, TaskTracker, AI Tutor |
+| Missing | BrokenChain, MindHacker, Whispering House, WildLens, Movie Picker |
+| Not needed | Trivia Roast (no persistent user data), Fake Artist (24hr TTL) |
+
+## Testing
+
+This repo has no code to test. For child app testing standards:
+- **Express apps**: Jest + supertest. Always test auth flow (valid/invalid/expired tokens, SSO auto-creation).
+- **FastAPI apps**: pytest + httpx AsyncClient.
+- **Reference project**: Lazy Chef is the gold standard for test coverage.
+
+## Skill References
+
+When working in this architecture repo, these skills provide context for writing instructions:
+- `express-backend-patterns` — Express error handler, Winston logger, response helpers
+- `fastapi-architecture` — FastAPI project structure, Motor async DB, auth dependency injection
+- `frontend-api-client` — Axios client with SSO interceptors, ProtectedRoute
+- `mbs-platform-sso` — JWT verification, user ID sync, entitlement checks
+- `coolify-deployment` — Dockerfiles, nginx config, env vars, branch mapping
+- `mongodb-shared-cluster` — DB-per-app naming, Mongoose/Motor patterns
+
+## Design Tokens
+
+Standard across all MBS products:
+- **Fonts**: Space Grotesk (headings), DM Sans (body), Instrument Serif (italic accent), JetBrains Mono (terminal)
+- **Colors**: MBS = Cyan/Teal, Inner Lab = Teal-500 `#14b8a6` + Sky-500 `#0ea5e9`, CWG = Blue `#3B82F6` + Purple `#7C3AED`
+- **UI**: Dark aesthetic, glass card panels, Framer Motion animations, floating particles
+
+## Backend Standardization
+
+All child apps built from MBS Platform instructions must follow:
+- **`req.user` shape**: `{ userId, email, name, avatar }` — standardize on `userId` (never `id` or `_id`)
+- **Response format**: `{ success: true, ...data }` or `{ success: false, message: "..." }`
+- **Logging**: Winston logger (NEVER `console.log`). Service name via `SERVICE_NAME` env var.
+- **Toasts**: Sonner (NEVER react-hot-toast)
+- **Route pattern**: authenticate -> validate -> business logic -> respond
+- **AI calls**: Always behind a service layer — API keys never in frontend
+
+## Architecture Reference
+
+Full platform architecture document: `~/Desktop/Codes/MBSPlatform/architecture-docs/MBS_Platform_Technical_Architecture.md`
