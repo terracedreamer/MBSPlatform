@@ -39,7 +39,7 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| GDPR deletion (three-level design) | All endpoints built, cascade service built, deletion UI built. Code NOT yet committed/pushed to individual repos. | Next session: commit, push, deploy, test. |
+| GDPR deletion (three-level design) | All endpoints committed and pushed to 7 repos. Pending Coolify deploy + testing. | Deploy, then test with curl + cascade test from MBS |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision (Session 7): stay on `test` indefinitely until everything is 100% set up. Do NOT merge to main. |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
 | CWG entitlements not wired | No free/premium enforcement | Future work |
@@ -76,5 +76,5 @@ Both fixes confirmed working across all affected apps.
 - [x] CWG stays on `test` branch (owner decision — intentional)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
-- [x] GDPR cascade to standalone products (code built Session 7 — needs commit/push/deploy)
+- [x] GDPR cascade to standalone products (code built Session 7, committed/pushed Session 8 — needs deploy)
 - [ ] Dead code cleanup across apps

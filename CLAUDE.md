@@ -354,7 +354,7 @@ GDPR status by product:
 | Status | Products |
 |--------|----------|
 | Implemented (deployed) | Lazy Chef, SmartCart, TaskTracker, AI Tutor |
-| Built (pending commit/deploy) | BrokenChain, MindHacker, WildLens, Movie Picker, Fake Artist (stub), Trivia Roast (stub) |
+| Committed (pending deploy) | BrokenChain, MindHacker, WildLens, Movie Picker, Fake Artist (stub), Trivia Roast (stub), MBS Platform (cascade service + deletion UI) |
 | Missing | Whispering House |
 | Not needed | Consciousness (no user accounts — email capture only) |
 

@@ -1,5 +1,25 @@
 # CHANGELOG — MBS Platform
 
+## March 29, 2026 — Session 8: GDPR Code Committed & Pushed to All Repos
+
+### Summary
+Committed and pushed all GDPR deletion code that was built in Session 7 to their respective GitHub repos. All 7 project repos now have the deletion endpoints on their `main` branches.
+
+### Commits pushed
+| Repo | Commit | What |
+|------|--------|------|
+| Fakeartist | `2775399` | Stub DELETE /api/user-data (no persistent data) |
+| Trivia | `4dc33c8` | Stub DELETE /api/user-data (no persistent data) |
+| Movie | `da991a9` | Deletes UserMovieInteraction, Watchlist, User |
+| Mindhacker | `1e9d933` | Pulls from GameResult/Room, deletes Player |
+| Brokenchain | `adb89ba` | Deletes Leaderboard, pulls from Room/Game/friends, deletes User |
+| Wildlife | `65f6be7` | Deletes Discovery, CommunityPost, ChatSession, Collection, Bookmark, UserChallenge, Notification, uploads, User |
+| MBS | `b0edb9b` | Cascade service, GDPR routes, deletion UI on AccountPage |
+
+### Next: Deploy to Coolify and test
+
+---
+
 ## March 29, 2026 — Session 7: Architectural Decisions + GDPR Deletion Built
 
 ### Summary
