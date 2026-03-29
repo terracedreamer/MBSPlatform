@@ -80,14 +80,20 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] **CWG entitlements** — CWG doesn't call the entitlements API yet. No free/premium enforcement.
 - [ ] **TaskTracker MongoDB transactions** — Legacy user migration uses transactions (requires replica set). May fail on standalone MongoDB. Needs non-transactional fallback.
 
-### Genuinely Future (no phase, needs multiple phases or decisions first)
-- [ ] **Premium feature gating** — Entitlement infrastructure wired in all 13 apps but nothing enforces free vs paid. Needs per-product decisions on what's free vs premium.
-- [ ] **Consolidate friends/invites to MBS Platform API** — CWG and FlowState currently have product-level friends in `inner_lab` DB. MBS Platform has platform-level friends API (`/api/friends/*`) in `mbs_platform` DB, built but unused. Migrate product-level friends to platform-level so one system manages all friendships cross-product.
-- [ ] **Post-signup module picker** — after a user signs up, show them all available modules (CWG, FlowState, BreathArc, etc.) and let them pick which ones they want to subscribe to. Could live on innerlab.ai/modules as an authenticated experience or as a step in the signup flow.
-- [ ] Free trial support (X days free, auto-convert) — needs pricing decision
+### Decided — Ready to Build (Session 7 Decisions, 2026-03-29)
+- [ ] **Three-tier subscription model** — All products require explicit subscription before access (even free tier). Three states: Not Subscribed → Free Subscriber → Premium Subscriber. Gives owner engagement/interest data.
+- [ ] **Subscribe gating for all apps** — Every product gates access behind subscription. Users must click "Subscribe" to get free access. Premium gating only on products with defined free/premium splits (currently only CWG).
+- [ ] **CWG entitlement enforcement** — CWG has free/premium defined but doesn't call entitlements API yet. Wire it up to enforce free vs premium.
+- [ ] **Product/module picker (all products)** — Authenticated page showing ALL products (Inner Lab modules, Arcade games, Studio Works tools). Users subscribe to each individually. Not just Inner Lab — covers entire catalog.
+- [ ] **Consolidate friends to MBS Platform level (Option A)** — Remove friends code from CWG and FlowState. Point both to MBS Platform friends API (`/api/friends/*`), already built but unused. Can evolve to Option C (product-context tags) later.
+- [ ] **Admin dashboard (hierarchical)** — Master dashboard at magicbusstudios.com/admin. Top level: all users, revenue, signups, subscriptions. Drill-down: MBS → Inner Lab → CWG, MBS → Arcade → per-game, MBS → Studio Works → per-tool. Absorbs CWG's existing admin dashboard data.
+- [ ] **Free trial (7 days premium)** — On subscription, users get 7 days premium free for that product. Only applies to products with premium features (currently CWG only). Future: require credit card upfront, auto-charge after 7 days.
+
+### Future Work (Decided but Deferred)
+- [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
+- [ ] **Admin accounts via ADMIN_EMAILS env var** — Currently `is_admin` is a DB field. Future: check email against `ADMIN_EMAILS` env var in Coolify. Easier to manage, no DB changes. Admin emails: `terracedreamer@gmail.com`, `1984.abhinav@gmail.com`.
+- [ ] **Premium feature gating (per-product)** — Entitlement infrastructure wired in all 13 apps but nothing enforces free vs paid. Needs per-product decisions on what's free vs premium for each app beyond CWG.
 - [ ] Win-back offers — needs email + promo system working together
-- [ ] JWT upgrade to RS256 asymmetric signing — all products share same HS256 secret, leaked key = forge tokens for all apps. Important before real users.
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
-- [ ] Admin dashboard (analytics, revenue, funnel tracking) — needs real data
 - [ ] Email campaigns + announcements + newsletter — post-launch
-- [ ] Multi-currency, family plan, teams, push notifications, enterprise SSO — long-term
+- [ ] Multi-currency, family plan, teams, push notifications — long-term

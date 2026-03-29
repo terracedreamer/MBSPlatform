@@ -5,15 +5,23 @@
 ### Summary
 Review-only session. Read all documentation (SESSION_HANDOFF, CURRENT_STATUS, FUTURE_WORK_TODO, CHANGELOG, CLAUDE.md, ORCHESTRATION_GUIDE, phase-reports listing) to assess current state post-Phase 5 completion. Compiled and prioritized all remaining work. No code or architecture changes.
 
-### Key Outcomes
-- Confirmed all 5 phases remain complete and verified
-- Prioritized next steps: Stripe product creation and BTCPay key regen (owner actions), GDPR compliance (code), premium gating (revenue)
-- No documentation gaps found — all session docs are current and consistent
+### Key Decisions
+- **Three-tier subscription model**: Not Subscribed → Free Subscriber → Premium Subscriber. Users must explicitly subscribe (even free) to access any product.
+- **Subscribe gating for all apps**: Subscription click required for access. Premium gating only for products with defined free/premium split (currently CWG only).
+- **Product picker for entire catalog**: Not just Inner Lab — covers all Arcade games, Studio Works tools, and IL modules.
+- **Friends consolidation: Option A (MBS Platform level)**: Remove product-level friends from CWG/FlowState, use existing platform friends API.
+- **Admin dashboard: hierarchical at MBS level**: Drill-down from MBS → category → individual product. Absorbs CWG's existing admin data.
+- **Admin accounts**: `terracedreamer@gmail.com` + `1984.abhinav@gmail.com` both `is_admin: true`. Future: `ADMIN_EMAILS` env var.
+- **Free trial: 7 days premium per product** on subscription. Future: credit card required upfront.
+- **RS256 JWT upgrade**: Moved to future (pre-launch).
+- **Enterprise SSO**: Removed from roadmap entirely.
+- **CWG `test` branch**: Stays indefinitely — not merging to `main` until everything is 100%.
 
 ### Files Updated
-- SESSION_HANDOFF.md — Session 7 summary added
+- SESSION_HANDOFF.md — Session 7 summary + all decisions
 - CHANGELOG.md — This entry
-- CURRENT_STATUS.md — Last updated date
+- CURRENT_STATUS.md — Date updated
+- FUTURE_WORK_TODO.md — Restructured: "Decided — Ready to Build" section + "Future Work (Deferred)" section. Enterprise SSO removed.
 
 ---
 

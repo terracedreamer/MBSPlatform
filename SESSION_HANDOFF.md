@@ -24,11 +24,23 @@
 ### What needs to happen next (prioritized):
 1. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices
 2. **BTCPay** — Regenerate API key with full store permissions (403 error)
-3. **CWG** — Merge `test` → `main` when ready
-4. **GDPR endpoints** — Add DELETE /api/user-data to BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker
-5. **MBS Platform deletion UI** — Three-level deletion at magicbusstudios.com/settings
-6. **Premium gating** — Start enforcing free vs paid per product
-7. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
+3. **GDPR endpoints** — Add DELETE /api/user-data to BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker
+4. **MBS Platform deletion UI** — Three-level deletion at magicbusstudios.com/settings
+5. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
+6. **TaskTracker MongoDB transactions** — Non-transactional fallback for standalone MongoDB
+7. **Premium gating** — Start enforcing free vs paid per product
+
+### Decisions made this session:
+- **CWG stays on `test` branch indefinitely** — will not be merged to `main` until everything is 100% set up. Removed from next-steps list.
+- **Three-tier subscription model** — Not Subscribed / Free Subscriber / Premium Subscriber. Users must explicitly subscribe (even free) before accessing any product features.
+- **Subscribe gating for all apps** — every product requires subscription click. Premium gating only for products with defined free/premium (CWG only, for now).
+- **Product picker for all products** — not just Inner Lab, covers entire catalog (Arcade, Studio Works, IL modules).
+- **Friends consolidation: Option A (MBS Platform level)** — remove from CWG/FlowState, use existing platform friends API. Can evolve to Option C (product-context tags) later.
+- **Admin dashboard: hierarchical at MBS level** — drill-down from MBS → Inner Lab → CWG, etc. Absorbs CWG's existing admin data.
+- **Admin accounts** — both `terracedreamer@gmail.com` and `1984.abhinav@gmail.com` are `is_admin: true`. Future: switch to `ADMIN_EMAILS` env var.
+- **Free trial: 7 days premium** — on subscription, per product. Only relevant for products with premium features. Future: require credit card, auto-charge.
+- **RS256 JWT upgrade** — moved to future work (pre-launch, not now).
+- **Enterprise SSO** — removed from list entirely (not needed).
 
 ---
 
