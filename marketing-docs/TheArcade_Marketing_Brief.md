@@ -4,15 +4,17 @@
 
 *Marketing Brief & Website Content Guide — March 2026*
 
-> **Last Updated**: March 26, 2026. Platform decisions integrated, game descriptions synced with live site.
+> **Last Updated**: March 27, 2026. Platform decisions integrated, pricing marked as TBD, auth methods updated.
 > **Note**: Arcade product information has been absorbed into `MagicBusStudios_Brand_And_Company.md` (the master doc). This file is kept as detailed reference for Arcade-specific marketing campaigns and content strategy. The master doc is the source of truth for product descriptions and pricing.
 
-## Platform Context (New)
-- The Arcade uses the centralized MBS Platform for auth and billing (no per-game payment handling)
+## Platform Context (SSO Migration Pending — Phase 5)
+- The Arcade will use the centralized MBS Platform for auth and billing (no per-game payment handling)
+- **Four auth methods** via MBS Platform: Google SSO, Email/Password (with optional 2FA/TOTP), Nostr identity, LNURL-Auth (Lightning wallet)
 - Login redirects to magicbusstudios.com/auth/login with MBS branding (not Inner Lab)
 - Arcade games do NOT share data between each other — SSO only via MBS Platform
+- Each game keeps its own database (no migration to shared DB)
 - No separate Arcade marketing folder — Arcade is marketed under MBS brand
-- Tiered access: Game Pass ($4.99 one-time per game), Arcade All Access ($14.99/mo or $119.99/yr), MBS All Access ($29.99/mo — includes everything)
+- Tiered access: MBS All Access ($29.99/mo or $249.99/yr — includes everything). Individual game pricing TBD.
 
 ---
 
@@ -57,20 +59,22 @@ Age range: 16-40. Tech-savvy. Browser-based gaming.
 
 ## 5. Pricing Model
 
-| Option | Price | What You Get |
-|--------|-------|-------------|
+**Current status: All games are FREE.** Pricing below is planned/aspirational and has not been finalized or implemented.
+
+| Option | Price (PLANNED) | What You Get |
+|--------|----------------|-------------|
 | Free Tier | Free | Limited daily play time (30 min/day) |
-| Game Pass | $4.99 one-time | Unlimited access to one game forever |
-| All Access Monthly | $14.99/month | All games unlimited |
-| All Access Yearly | $119.99/year | All games unlimited (save 33%) |
-| 10hr Time Bank | $9.99 one-time | 10 hours across any game |
-| 25hr Time Bank | $19.99 one-time | 25 hours across any game |
+| Game Pass | $4.99 one-time (TBD) | Unlimited access to one game forever |
+| All Access Monthly | $14.99/month (TBD) | All games unlimited |
+| All Access Yearly | $119.99/year (TBD) | All games unlimited (save 33%) |
+| 10hr Time Bank | $9.99 one-time (TBD) | 10 hours across any game |
+| 25hr Time Bank | $19.99 one-time (TBD) | 25 hours across any game |
 
 ## 6. Website Content (magicbusstudios.com/arcade)
 
 Current state: 5 games with links. Future additions (after platform is built):
 
-- Login/signup button (Google SSO)
+- Login/signup button (Google SSO, Email/Password, Nostr, LNURL-Auth via MBS Platform)
 - My Games section for logged-in users
 - Pricing cards for passes and subscriptions
 - Promo code input

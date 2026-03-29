@@ -46,7 +46,7 @@ FlowState is being migrated to use the centralized MBS Platform for auth/billing
 - Remove FlowState's Stripe routes and webhook handler
 - Remove Stripe env vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_*)
 - Upgrade buttons redirect to MBS Platform billing page
-- Check access via: `GET https://magicbusstudios.com/api/entitlements/flowstate`
+- Check access via: `GET https://api.magicbusstudios.com/api/entitlements/flowstate`
 
 ### Step 3: Migrate Data
 Since FlowState has 0 real users, this is less critical than CWG. But follow the same pattern:
@@ -153,6 +153,43 @@ This report is critical — the orchestrator session (MBSPlatform repo) uses it 
 
 ---
 
+## Phase 3B Learnings (Added by Orchestrator — 2026-03-27)
+
+These are real-world lessons from the CWG migration that apply to FlowState:
+
+### API URL: Use `api.magicbusstudios.com` NOT `magicbusstudios.com`
+The MBS Platform API lives at `https://api.magicbusstudios.com` (the backend container). `https://magicbusstudios.com` is the frontend (nginx). Calling the frontend URL for API requests causes CORS errors. All entitlement checks, billing redirects, and any backend API calls must use `api.magicbusstudios.com`.
+
+### After Deleting Auth Files — Grep for ALL Imports
+When you delete auth routes and services (e.g., stripe_integration.js, auth_routes.js), other files may still import functions from them. A runtime crash will occur. **Before deploying, run:** `grep -r "require.*auth\|require.*stripe\|require.*btcpay\|import.*auth\|import.*stripe" server/` and remove all stale imports.
+
+### Legacy Auth Routes — Redirect to Platform Login, Not Homepage
+When removing `/login`, `/signup`, `/forgot-password` pages, DO NOT redirect those routes to `/` (homepage). Instead, redirect them to the platform login URL: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`. Users with bookmarks or cached links will otherwise land on a confusing homepage.
+
+### BrowserRouter Ordering
+Any React component that uses `useLocation()`, `useNavigate()`, or other React Router hooks MUST be nested INSIDE `<BrowserRouter>`, not wrapping it. If you have a wrapper component (e.g., SmoothScroll) that uses these hooks, it must be a child of BrowserRouter.
+
+### User ID Resolution — CRITICAL for Migrated Modules
+The JWT `userId` field contains the MBS Platform ObjectId (e.g., `69c53401fe8f1763b9046ae5`). But if data was migrated from the old database, documents may use the old module-specific `_id`. FlowState uses MongoDB ObjectId natively so this is LESS of a problem than CWG (which used UUIDs), but still:
+- **If FlowState has 0 real users**: auto-provision new profiles with the platform user ID. No resolution layer needed.
+- **If any users exist at migration time**: implement email-based resolution like CWG did — look up old profile by email from JWT, add `platform_user_id` field, cache the mapping in memory.
+- **All new user_id fields in yoga_* collections must store the platform ObjectId string**, not a local ID.
+
+### Entitlements Check — MUST Be Wired
+CWG missed this during Phase 3B. FlowState MUST call `GET https://api.magicbusstudios.com/api/entitlements/flowstate` (with Bearer token) and enforce the result. Without it, there's no free/premium distinction. Cache the result for 5 minutes.
+
+### Cross-Origin Login Redirect Already Works
+Inner Lab's login page (commit `efebe36`) already supports cross-origin redirects to `*.magicbusstudios.com` domains. When FlowState redirects to `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`, Inner Lab will:
+1. Accept the redirect URL (it's in the trusted domain whitelist)
+2. After login, redirect back with `?token={JWT}` appended
+3. FlowState frontend extracts the token and stores it in localStorage
+No changes needed on Inner Lab's side for this to work with FlowState.
+
+### Coolify Env Vars — Separate Lines
+When pasting env vars in Coolify, ensure each var is on its own line. A known CWG issue: `JWT_SECRET=xxxLOG_LEVEL=INFO` was pasted as one line, making JWT validation fail silently.
+
+---
+
 ## Phase 1 Learnings (Added by Orchestrator — 2026-03-26)
 
 These are real-world implementation details from the MBS Platform build that affect this migration:
@@ -172,7 +209,7 @@ These are real-world implementation details from the MBS Platform build that aff
 - All API calls use header: `Authorization: Bearer ${localStorage.getItem("mbs_token")}`
 
 ### Entitlement Check
-- `GET https://magicbusstudios.com/api/entitlements/flowstate` with `Authorization: Bearer <JWT>`
+- `GET https://api.magicbusstudios.com/api/entitlements/flowstate` with `Authorization: Bearer <JWT>`
 - Returns `{ success, hasAccess, reason }` — reason `free_tier` means free access
 - Cache response for 5 minutes in-memory
 

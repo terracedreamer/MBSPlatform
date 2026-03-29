@@ -314,18 +314,23 @@ When done, generate PHASE_4A_MIGRATION_REPORT.md in the project root with:
 Open Claude Code in `YogaGhost/` and paste:
 
 ```
-Read platform-instructions/PLATFORM_MIGRATION.md completely before doing anything.
+Read platform-instructions/PLATFORM_MIGRATION.md completely before doing anything — including ALL the Phase 1 Learnings and Phase 3B Learnings sections at the bottom. Those sections contain critical real-world lessons from CWG's migration that will save you from repeating the same mistakes.
 
 Refactor FlowState to use MBS Platform auth:
 1. Change DB from yogaghost to inner_lab
-2. Add JWT validation middleware (Node — verify with JWT_SECRET)
-3. Update collections to yoga_* prefix
-4. Remove standalone auth routes
-5. Remove Stripe routes
-6. Remove LoginPage, PricingPage
-7. Login redirects to: https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com
-8. Handle ?token= on redirect back
-9. Sunset deviceId routes (90-day window, then remove)
+2. Add JWT validation middleware (Node — verify with JWT_SECRET, HS256)
+   - Extract: userId, email, name, avatar, isAdmin from token payload
+   - userId is a string (ObjectId.toString())
+3. Update all collection references to yoga_* prefix (product data) or il_* prefix (shared data)
+4. Remove standalone auth routes, Stripe routes, scrypt password hashing
+5. Remove LoginPage, PricingPage, any auth-related frontend pages
+6. Login button redirects to: https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com
+7. Frontend: extract ?token= from URL on redirect back, store in localStorage as mbs_token, replaceState to clean URL
+8. All API calls use Authorization: Bearer header (not cookies, not credentials: include)
+9. Wire entitlements check: GET https://api.magicbusstudios.com/api/entitlements/flowstate (cache 5 min)
+10. Sunset deviceId routes (90-day window, then remove)
+11. After deleting auth files, grep for ALL imports from deleted files — stale imports cause runtime crashes
+12. Legacy auth routes (/login, /signup) must redirect to Inner Lab login, NOT to homepage
 
 When done, generate PHASE_4_REPORT.md in the project root following the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
 ```
@@ -344,27 +349,36 @@ When done, generate PHASE_4_REPORT.md in the project root following the Completi
 cp -r MBSPlatform/platform-instructions-for-standalone-products/* {PROJECT}/platform-instructions/
 ```
 
-2. Open Claude Code in that project folder and paste:
+2. Open Claude Code in that project folder and paste the **generic prompt** (same for all 11):
 
 ```
-Read platform-instructions/PLATFORM_MIGRATION.md completely.
+Read platform-instructions/PLATFORM_MIGRATION.md completely — including ALL the Learnings sections at the bottom (Phase 1, Phase 3B, Phase 4). Those contain critical real-world lessons from previous migrations.
 
-This product is: {PRODUCT_NAME}
-- Slug: {SLUG}
-- Domain: {DOMAIN}
-- Category: {CATEGORY}
+Identify this product's name, slug, domain, and category (arcade or studioworks) from the existing codebase, package.json, Coolify config, or deployment files.
 
 Do the SSO migration:
-1. Add JWT validation middleware (requireAuth)
+1. Add JWT validation middleware (requireAuth — verify with JWT_SECRET, HS256, extract userId/email/name/avatar/isAdmin)
 2. Remove standalone auth (login/signup pages and routes)
-3. Login button redirects to: https://magicbusstudios.com/auth/login?redirect=https://{DOMAIN}&brand=mbs
-4. Handle ?token= on redirect back — extract, store, replaceState
-5. Remove Stripe/billing if any — upgrade buttons go to MBS Platform
-6. Check entitlement: GET https://magicbusstudios.com/api/entitlements/{SLUG}
-7. Add JWT_SECRET and PLATFORM_URL to env vars
-8. Keep everything else (own database, own features, own logic)
+3. Login button redirects to: https://magicbusstudios.com/auth/login?redirect=https://{THIS_PRODUCT_DOMAIN}&brand=mbs
+4. Handle ?token= on redirect back — extract, store as mbs_token in localStorage, replaceState to clean URL
+5. All API calls use Authorization: Bearer header (not cookies)
+6. Remove Stripe/billing if any — upgrade buttons go to https://magicbusstudios.com/billing
+7. Check entitlement: GET https://api.magicbusstudios.com/api/entitlements/{THIS_PRODUCT_SLUG} (cache 5 min)
+8. Add JWT_SECRET and PLATFORM_URL to env vars
+9. Keep everything else (own database, own features, own logic)
+10. After deleting auth files, grep for ALL imports from deleted files — stale imports cause runtime crashes
+11. Legacy auth routes (/login, /signup) must redirect to platform login, NOT to homepage
+12. If index.html loads Google GSI script (accounts.google.com/gsi/client), remove it — Google SSO handled by platform
+13. Support MONGO_URL / MONGODB_URI / MONGO_URI env var fallbacks (Coolify services vary)
 
-When done, generate PHASE_5_REPORT.md in the project root following the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
+IMPORTANT — At the end of your report, include a "Coolify Action Items" section listing:
+- Env vars to ADD in Coolify (with example values, never real secrets)
+- Env vars to REMOVE from Coolify
+- Build args to ADD or REMOVE
+- Whether this product's domain needs to be added to MBS Platform's CORS_ORIGINS
+- Any DNS or Coolify service config changes needed
+
+When done, generate PHASE_5_REPORT_{PRODUCT_SLUG}.md in the project root (e.g., PHASE_5_REPORT_brokenchain.md). Use the product slug you identified. Follow the Completion Report requirements in platform-instructions/PLATFORM_MIGRATION.md. This report is critical — the orchestrator uses it to verify the migration and update downstream instructions.
 ```
 
 ### Product List (fill in the prompt above for each):

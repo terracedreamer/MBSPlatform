@@ -579,7 +579,7 @@ MBS Platform has rate limiting: 100 req/15min general, 20 req/15min auth, 30 req
 
 ### Entitlement Check (confirmed format)
 ```
-GET https://magicbusstudios.com/api/entitlements/{slug}
+GET https://api.magicbusstudios.com/api/entitlements/{slug}
 Authorization: Bearer <JWT>
 → { success: true, hasAccess: true/false, reason: "product_pass"|"category_access"|"mbs_all_access"|"free_tier"|"none" }
 ```

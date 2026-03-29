@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 27, 2026 (Session 4)
+**Last Updated**: March 28, 2026 (Session 6)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -11,11 +11,27 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Phase | Status | Next Action |
 |-------|--------|-------------|
 | Phase 1: MBS Platform | **ALL DONE — Addendum #1-15 complete** (deployed at magicbusstudios.com) | Nothing |
-| Phase 2: IL Middleware + Auth | **FULLY COMPLETE** (api.innerlab.ai + innerlab.ai/auth/*) | Nothing — all auth pages live, ProtectedRoute fixed |
-| Phase 3A: CWG Migration Script | **DONE** — 20 users migrated, 14 collections copied | Report filed in phase-reports/ |
-| Phase 3B: CWG Refactor | **NOT STARTED** — no report found in CWG/ | Run Step B prompt from ORCHESTRATION_GUIDE.md |
-| Phase 4: FlowState Migration | **READY TO START** — can parallel with Phase 3 | Same pattern as CWG, simpler (0 users) |
-| Phase 5: Standalone Products | **READY TO START** — can parallel with Phase 3+4 | 11 independent products, all independent |
+| Phase 2: IL Middleware + Auth | **FULLY COMPLETE** (api.innerlab.ai + innerlab.ai/auth/*) | Nothing |
+| Phase 3A: CWG Migration Script | **DONE** — 20 users migrated, 14 collections copied | Nothing |
+| Phase 3B: CWG Refactor | **COMPLETE** — running on `test` branch, needs promotion to `main` | Merge test → main when ready |
+| Phase 4: FlowState Migration | **COMPLETE** — live on production | Nothing |
+| Phase 5: Standalone Products | **ALL 11 COMPLETE — deployed and verified live** | Dead code cleanup (optional) |
+
+## All 11 Standalone Products — Verified Live (2026-03-28)
+
+| Product | Category | Domain | SSO Status |
+|---------|----------|--------|-----------|
+| BrokenChain | arcade | brokenchain.magicbusstudios.com | Authenticated (Abhinav Gupta) |
+| MindHacker | arcade | mindhacker.magicbusstudios.com | SSO ready (Sign In button) |
+| Trivia Roast | arcade | triviaroast.magicbusstudios.com | Authenticated |
+| Fake Artist | arcade | fakeartist.magicbusstudios.com | SSO ready (Sign In button) |
+| Whispering House | arcade | whisperinghouse.magicbusstudios.com | Authenticated + Sign Out verified |
+| WildLens | studioworks | wildlens.magicbusstudios.com | Authenticated (100 XP, Naturalist) |
+| Lazy Chef | studioworks | lazy-chef.magicbusstudios.com | Authenticated + live verified |
+| Movie Picker | studioworks | moviepicker.magicbusstudios.com | Authenticated + live verified |
+| SmartCart | studioworks | smartcart.magicbusstudios.com | Authenticated (My Lists loaded) |
+| TaskTracker | studioworks | tasktracker.magicbusstudios.com | Authenticated (parent dashboard) |
+| AI Tutor | studioworks | tutor.magicbusstudios.com | Authenticated (dashboard, 50 XP) |
 
 ## Known Issues
 
@@ -23,49 +39,41 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| MBS /auth/forgot-password | May have been built by Phase 1 Addendum agent (AuthForgotPasswordPage.jsx in updated report) — verify on live site | Low priority if missing — IL has its own |
-| GDPR cascade incomplete | Account delete removes mbs_platform data but NOT il_* data | Phase 1 was built before Phase 2; MBS delete endpoint needs to call Innerlab to cascade — future work |
+| GDPR cascade incomplete | Account delete removes mbs_platform + inner_lab data but NOT standalone product data | Platform needs to call `DELETE /api/user-data` on each standalone product — endpoint exists on some apps, not all |
+| CWG on `test` branch | Not on production yet | Merge test → main when ready |
+| CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
+| CWG entitlements not wired | No free/premium enforcement | Future work |
+| TaskTracker MongoDB transactions | Legacy user migration uses transactions (requires replica set) | May fail on standalone MongoDB — needs non-transactional fallback |
+| Dead auth code on disk | Several apps kept old auth files (not imported, harmless) | Cleanup pass per app |
+| Unused npm deps | bcryptjs, passport, etc. still in package.json on several apps | Cleanup pass per app |
 
 ## What Exists (Live Products)
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website (marketing + forms) | Deployed | `MBS/` → magicbusstudios.com |
-| MBS Platform (SSO + billing) | **Deployed — Phase 1 complete** | `MBS/` → magicbusstudios.com |
-| Inner Lab website (marketing) | Deployed | `Innerlab/` → innerlab.ai |
-| Inner Lab Middleware (il_* APIs) | **Deployed — Phase 2 complete** | `Innerlab/` → api.innerlab.ai |
-| Inner Lab Auth Pages (4 pages) | **Deployed** (login/signup/forgot-pw/reset-pw) | `Innerlab/` → innerlab.ai/auth/* |
-| Inner Lab Dashboard (4 pages) | **Deployed and unblocked** (full login flow working) | `Innerlab/` → innerlab.ai/dashboard |
-| CWG | Deployed, **data migrated** (Step A done), needs refactor (Step B) | `CWG/` → conversationswithgod.ai |
-| FlowState | Deployed, needs migration | `YogaGhost/` → yoga.magicbusstudios.com |
-| Arcade games (5) | Deployed, needs SSO migration | Individual folders |
-| Studio Works tools (6) | Deployed, needs SSO migration | Individual folders |
+| MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
+| Inner Lab website + Middleware + Auth | **Deployed — Phase 2 complete** | innerlab.ai / api.innerlab.ai |
+| CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
+| FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
+| Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
+| Studio Works tools (6) | **All 6 SSO migrated and deployed** | *.magicbusstudios.com |
 
-## Sync Status (verified Session 3)
+## Phase 5 Learnings (Cascaded to Instructions)
 
-| Target | Source → Target | Status |
-|--------|----------------|--------|
-| MBS/platform-instructions/ | platform-instructions-for-mbs/ | **IN SYNC** (addendum #14-15 added) |
-| Innerlab/platform-instructions/ | platform-instructions-for-innerlab/ | **IN SYNC** (login/signup spec added) |
-| CWG/platform-instructions/ | platform-instructions-for-cwg/ | **IN SYNC** (user copy-across + auth_methods) |
-| YogaGhost/platform-instructions/ | platform-instructions-for-yogaghost/ | **IN SYNC** (login redirect updated) |
+Two critical SSO bugs discovered and documented:
+1. **Legacy user collision** — existing users with different `_id` than platform `userId` crash on unique email index. Fix pattern added to `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` Step 5.
+2. **Python JWT_SECRET_KEY vs JWT_SECRET** — Python config reads wrong env var name. Warning added to CWG instructions.
+
+Both fixes confirmed working across all affected apps.
 
 ## Pre-Build Checklist
 
-- [x] JWT_SECRET generated
-- [x] Platform-instructions synced to all 4 project folders
-- [x] Project CLAUDE.md files updated to point agents to platform-instructions/
-- [x] Completion report requirements baked into all platform-instructions docs
-- [x] Marketing briefs updated and synced
-- [x] Orchestration guide created with copy-paste prompts
-- [x] Phase 1 built and deployed
-- [x] Phase 1 report reviewed, learnings cascaded to all downstream instructions
-- [x] Phase 2 built and deployed
-- [x] Phase 2 report reviewed, learnings noted
-- [x] Email/password auth + 2FA added to MBS Platform (addendum #14-15)
-- [x] Inner Lab login/signup pages built (Phase 2 Addendum — all 4 pages live)
-- [x] Phase 2 Addendum report reviewed and filed
-- [x] Phase 3A: CWG data migration script run (20 users, 14+1 collections)
-- [ ] Phase 3B: CWG refactor (remove standalone auth/billing, switch to JWT + inner_lab DB)
-- [ ] Phase 4 started (FlowState Migration)
-- [ ] Phase 5 started (11 standalone products)
+- [x] All phases 1-5 complete
+- [x] Phase 5 learnings cascaded to instructions (commit `0aa6711`)
+- [x] All 11 standalone products verified live via Chrome browser
+- [x] Phase 5 reports collected from all 11 project folders
+- [ ] CWG test → main promotion
+- [ ] Stripe bundle price IDs created in Dashboard
+- [ ] BTCPay API key regenerated
+- [ ] GDPR cascade to standalone products
+- [ ] Dead code cleanup across apps

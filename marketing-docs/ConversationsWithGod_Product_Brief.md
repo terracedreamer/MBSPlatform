@@ -8,15 +8,15 @@
 
 ---
 
-> **Last Updated**: March 26, 2026. Platform decisions integrated.
+> **Last Updated**: March 27, 2026. Platform migration complete.
 
-## Platform Context (Migration Pending — Phase 3)
-- CWG is being migrated to the centralized MBS Platform for auth and billing
+## Platform Context (Migration Complete — Phase 3 Done)
+- CWG is fully migrated to the centralized MBS Platform for auth and billing
 - Login redirects to **innerlab.ai/auth/login** (CWG is an Inner Lab module, so it uses Inner Lab branding)
-- **Four auth methods**: Google SSO, Email/Password, Nostr identity, LNURL (Lightning wallet). Plus optional 2FA/TOTP.
-- Payments: Stripe + BTCPay (Lightning) -- handled by MBS Platform, not CWG
-- CWG has 56 database collections being migrated -- shared data (consciousness, memories, check-ins) goes to shared il_* tables, CWG-specific data stays as cwg_*
-- CWG's existing ~10 users automatically become MBS Platform users during migration (password hashes and 2FA data are copied -- no re-registration needed)
+- **Four auth methods**: Google SSO, Email/Password (with optional 2FA/TOTP), Nostr identity, LNURL-Auth (Lightning wallet)
+- Payments: Stripe + BTCPay (Lightning) -- handled by MBS Platform at magicbusstudios.com/billing, not CWG
+- CWG has 28 database collections migrated to the inner_lab database -- shared data (consciousness, memories, check-ins) uses il_* prefix, CWG-specific data uses cwg_* prefix
+- CWG's 20 existing users were automatically migrated to MBS Platform users (password hashes and 2FA data copied -- no re-registration needed)
 - Data sovereignty features built into CWG (Nostr, Lightning, client encryption, blockchain anchors) are moving to the platform level
 - Users signing up from CWG see Inner Lab branding -- they know they're joining a bigger ecosystem
 - Tiered access: product_pass (just CWG), category_access (all Inner Lab), mbs_all_access (everything)
@@ -212,12 +212,19 @@ CWG is the first and flagship module of Inner Lab -- the unified system for inne
 - Full spiritual growth tracking and milestones
 - Priority access to new features
 
+### Lightning / Bitcoin Pricing
+
+| Plan | Price (sats) |
+|------|-------------|
+| **CWG Premium Monthly** | 21,000 sats/mo |
+| **CWG Premium Yearly** | 126,000 sats/yr |
+
 ### Payment Methods
 
 - **Stripe** -- standard credit/debit card processing via MBS Platform
 - **Lightning / Bitcoin via BTCPay** -- alternative payment for privacy-conscious users
-- All prices in USD
-- Billing managed centrally by MBS Platform (not per-product)
+- All fiat prices in USD. Lightning prices in satoshis.
+- Billing managed centrally by MBS Platform at magicbusstudios.com/billing (not per-product)
 
 ---
 

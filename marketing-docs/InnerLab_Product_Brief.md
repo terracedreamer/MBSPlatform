@@ -6,12 +6,14 @@
 
 **innerlab.ai** | A MagicBusStudios Product
 
-> **Last Updated**: March 26, 2026. Platform decisions integrated, website content absorbed.
+> **Last Updated**: March 27, 2026. Platform context updated — Phase 2 live, auth + middleware details added, pricing added.
 
-## Platform Context (New)
+## Platform Context (Live — Phase 2 Complete)
+- **Four auth methods** via MBS Platform: Google SSO, Email/Password (with optional 2FA/TOTP), Nostr identity, LNURL-Auth (Lightning wallet)
+- Login at innerlab.ai/auth/login (Inner Lab branded). Billing at magicbusstudios.com/billing.
 - Inner Lab modules share a database (inner_lab) with shared il_* collections for consciousness profiles, user memories (opt-in), check-ins, wellness profiles, and activity feed
-- Each module is a separate container but reads/writes shared data through the Inner Lab Middleware at innerlab.ai
-- innerlab.ai is being upgraded from a marketing site to also serve as the Inner Lab Dashboard for subscribers
+- Each module is a separate container but reads/writes shared data through the Inner Lab Middleware at api.innerlab.ai
+- innerlab.ai serves as both the marketing site and the Inner Lab Dashboard for subscribers (dashboard is live at innerlab.ai/dashboard)
 - Dashboard features: daily briefing, unified consciousness profile, cross-module insights, activity feed, module launcher
 - User memory privacy model: memories are per-module by default, users opt-in to share across modules
 - Shared wellness profiles: health conditions and injuries from FlowState are readable by BreathArc and other modules
@@ -401,6 +403,7 @@ Approved messaging themes and taglines for marketing use:
 - `/activity` — Cross-module activity feed
 
 **Not yet built:**
-- No pricing visible (billing handled at magicbusstudios.com/billing)
+- No pricing visible on innerlab.ai (billing handled at magicbusstudios.com/billing)
+- Inner Lab All Access: $19.99/mo or $159.99/yr. MBS All Access: $29.99/mo or $249.99/yr.
 - No individual module detail pages
 - No daily briefing engine (needs data from multiple modules first)

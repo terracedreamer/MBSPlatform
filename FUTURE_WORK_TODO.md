@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 26, 2026
+**Last Updated**: March 27, 2026
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -12,9 +12,9 @@
 |-------|--------|----------------------|-----------------|
 | Phase 1: MBS Platform | ✅ DONE — all addendum items #1-15 deployed | `platform-instructions-for-mbs/CLAUDE.md` | That doc (addendum section) |
 | Phase 2: IL Middleware + Auth | ✅ DONE — middleware + 4 auth pages live at innerlab.ai | `platform-instructions-for-innerlab/CLAUDE.md` | That doc |
-| Phase 3: CWG Migration | 🟡 READY — all blockers cleared | `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` | That doc |
-| Phase 4: FlowState Migration | 🟡 READY — can parallel with Phase 3 | `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` | That doc |
-| Phase 5: Standalone Products | 🟡 READY — can parallel with Phase 3+4 | `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` | That doc |
+| Phase 3: CWG Migration | ✅ DONE — Phase 3A (data) + Phase 3B (refactor) complete, running on `test` | `platform-instructions-for-cwg/PLATFORM_MIGRATION.md` | That doc |
+| Phase 4: FlowState Migration | ✅ DONE — live on production (dev + main), entitlements wired | `platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md` | That doc |
+| Phase 5: Standalone Products | ✅ DONE — all 11 deployed and verified live (2026-03-28) | `platform-instructions-for-standalone-products/PLATFORM_MIGRATION.md` | That doc + 11 PHASE_5_REPORT files |
 
 ---
 
@@ -70,6 +70,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - ~~Token refresh~~ → Phase 1 Addendum #12
 
 ### Genuinely Future (no phase, needs multiple phases or decisions first)
+- [ ] **Consolidate friends/invites to MBS Platform API** — CWG and FlowState currently have product-level friends in `inner_lab` DB. MBS Platform has platform-level friends API (`/api/friends/*`) in `mbs_platform` DB, built but unused. Migrate product-level friends to platform-level so one system manages all friendships cross-product. Involves: changing CWG + FlowState social routes to call MBS Platform API, migrating existing friend records, removing `friends`/`invites` collections from `inner_lab`.
 - [ ] **Post-signup module picker** — after a user signs up, show them all available modules (CWG, FlowState, BreathArc, etc.) and let them pick which ones they want to subscribe to. Could live on innerlab.ai/modules as an authenticated experience or as a step in the signup flow. Needs: product catalog with descriptions + pricing for each module, Stripe checkout per module.
 - [ ] Free trial support (X days free, auto-convert) — needs pricing decision
 - [ ] Win-back offers — needs email + promo system working together
