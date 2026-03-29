@@ -250,8 +250,19 @@ Your product's backend is responsible for enforcing free tier limits (time, usag
 - Do NOT keep standalone auth after migration — remove it completely
 - Do NOT hardcode the product slug — use env var `PRODUCT_SLUG`
 
-## GDPR Compliance Note
-The MBS Platform's GDPR cascade delete (`DELETE /api/auth/account`) automatically deletes user data from `mbs_platform` and `inner_lab` databases. It does NOT reach into standalone product databases. If your product stores user-specific data (keyed by `userId` from JWT), you MUST implement a `DELETE /api/user-data` endpoint that deletes all user data when called. The MBS Platform will call this endpoint during account deletion (planned — not yet implemented). Until then, standalone products with user data have a GDPR gap for account deletion.
+## GDPR — Data Deletion (Three Levels)
+
+Data deletion is **layered**, not a single nuclear cascade:
+
+1. **App-level** ("Delete my data from this app") — triggered from within YOUR app's Settings page. Deletes ONLY this app's data from its own database. The user's MBS Platform account, entitlements, and data in other apps stay intact.
+2. **Category-level** — triggered from magicbusstudios.com/settings. MBS Platform calls `DELETE /api/user-data` on every app in the category (e.g., all Arcade games or all Studio Works tools).
+3. **Full account deletion** — triggered from magicbusstudios.com/settings. MBS Platform calls every product's delete endpoint, then deletes the user record.
+
+**What you MUST implement:** `DELETE /api/user-data` — an authenticated endpoint that deletes all data for `req.user.userId` from your product's database. This endpoint serves BOTH purposes:
+- Called by your own app when the user clicks "Delete my data" in Settings
+- Called by the MBS Platform during category-level or full account deletion (planned — not yet wired)
+
+**Important:** This endpoint must NOT delete the user's MBS Platform account. It only deletes local product data. The user can still log into other apps after deleting their data from yours.
 
 ---
 

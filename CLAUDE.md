@@ -146,7 +146,7 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 - POST /api/auth/lnurl — LNURL-Auth
 - GET /api/auth/me — current user + entitlements
 - POST /api/auth/logout — invalidate session
-- DELETE /api/auth/account — GDPR delete
+- DELETE /api/auth/account — GDPR full account delete (see Data Deletion section below)
 - GET /api/entitlements — all entitlements for user
 - GET /api/entitlements/:product — check access
 - GET /api/entitlements/category/:cat — products in category
@@ -163,6 +163,24 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 
 **Phase 2+**
 - Email preferences, admin, promos, referrals (see FUTURE_WORK_TODO.md)
+
+## Data Deletion (Three-Level Architecture)
+
+"Delete my data" means different things depending on where the user triggers it:
+
+| Level | Where | What gets deleted | What stays |
+|-------|-------|-------------------|-----------|
+| **App-level** | Settings within each app (e.g., WildLens Settings → "Delete my data") | Only that app's data in its own database | MBS account, entitlements, all other apps' data |
+| **Category-level** | magicbusstudios.com/settings | All data from all apps in one category (e.g., all Inner Lab, all Arcade, or all Studio Works) | MBS account, other categories' data |
+| **Full account** | magicbusstudios.com/settings | Everything — user record, entitlements, transactions, data across ALL apps | Nothing |
+
+**Rules:**
+- A standalone app's "Delete my data" button ONLY calls its own `DELETE /api/user-data` endpoint. It does NOT touch the MBS Platform user account or any other app.
+- Only the MBS Platform (magicbusstudios.com) has authority to do cross-product or full account deletion.
+- Category-level deletion: MBS Platform calls `DELETE /api/user-data` on each app in the category.
+- Full account deletion: MBS Platform calls every product's delete endpoint, then deletes the user record from `mbs_platform`.
+
+**Each standalone app must implement:** `DELETE /api/user-data` — deletes all data for the authenticated user from that app's database only.
 
 ## Data Migration
 

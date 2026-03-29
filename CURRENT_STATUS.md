@@ -39,8 +39,8 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| GDPR cascade incomplete | Account delete removes mbs_platform + inner_lab data but NOT standalone product data | Platform needs to call `DELETE /api/user-data` on each standalone product — endpoint exists on some apps, not all |
-| CWG on `test` branch | Not on production yet | Merge test → main when ready |
+| GDPR deletion (three-level design) | Per-app "Delete my data" only deletes from that app's DB (not account-wide). Category-level and full account deletion happen from magicbusstudios.com only. | Some apps have `DELETE /api/user-data`, others don't. MBS Platform needs UI for all 3 levels. |
+| CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` for now |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
 | CWG entitlements not wired | No free/premium enforcement | Future work |
 | TaskTracker MongoDB transactions | Legacy user migration uses transactions (requires replica set) | May fail on standalone MongoDB — needs non-transactional fallback |
@@ -72,7 +72,7 @@ Both fixes confirmed working across all affected apps.
 - [x] Phase 5 learnings cascaded to instructions (commit `0aa6711`)
 - [x] All 11 standalone products verified live via Chrome browser
 - [x] Phase 5 reports collected from all 11 project folders
-- [ ] CWG test → main promotion
+- [x] CWG stays on `test` branch (owner decision — intentional)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [ ] GDPR cascade to standalone products
