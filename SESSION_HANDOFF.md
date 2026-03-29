@@ -2,7 +2,7 @@
 
 **Last Updated**: March 28, 2026 (Session 6)
 **Git Branch**: main
-**Last Commit**: `c8a3dce` (docs: add architecture-docs)
+**Last Commit**: `59f80d8` (docs: deployment map, Phase 5 summary, platform-instructions synced)
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
 
@@ -28,8 +28,11 @@
 7. **Saved memory** about SSO login loop pattern + GDPR deletion architecture
 8. **GDPR three-level deletion architecture** decided and documented — app-level (within app only), category-level, full account (both from magicbusstudios.com only)
 9. **Created `architecture-docs/` folder** with two reference documents:
-   - `MBS_Platform_Technical_Architecture.md` — comprehensive technical reference
+   - `MBS_Platform_Technical_Architecture.md` — comprehensive technical reference (includes Appendix A: per-product deployment map with all 15 products)
    - `MBS_Platform_Overview.md` — non-technical overview for marketing/executive use
+10. **Created `phase-reports/PHASE_5_SUMMARY.md`** — consolidated findings from all 11 Phase 5 reports (bugs, migration patterns, GDPR status per app, env var changes)
+11. **Deep audit of all documentation** — fixed stale API list in CLAUDE.md (added 16 missing routes), updated build order to show all 5 phases complete, added missing folder structure entries, added Session 5+6 to CHANGELOG.md, expanded FUTURE_WORK_TODO with reminders and cleanup items
+12. **Re-synced platform-instructions to all 15 project folders** (MBS, Innerlab, CWG, YogaGhost, and all 11 standalone products)
 
 ### Key findings:
 - AI Tutor (Python) confirmed BOTH bugs — JWT_SECRET naming AND legacy user collision
