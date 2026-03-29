@@ -1,10 +1,34 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 28, 2026 (Session 6)
+**Last Updated**: March 29, 2026 (Session 7)
 **Git Branch**: main
-**Last Commit**: `59f80d8` (docs: deployment map, Phase 5 summary, platform-instructions synced)
+**Last Commit**: `02ceccc` (docs: final session 6 handoff — complete commit history + all items documented)
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 7 SUMMARY (March 29, 2026)
+
+### What was done this session:
+1. **Full documentation review** — Read SESSION_HANDOFF, CURRENT_STATUS, FUTURE_WORK_TODO, CHANGELOG, CLAUDE.md, and ORCHESTRATION_GUIDE to assess current state
+2. **Next-steps assessment** — Compiled and prioritized all remaining work into immediate (owner actions), short-term (code work), medium-term (features), and long-term categories
+3. **No code or architecture changes** — review-only session
+
+### Key takeaways:
+- All 5 build phases remain complete and verified
+- Two owner-action blockers identified: Stripe product creation (bundle prices) and BTCPay API key regeneration
+- GDPR compliance is the highest-priority code work (6 apps missing DELETE /api/user-data + MBS Platform deletion UI)
+- Premium feature gating is the key revenue-enabling step after compliance work
+
+### What needs to happen next (prioritized):
+1. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices
+2. **BTCPay** — Regenerate API key with full store permissions (403 error)
+3. **CWG** — Merge `test` → `main` when ready
+4. **GDPR endpoints** — Add DELETE /api/user-data to BrokenChain, MindHacker, Trivia Roast, Fake Artist, WildLens, Movie Picker
+5. **MBS Platform deletion UI** — Three-level deletion at magicbusstudios.com/settings
+6. **Premium gating** — Start enforcing free vs paid per product
+7. **Dead code cleanup** — Remove old auth files + unused deps across Phase 5 apps
 
 ---
 
@@ -101,6 +125,13 @@
 ---
 
 ## PREVIOUS SESSIONS
+
+### Session 6 (March 28, 2026)
+- Phase 5 complete, all 11 standalone products verified live
+- WildLens SSO login loop root causes identified and cascaded
+- Architecture docs created (technical + overview)
+- GDPR three-level deletion architecture decided
+- Deep audit of all documentation, platform-instructions re-synced
 
 ### Session 5 (March 27, 2026)
 - Reviewed Phase 3B report, filed to phase-reports/
