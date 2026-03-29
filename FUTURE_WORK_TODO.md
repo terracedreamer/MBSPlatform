@@ -89,6 +89,26 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [x] **Admin dashboard (hierarchical)** — AdminPage at /admin with overview, users, entitlements tabs.
 - [x] **Free trial (7 days premium)** — Bundled with subscribe-free. Lazy downgrade after trial expires.
 
+### Next Up — 12 Enhancements (Queued for Session 9)
+
+**Quick wins (1-5):**
+- [ ] **Backfill auth_provider on legacy users** — 19 users show "unknown" in admin. MongoDB script to detect Google (has google_id) vs email (has password_hash) and set auth_provider.
+- [ ] **ProtectedRoute component** — /account, /billing, /products, /admin all manually check localStorage. One shared wrapper eliminates duplication.
+- [ ] **Auth Context (React Context API)** — Auth scattered across localStorage reads. Centralized context for user state, admin checks, token refresh.
+- [ ] **User profile editing** — Account page shows name/avatar but no edit. Add inline edit for name, avatar URL, language preference.
+- [ ] **Email verification end-to-end** — Account shows "Unverified". Verify the resend + confirm flow works completely.
+
+**Medium features (6-10):**
+- [ ] **Notification center** — Bell icon in nav, glass dropdown. Announcement model already exists, needs routes + frontend.
+- [ ] **Feature flags system** — FeatureFlag model exists, needs admin routes + admin UI tab. Toggle features per-product without redeploying.
+- [ ] **Activity feed on admin dashboard** — ActivityLog model already populating (entitlement grants, revokes). Add "Recent Activity" tab to AdminPage.
+- [ ] **Product analytics** — Per-product subscription counts, trial conversion rates, popular products. All derivable from Entitlement data.
+- [ ] **Onboarding flow** — After first login, guide users through product selection. /welcome page or modal.
+
+**Larger features (14-15):**
+- [ ] **Push notifications** — PushSubscription model exists but no implementation. Service worker, VAPID keys, opt-in UI, notification triggers.
+- [ ] **Real-time admin dashboard** — WebSocket live stats updates. No page refresh needed for new signups/subscriptions.
+
 ### Future Work (Decided but Deferred)
 - [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
 - [ ] **Admin accounts via ADMIN_EMAILS env var** — Currently `is_admin` is a DB field. Future: check email against `ADMIN_EMAILS` env var in Coolify. Easier to manage, no DB changes. Admin emails: `terracedreamer@gmail.com`, `1984.abhinav@gmail.com`.
@@ -96,7 +116,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Email campaigns + announcements + newsletter — post-launch
-- [ ] Multi-currency, family plan, teams, push notifications — long-term
+- [ ] Multi-currency, family plan, teams — long-term
 
 ---
 

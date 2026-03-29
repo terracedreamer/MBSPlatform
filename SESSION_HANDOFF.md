@@ -46,15 +46,46 @@
     - Adds isTrialing and trialDaysRemaining to profile response
 16. **Friends consolidation** — NO WORK NEEDED (MBS already has it, CWG has no friends code)
 
-### What needs to happen next:
-1. **Log in to MBS** — token expired, need fresh session to test
-2. **Test GDPR endpoints** — delete data from Fake Artist or similar from Account page
-3. **Test subscribe-free flow** — visit /products, subscribe to a product, verify trial created
-4. **Test admin dashboard** — visit /admin, verify stats/users/entitlements tabs
-5. **Test CWG entitlement enforcement** — verify profile endpoint now syncs plan from MBS Platform
-6. **Stripe Dashboard** — Create IL All Access ($19.99/mo) and MBS All Access ($29.99/mo) products/prices (OWNER ACTION)
-7. **BTCPay** — Regenerate API key with full store permissions (OWNER ACTION)
-8. **Redeploy MBS B + MBS F** — Coolify webhook should auto-deploy, but verify new features are live
+**Part 4 — Standards Compliance Fixes**
+17. **Fixed admin stats response shape** (MBS `8b732fc`) — was returning nested structure, frontend expected flat keys. Now shows 20 users, 4 signups, auth breakdown.
+18. **Fixed 7 auth route responses** — `id` → `userId` across all auth responses (Google, email, signup, Nostr, LNURL)
+19. **Added Winston logger** — `server/utils/logger.js`, installed winston package
+20. **Added centralized error handler** — `server/middleware/errorHandler.js`, registered after all routes
+21. **Added response helpers** — `server/utils/responseHelpers.js` (sendSuccess, sendError, sendNotFound, sendBadRequest, sendUnauthorized, sendForbidden)
+22. **Restored Winston in gdprCascade.js** — was using console fallback after crash fix, now uses real logger
+23. **Fixed logger crash** (MBS `0ca9c42`) — gdprCascade.js imported non-existent logger, crashed auth.js on load, breaking ALL auth routes including Google SSO
+24. **Set is_admin: true** for both admin accounts via Coolify MongoDB terminal
+
+### Verified live via Chrome:
+- `/auth/login` — Google SSO working (after logger crash fix)
+- `/products` — Product Picker with 22 products, category tabs, "Start Free Trial" buttons, free tier limits
+- `/admin` — Admin Dashboard showing 20 users, 4 recent signups, Google auth breakdown, user table with admin badges
+- `/account` — Data Management section with 3 collapsible categories (Inner Lab 2, Arcade 5, Studio Works 6)
+
+### Pending — Owner Action:
+1. **Test subscribe-free** — click "Start Free Trial" on /products to verify entitlement creation
+2. **Test GDPR delete** — delete data from one app on /account Data Management
+3. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
+4. **BTCPay** — Regenerate API key with full store permissions
+
+### Next Session — 12 Enhancements Queued:
+**Quick wins (1-5):**
+1. Backfill auth_provider on 19 legacy users
+2. ProtectedRoute component (replace manual localStorage checks)
+3. Auth Context (React Context API for centralized auth state)
+4. User profile editing (name, avatar, language on Account page)
+5. Email verification end-to-end flow
+
+**Medium features (6-10):**
+6. Notification center (bell icon, Announcement model already exists)
+7. Feature flags system (FeatureFlag model exists, needs routes + admin UI)
+8. Activity feed on admin dashboard (ActivityLog model populating)
+9. Product analytics (subscription counts, trial conversion, popular products)
+10. Onboarding flow (/welcome page or modal after first login)
+
+**Larger features (14-15):**
+14. Push notifications (PushSubscription model exists, needs implementation)
+15. Real-time admin dashboard (WebSocket live stats)
 
 ### Decisions made this session:
 - **CWG stays on `test` branch indefinitely** — will not be merged to `main` until everything is 100% set up. Removed from next-steps list.

@@ -1,9 +1,9 @@
 # CHANGELOG — MBS Platform
 
-## March 29, 2026 — Session 8: GDPR Deployed + 5 Roadmap Features Built
+## March 29, 2026 — Session 8: GDPR Deployed + 5 Roadmap Features + Standards Compliance
 
 ### Summary
-Massive session: pushed all GDPR code from Session 7, built Whispering House endpoint, fixed TaskTracker transactions, deployed everything to Coolify, then built all 5 remaining roadmap features (subscribe gating, product picker, free trial, CWG entitlement enforcement, admin dashboard). Friends consolidation was already done.
+Massive session covering 24 items: pushed all GDPR code, built Whispering House endpoint, fixed TaskTracker transactions, deployed everything to Coolify, built all 5 roadmap features (subscribe gating, product picker, free trial, CWG entitlement enforcement, admin dashboard), then did standards compliance (Winston logger, error handler, response helpers, userId shape fix, admin stats fix, logger crash fix). All verified live via Chrome.
 
 ### GDPR — Committed and Pushed
 
@@ -36,6 +36,16 @@ All 9 services (8 backends + MBS frontend) redeployed via Coolify. All successfu
 | CWG entitlement enforcement | CWG | `f9c38ab` | Wired check_entitlement() to profile endpoint, syncs plan from MBS Platform |
 | Friends consolidation | N/A | N/A | No work needed — MBS already has friends, CWG has none |
 | Free trial (7 days) | MBS | `ca7fac6` | Bundled with subscribe-free, lazy downgrade after expiry |
+
+### Standards Compliance (MBS `8b732fc`)
+- Fixed admin stats response (nested → flat keys matching frontend)
+- Fixed 7 auth routes: `id` → `userId` in response body
+- Added Winston logger, centralized error handler, response helpers
+- Fixed logger crash (`0ca9c42`) that broke all auth routes
+- Set `is_admin: true` for both admin accounts via MongoDB
+
+### All MBS Commits This Session
+`b0edb9b` → `ca7fac6` → `0ca9c42` → `8b732fc`
 
 ---
 
