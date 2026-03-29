@@ -394,3 +394,8 @@ All child apps built from MBS Platform instructions must follow:
 ## Architecture Reference
 
 Full platform architecture document: `~/Desktop/Codes/MBSPlatform/architecture-docs/MBS_Platform_Technical_Architecture.md`
+
+---
+
+## Pending Work
+Check `FUTURE_WORK_TODO.md` for pending standards compliance work and backlog items.

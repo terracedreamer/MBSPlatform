@@ -97,3 +97,15 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Email campaigns + announcements + newsletter — post-launch
 - [ ] Multi-currency, family plan, teams, push notifications — long-term
+
+---
+
+## Standards Compliance (Global CLAUDE.md Audit)
+
+> Reference: Check global CLAUDE.md and ~/.claude/rules/ for full standards.
+
+- [ ] **Verify Architecture Docs**: Ensure MBS_Platform_Technical_Architecture.md is up to date with current system state
+- [ ] **Verify GDPR Status Table**: Cross-reference data-sovereignty.md with actual implementation across all products
+- [ ] **Verify Deployment Quirks**: Cross-reference deployment-quirks.md with actual Coolify configuration
+
+> Note: This is an architecture-only repo — no application code to audit.
