@@ -103,9 +103,36 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 ## Standards Compliance (Global CLAUDE.md Audit)
 
 > Reference: Check global CLAUDE.md and ~/.claude/rules/ for full standards.
+> Audited against MBS/ codebase (Layer 1 — magicbusstudios.com) on 2026-03-29.
+
+### Architecture Docs & Rules Files
 
 - [x] **Verify Architecture Docs**: Fixed Movie Picker (single container, not 2), updated GDPR limitation note for Session 7 cascade service, bumped version to 1.1 (2026-03-29)
 - [x] **Verify GDPR Status Table**: Updated data-sovereignty.md and CLAUDE.md — 6 apps moved from "Missing" to "Built (pending deploy)", Whispering House still missing
 - [x] **Verify Deployment Quirks**: Added Movie Picker (single container, TMDB API) and AI Tutor (Python/FastAPI, JWT fallback chain) entries. Fixed Lazy Chef DB name in env-standards.md (`lazychef` → `lazy_chef`)
 
-> Note: This is an architecture-only repo — no application code to audit.
+### Backend Standards (MBS/ server/)
+
+- [x] **CORS before helmet()**: Compliant. `server/index.js` lines 48-51: `app.use(cors(...))` then `app.use(helmet())`.
+- [x] **Response format `{ success: true/false, ... }`**: Compliant. All 10 route files and index.js health endpoints use `{ success: true, ...data }` or `{ success: false, message: "..." }`. 217 `success:` occurrences across 232 `res.json`/`res.status` calls — no response missing the `success` field.
+- [x] **Rate limiting on API routes**: Compliant. Three tiers: general (100/15min), auth (20/15min), billing (30/15min) in `server/index.js`.
+- [x] **Input validation on routes**: Compliant. Auth routes validate required fields, password length, terms acceptance. Billing validates priceId. Promotions validates code. Friends validates invite code format.
+- [x] **Route pattern (authenticate -> validate -> business logic -> respond)**: Compliant. All protected routes use `requireAuth` middleware, admin routes stack `requireAuth` + `requireAdmin`, then validate, then business logic.
+- [x] **Env vars: `CORS_ORIGINS` (canonical)**: Compliant. Uses `process.env.CORS_ORIGINS` in `server/index.js`. No legacy `CORS_ORIGIN`/`CLIENT_URL`/`ALLOWED_ORIGINS`.
+- [x] **Env vars: `JWT_SECRET` (canonical)**: Compliant. `server/middleware/auth.js` uses `process.env.JWT_SECRET`. No `JWT_SECRET_KEY` or `SECRET_KEY`.
+- [x] **Env vars: `DB_NAME` (canonical)**: Compliant. `server/config/database.js` reads `process.env.DB_NAME` with default `mbs_platform`.
+- [x] **Env vars: `PORT` (canonical)**: Compliant. `server/index.js` line 9: `process.env.PORT || 3001`.
+- [x] **Env var: `MONGO_URL` (canonical with fallback)**: Compliant. `server/config/database.js` reads `MONGO_URL || MONGODB_URI` — canonical first, legacy fallback acceptable per env-standards.md.
+- [x] **Health check endpoints**: Compliant. Both `/health` and `/api/health` return `{ success: true, service: "mbs-platform", database: bool, timestamp: ISO }`.
+- [x] **Git branch**: Compliant. On `main` (correct for MBS — single-branch workflow per project CLAUDE.md).
+- [ ] **`req.user` shape `{ userId, email, name, avatar }`**: PARTIAL. The JWT payload (via `issueToken` in `middleware/auth.js`) correctly encodes `{ userId, email, name, avatar, isAdmin }` and `requireAuth` sets `req.user = decoded` which is correct. However, **7 auth route responses** return `user: { id: existingUser._id, ... }` instead of `user: { userId: ... }` — lines 98, 144, 187, 436, 598, 733, 826 in `server/routes/auth.js`. The `id` key in the response body does not match the `userId` convention.
+- [ ] **Winston logger (never `console.log`)**: NOT COMPLIANT. 155 `console.log/warn/error` calls across all 15 server files. Only `server/services/gdprCascade.js` imports a logger (`require("../utils/logger")`), but `server/utils/logger.js` does not exist — this import will crash at runtime if the GDPR cascade is invoked. No Winston setup anywhere.
+- [ ] **Centralized error handler middleware**: NOT COMPLIANT. No `app.use((err, req, res, next) => ...)` in `server/index.js`. Each route does its own try/catch with inline `res.status(500).json(...)`. No centralized error-handling middleware registered.
+- [ ] **Response helpers (`sendSuccess`, `sendError`, `sendNotFound`)**: NOT COMPLIANT. No response helper functions exist. All routes construct `{ success: true/false, ... }` manually inline.
+
+### Frontend Standards (MBS/ src/)
+
+- [x] **No `alert()`/`prompt()`/`confirm()`**: Compliant. Zero occurrences in `src/`.
+- [x] **Sonner toasts (never react-hot-toast)**: Compliant. `sonner` imported in `main.jsx` (Toaster component) and across 6 page/component files. No `react-hot-toast` in codebase or `package.json`.
+- [x] **Fonts: Space Grotesk (headings), DM Sans (body)**: Compliant. Both declared as CSS custom properties in `src/index.css` (`--font-heading`, `--font-body`). Font packages imported in `main.jsx` (`@fontsource-variable/space-grotesk`, `@fontsource-variable/dm-sans`). Also includes Instrument Serif (accent) and JetBrains Mono (mono) per standard.
+- [x] **Safe array mapping `(array || []).map()`**: Mostly compliant. 7 instances of `(x || []).map()` in `AccountPage.jsx`, `BillingPage.jsx`, `Games.jsx`, `OtherWork.jsx`, `RoadmapTimeline.jsx`, `Home.jsx`. Other `.map()` calls use arrays initialized as `useState([])` or hardcoded arrays (safe). No unguarded dynamic data `.map()` found.
