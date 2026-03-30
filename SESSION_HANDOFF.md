@@ -90,12 +90,20 @@
 - Notification bell in nav
 - Onboarding modal for new users
 
-### Pending — Owner Action:
-1. **Test subscribe-free** — click "Start Free Trial" on /products to verify entitlement creation
-2. **Test GDPR delete** — delete data from one app on /account Data Management
-3. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
-4. **BTCPay** — Regenerate API key with full store permissions
-5. **VAPID keys** — Generate and add to MBS B env vars in Coolify for push notifications
+### Verified at end of session:
+- ✅ Subscribe-free: Fake Artist trial created (7-day premium, limits included)
+- ✅ GDPR delete: cascade hit Fake Artist backend, 200 success
+- ✅ VAPID keys: generated, added to Coolify, push subscription verified working
+- ✅ Push notifications: toggle on Account page, subscription saved to backend
+- ✅ Admin dashboard: 5 tabs, 20 users, auth breakdown, "Live" badge
+- ✅ Audit agent migrated all 155 console.log calls to Winston logger
+
+### Pending — Owner Action (2 items remaining):
+1. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
+2. **BTCPay** — Regenerate API key with full store permissions (current returns 403)
+
+### Known issue to fix in next session:
+- **Framer Motion opacity on protected pages** — ProductPickerPage (and possibly BillingPage) visually appear dark. Same fix as AdminPage: change `initial={{ opacity: 0 }}` to `initial={false}` on the page wrapper motion.div. Content works functionally (verified via API).
 
 ### For detailed file-by-file breakdown, see: SESSION_8_COMPLETE_REPORT.md
 

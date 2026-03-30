@@ -293,22 +293,36 @@ Via Coolify terminal on `conversations-mongodb`:
 
 ---
 
+## VERIFIED IN SESSION (end-of-session testing)
+
+| Test | Method | Result |
+|------|--------|--------|
+| Subscribe-free (Fake Artist) | JS console on /products | ✅ Entitlement created, status "trial", 7-day premium, limits included |
+| GDPR delete (Fake Artist) | JS console on /products | ✅ Cascade hit Fake Artist backend, 200 success |
+| checkAccess (Fake Artist) | JS console | ✅ hasAccess: true, reason: "free_tier", isTrialing: true |
+| VAPID public key endpoint | `GET /api/push/vapid-key` | ✅ Returns configured key |
+| Push subscription | Account page toggle | ✅ Browser permission granted, subscription saved, status: subscribed |
+| Push status check | `GET /api/push/status` | ✅ subscribed: true, subscribedAt confirmed |
+| Admin dashboard | Chrome /admin | ✅ 5 tabs, 20 users, auth breakdown, "Live" badge |
+| Account page | Chrome /account | ✅ Profile edit, Push toggle, Data Management, 2FA, Friends |
+| Onboarding modal | Chrome (first load) | ✅ Shows for users with 0 entitlements |
+
 ## PENDING — OWNER ACTION REQUIRED
 
-1. **Test subscribe-free** — click "Start Free Trial" on `/products` to verify entitlement creation
-2. **Test GDPR delete** — delete data from one app on `/account` Data Management
+1. ~~Test subscribe-free~~ — ✅ DONE (verified via JS console)
+2. ~~Test GDPR delete~~ — ✅ DONE (verified via JS console)
 3. **Create Stripe products** — IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr) in Stripe Dashboard
 4. **Regenerate BTCPay API key** — current returns 403
-5. **Generate VAPID keys** for push notifications — add `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL` to MBS B in Coolify
+5. ~~Generate VAPID keys~~ — ✅ DONE (keys generated, added to Coolify by owner, push verified working)
 
 ---
 
 ## KNOWN ISSUES
 
-1. **Response helpers not yet adopted** — `sendSuccess`/`sendError` created but all routes still use inline `{ success }`. Gradual migration.
-2. **Console.log still in auth.js** — 155 console calls across route files. Winston logger exists now but routes haven't been migrated yet.
-3. **CWG Settings page crash** — pre-existing "Illegal constructor" TypeError, unrelated to our work.
-4. **Auth breakdown shows Email: 12 instead of 10** — 2 users may have been created between backfill commands. Minor discrepancy.
+1. **Framer Motion opacity on protected pages** — ProductPickerPage and other pages render content but visually appear dark due to motion.div `initial={{ opacity: 0 }}` not animating under ProtectedRoute. AdminPage and AccountPage were fixed; ProductPickerPage and BillingPage may still need the same `initial={false}` fix. Content works functionally (verified via API calls).
+2. **Response helpers not yet adopted** — `sendSuccess`/`sendError` created but routes still use inline `{ success }`. Gradual migration.
+3. **Console.log migration** — Audit agent migrated all 155 console calls to Winston logger (commit `62c4802` + `409fc24`). Now complete.
+4. **CWG Settings page crash** — pre-existing "Illegal constructor" TypeError, unrelated to our work.
 
 ---
 
