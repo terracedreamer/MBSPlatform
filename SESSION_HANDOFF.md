@@ -68,24 +68,36 @@
 3. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
 4. **BTCPay** — Regenerate API key with full store permissions
 
-### Next Session — 12 Enhancements Queued:
-**Quick wins (1-5):**
-1. Backfill auth_provider on 19 legacy users
-2. ProtectedRoute component (replace manual localStorage checks)
-3. Auth Context (React Context API for centralized auth state)
-4. User profile editing (name, avatar, language on Account page)
-5. Email verification end-to-end flow
+**Part 5 — 12 Enhancements Built** (MBS `d52eaba` + `e2a0364`)
+25. **AuthContext** — React Context API for centralized auth (user, token, isAdmin, login, logout, refreshUser)
+26. **ProtectedRoute** — wraps /account, /billing, /products, /admin. Always renders children with loading overlay (fixes Framer Motion blank page bug)
+27. **User profile editing** — PUT /api/auth/profile endpoint + Edit button on AccountPage (name, language)
+28. **Notification center** — Bell icon in nav, announcements API, glass dropdown, dismiss/read tracking
+29. **Feature flags system** — Admin CRUD + public check-flag endpoint + Flags tab on AdminPage
+30. **Activity feed** — Activity tab on AdminPage, paginated ActivityLog with color-coded action badges
+31. **Product analytics** — Analytics section on Overview tab (per-product subs, trial conversion, top products)
+32. **Onboarding modal** — "Welcome to MagicBusStudios!" for users with 0 entitlements
+33. **Push notifications** — web-push + service worker + AccountPage toggle + admin send modal
+34. **Real-time admin** — Socket.io /admin namespace, "Live" badge, toast events for signups/entitlements
+35. **Backfilled auth_provider** — 9 google + 10 email users via MongoDB terminal. Admin breakdown now shows real data.
+36. **Fixed ProtectedRoute blank pages** — always render children, loading as overlay
 
-**Medium features (6-10):**
-6. Notification center (bell icon, Announcement model already exists)
-7. Feature flags system (FeatureFlag model exists, needs routes + admin UI)
-8. Activity feed on admin dashboard (ActivityLog model populating)
-9. Product analytics (subscription counts, trial conversion, popular products)
-10. Onboarding flow (/welcome page or modal after first login)
+### Verified live via Chrome:
+- `/auth/login` — Google SSO working
+- `/products` — 22 products, category tabs, "Start Free Trial" buttons
+- `/admin` — 5 tabs (Overview, Users, Entitlements, Flags, Activity), "Live" badge, "Send Notification", 20 users, auth breakdown (Google 45%, Email 55%)
+- `/account` — Profile with Edit button, Admin badge + dashboard link, Push Notifications toggle, Data Management, Danger Zone
+- Notification bell in nav
+- Onboarding modal for new users
 
-**Larger features (14-15):**
-14. Push notifications (PushSubscription model exists, needs implementation)
-15. Real-time admin dashboard (WebSocket live stats)
+### Pending — Owner Action:
+1. **Test subscribe-free** — click "Start Free Trial" on /products to verify entitlement creation
+2. **Test GDPR delete** — delete data from one app on /account Data Management
+3. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
+4. **BTCPay** — Regenerate API key with full store permissions
+5. **VAPID keys** — Generate and add to MBS B env vars in Coolify for push notifications
+
+### For detailed file-by-file breakdown, see: SESSION_8_COMPLETE_REPORT.md
 
 ### Decisions made this session:
 - **CWG stays on `test` branch indefinitely** — will not be merged to `main` until everything is 100% set up. Removed from next-steps list.

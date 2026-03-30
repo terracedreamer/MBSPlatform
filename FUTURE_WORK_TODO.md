@@ -89,25 +89,25 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [x] **Admin dashboard (hierarchical)** — AdminPage at /admin with overview, users, entitlements tabs.
 - [x] **Free trial (7 days premium)** — Bundled with subscribe-free. Lazy downgrade after trial expires.
 
-### Next Up — 12 Enhancements (Queued for Session 9)
+### Completed — 12 Enhancements (Session 8, MBS `d52eaba` + `e2a0364`)
 
 **Quick wins (1-5):**
-- [ ] **Backfill auth_provider on legacy users** — 19 users show "unknown" in admin. MongoDB script to detect Google (has google_id) vs email (has password_hash) and set auth_provider.
-- [ ] **ProtectedRoute component** — /account, /billing, /products, /admin all manually check localStorage. One shared wrapper eliminates duplication.
-- [ ] **Auth Context (React Context API)** — Auth scattered across localStorage reads. Centralized context for user state, admin checks, token refresh.
-- [ ] **User profile editing** — Account page shows name/avatar but no edit. Add inline edit for name, avatar URL, language preference.
-- [ ] **Email verification end-to-end** — Account shows "Unverified". Verify the resend + confirm flow works completely.
+- [x] **Backfill auth_provider on legacy users** — 9 google + 10 email via MongoDB terminal
+- [x] **ProtectedRoute component** — wraps all protected routes, loading overlay, admin guard
+- [x] **Auth Context (React Context API)** — centralized user/token/admin state, cross-tab sync
+- [x] **User profile editing** — PUT /api/auth/profile + Edit button on AccountPage
+- [x] **Email verification** — already existed, verified working
 
 **Medium features (6-10):**
-- [ ] **Notification center** — Bell icon in nav, glass dropdown. Announcement model already exists, needs routes + frontend.
-- [ ] **Feature flags system** — FeatureFlag model exists, needs admin routes + admin UI tab. Toggle features per-product without redeploying.
-- [ ] **Activity feed on admin dashboard** — ActivityLog model already populating (entitlement grants, revokes). Add "Recent Activity" tab to AdminPage.
-- [ ] **Product analytics** — Per-product subscription counts, trial conversion rates, popular products. All derivable from Entitlement data.
-- [ ] **Onboarding flow** — After first login, guide users through product selection. /welcome page or modal.
+- [x] **Notification center** — bell icon, announcements API, glass dropdown, dismiss tracking
+- [x] **Feature flags system** — admin CRUD + public check-flag + Flags tab on AdminPage
+- [x] **Activity feed on admin dashboard** — Activity tab, paginated ActivityLog, color-coded badges
+- [x] **Product analytics** — per-product subs, trial conversion, top products on Overview tab
+- [x] **Onboarding flow** — "Welcome to MagicBusStudios!" modal for users with 0 entitlements
 
 **Larger features (14-15):**
-- [ ] **Push notifications** — PushSubscription model exists but no implementation. Service worker, VAPID keys, opt-in UI, notification triggers.
-- [ ] **Real-time admin dashboard** — WebSocket live stats updates. No page refresh needed for new signups/subscriptions.
+- [x] **Push notifications** — web-push + service worker + AccountPage toggle + admin send modal. Needs VAPID keys in env vars.
+- [x] **Real-time admin dashboard** — Socket.io /admin namespace, "Live" badge, toast events for signups/entitlements
 
 ### Future Work (Decided but Deferred)
 - [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).

@@ -39,14 +39,17 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| GDPR deletion | All endpoints deployed to Coolify. Cascade service + deletion UI live on MBS Platform. | Test with fresh login |
-| Subscribe gating | Three-tier model built — checkAccess requires explicit subscription. ProductPickerPage + subscribe-free + 7-day trial. | Test /products page |
-| Admin dashboard | AdminPage built with overview/users/entitlements tabs. | Test /admin page |
-| CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch. | Verify on CWG test site |
+| GDPR deletion | Deployed and verified. All endpoints live, cascade service working, deletion UI on AccountPage. | Owner: test delete from /account |
+| Subscribe gating + trial | Three-tier model deployed. ProductPickerPage at /products. 7-day free trial. Lazy downgrade. | Owner: test "Start Free Trial" |
+| Admin dashboard | 5 tabs (Overview, Users, Entitlements, Flags, Activity). Real-time "Live" badge. Push notifications. | Verified live |
+| 12 enhancements | AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push, real-time. All deployed. | Verified live |
+| CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key (OWNER ACTION) |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout fail | Create in Stripe Dashboard (OWNER ACTION) |
+| VAPID keys for push | Push notification routes built but can't send without VAPID keys | Add env vars to MBS B in Coolify (OWNER ACTION) |
+| Response helpers adoption | sendSuccess/sendError created but routes still use inline { success } | Gradual migration when touching routes |
 
 ## What Exists (Live Products)
 

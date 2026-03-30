@@ -44,8 +44,21 @@ All 9 services (8 backends + MBS frontend) redeployed via Coolify. All successfu
 - Fixed logger crash (`0ca9c42`) that broke all auth routes
 - Set `is_admin: true` for both admin accounts via MongoDB
 
+### 12 Enhancements (MBS `d52eaba` + `e2a0364`)
+- AuthContext (React Context API) + ProtectedRoute component
+- User profile editing (PUT /api/auth/profile + Edit button on AccountPage)
+- Notification center (bell icon, announcements API, glass dropdown)
+- Feature flags system (admin CRUD + public check + Flags tab)
+- Activity feed (Activity tab, paginated ActivityLog)
+- Product analytics (per-product subs, trial conversion, top products on Overview tab)
+- Onboarding modal for users with 0 entitlements
+- Push notifications (web-push, service worker, admin send, AccountPage toggle)
+- Real-time admin dashboard (Socket.io /admin namespace, "Live" badge, toast events)
+- Backfilled auth_provider on 19 legacy users (9 google + 10 email)
+- Fixed ProtectedRoute blank pages (always render children, overlay for loading)
+
 ### All MBS Commits This Session
-`b0edb9b` → `ca7fac6` → `0ca9c42` → `8b732fc`
+`b0edb9b` → `ca7fac6` → `0ca9c42` → `8b732fc` → `d52eaba` → `00e5b44` → `e2a0364`
 
 ---
 
