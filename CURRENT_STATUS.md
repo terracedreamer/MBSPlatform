@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 30, 2026 (Session 9)
+**Last Updated**: March 30, 2026 (Session 9 — End)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -48,7 +48,12 @@ This repo contains architecture decisions, migration plans, and reference files.
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key (OWNER ACTION) |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout fail | Create in Stripe Dashboard (OWNER ACTION) |
-| Framer Motion opacity | ~~ProductPickerPage + BillingPage dark under ProtectedRoute~~ | **FIXED** in Session 9 (`65d0612`) — initial={false} |
+| Framer Motion opacity | ~~All 5 platform pages dark under ProtectedRoute~~ | **FIXED** in Session 9 (multiple commits) — initial={false} everywhere |
+| SectionHeading on protected pages | ~~whileInView never fires under ProtectedRoute~~ | **FIXED** — replaced with inline headings (`f66205e`) |
+| AnimatePresence initial mount | ~~Price toggles and tab content invisible~~ | **FIXED** — AnimatePresence initial={false} (`f9aa92d`, `6ba2e57`) |
+| Modern pricing page | BillingPage redesigned with toggle + hero | **DEPLOYED** — `0e542c5` |
+| IndividualPlansPage | New page at /billing/individual | **DEPLOYED** — `0e542c5` |
+| Premium UI polish | All 5 platform pages match marketing quality | **DEPLOYED** — `ff2a4c9` |
 | VAPID keys for push | ✅ RESOLVED — VAPID keys configured, push working | Session 8 |
 | Response helpers adoption | sendSuccess/sendError created but routes still use inline { success } | Gradual migration when touching routes |
 

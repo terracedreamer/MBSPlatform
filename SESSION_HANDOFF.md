@@ -11,18 +11,72 @@
 ## SESSION 9 SUMMARY (March 30, 2026)
 
 ### What was done this session:
-1. **Fixed Framer Motion opacity on ProductPickerPage and BillingPage** (MBS `65d0612`) — same `initial={false}` fix applied to AdminPage in Session 8. Both pages now render visually under ProtectedRoute.
-2. **Stripe + BTCPay instructions provided** — Chrome extension cannot access Stripe Dashboard (financial site safety policy). Detailed manual instructions provided for creating IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr) products, copying price IDs, and adding env vars to Coolify.
+
+**Part 1 — Opacity fixes + Pricing**
+1. **Fixed Framer Motion opacity** on ProductPickerPage and BillingPage (`65d0612`)
+2. **Updated pricing** — 6 products with 25% annual discount (`d460c36`, `f7418d8`)
+   - FlowState $5/mo $45/yr, CWG $15/mo $135/yr
+   - Studio Works $10/mo $90/yr, Arcade $10/mo $90/yr
+   - Inner Lab $20/mo $180/yr, MBS All Access $30/mo $270/yr
+3. **Updated billing.js** backend price ID mapping for all 6 products, fixed duplicate logger
+
+**Part 2 — Modern Pricing Page**
+4. **Redesigned BillingPage** (`0e542c5`) — modern SaaS-style:
+   - Prominent Monthly/Annual pill toggle (Annual default, "Save 25%" badge)
+   - MBS All Access hero card at top with "Everything Bundle" badge
+   - 3 category bundle cards below (Inner Lab, Studio Works, Arcade)
+   - Strikethrough annual pricing (~~$30~~ $22.50/mo, "Billed $270/year")
+   - Lightning as secondary "or pay with Lightning" link per card
+   - "Looking for individual apps?" link to new page
+5. **Created IndividualPlansPage** (`0e542c5`) — `/billing/individual`:
+   - 3-column layout: Inner Lab (11 apps), Studio Works (6), Arcade (5)
+   - Category-colored accent strips (teal/sky/purple)
+   - Bundle recommendation cards per column
+   - "Not available individually yet" messaging
+
+**Part 3 — Premium UI Polish (all 5 platform pages)**
+6. **Added ParticleField** to all 5 pages (BillingPage, IndividualPlansPage, ProductPickerPage, AccountPage, AdminPage)
+7. **Added AuroraBackground** to AdminPage (had NONE before) and ProductPickerPage (replaced static gradient)
+8. **Added card hover elevation** (y: -4 + purple glow shadow) across all pages
+9. **Added SectionDivider** (glow variant) between sections on BillingPage, AccountPage
+10. **Color-coded section icons** on AccountPage (Subscriptions=purple, Friends=blue, Push=teal, 2FA=amber, Data=red)
+11. **Enhanced AdminPage** stat card gradient icons, purple glow active tab, table row hovers
+12. **Category-colored left borders** on ProductPickerPage cards, accent strips on IndividualPlansPage columns
+
+**Part 4 — ProtectedRoute Animation Fixes**
+13. **Discovered SectionHeading incompatibility** — uses `whileInView`/`useInView` which never fires under ProtectedRoute. Replaced with inline headings using same gradient styling on all 4 protected pages (`f66205e`)
+14. **Fixed AnimatePresence initial mount** — price toggles and admin tabs started invisible. Added `initial={false}` to AnimatePresence components (`f9aa92d`, `6ba2e57`)
+15. **Key learning documented**: Never use `whileInView`, `useInView`, or `initial={{ opacity: 0 }}` on page-level elements inside ProtectedRoute.
+
+**Part 5 — Documentation**
+16. **Created SESSION_9_PENDING_ITEMS.md** — 21 items organized by priority
+17. **Created SESSION_10_PLAN.md** — detailed plan for 12 enhancements (next session)
 
 ### Pending — Owner Action:
-1. **Stripe Dashboard** — Create IL All Access and MBS All Access products (instructions above)
+1. **Stripe Dashboard** — Create 6 products with 12 prices (see SESSION_9_PENDING_ITEMS.md for exact table)
 2. **BTCPay** — Regenerate API key with full store permissions
-3. **Coolify** — Add 4 Stripe price ID env vars to MBS B, then redeploy
+3. **Coolify** — Add 12 Stripe price ID env vars to MBS B, then redeploy
 
-### MBS Platform commit this session:
-| Commit | Message | Files Changed |
-|--------|---------|---------------|
-| `65d0612` | fix: ProductPickerPage and BillingPage opacity animation under ProtectedRoute | 2 files |
+### MBS Platform commits this session:
+| Commit | Message |
+|--------|---------|
+| `65d0612` | fix: ProductPickerPage and BillingPage opacity under ProtectedRoute |
+| `d460c36` | feat: update pricing — 6 products with 25% annual discount |
+| `f7418d8` | fix: CWG annual price to $135/yr (25% off) |
+| `0e542c5` | feat: modern pricing page with monthly/annual toggle |
+| `a67c631` | fix: BillingPage opacity animations under ProtectedRoute |
+| `ff2a4c9` | feat: premium UI polish across all 5 platform pages |
+| `f66205e` | fix: replace SectionHeading with inline headings on protected pages |
+| `f9aa92d` | fix: price AnimatePresence initial={false} |
+| `6ba2e57` | fix: remaining opacity fixes on IndividualPlansPage + AdminPage |
+
+### For next session (Session 10):
+See `SESSION_10_PLAN.md` — 12 enhancements in 5 batches:
+- Batch 1: ADMIN_EMAILS env var, response helpers adoption, activity logging
+- Batch 2: Social login linking UI, GDPR delete confirmation, onboarding flow
+- Batch 3: Friends system enhancement
+- Batch 4: AdminPage splitting + user segmentation + revenue analytics tab
+- Batch 5: Referral email invites + promo code checkout flow
 
 ---
 

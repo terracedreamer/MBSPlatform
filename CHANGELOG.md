@@ -1,14 +1,31 @@
 # CHANGELOG — MBS Platform
 
-## March 30, 2026 — Session 9: Opacity Fix + Stripe/BTCPay Instructions
+## March 30, 2026 — Session 9: Pricing Redesign + Premium UI Polish
 
-### Bug Fix
-- **Fixed Framer Motion opacity on ProductPickerPage and BillingPage** (MBS `65d0612`) — same `initial={false}` fix from AdminPage Session 8. Both pages now visually render under ProtectedRoute.
+### Pricing Overhaul
+- **New 6-product pricing** with 25% annual discount: FlowState $5, CWG $15, SW $10, Arcade $10, IL $20, MBS $30
+- **Modern BillingPage** — Monthly/Annual pill toggle (Annual default, "Save 25%"), hero MBS card, strikethrough pricing
+- **New IndividualPlansPage** (`/billing/individual`) — 3-column layout with category-colored accent strips
+- Updated backend billing.js price ID mapping for all 6 products
 
-### Owner Action Items (provided instructions)
-- Stripe product creation: IL All Access ($19.99/mo, $159.99/yr) + MBS All Access ($29.99/mo, $249.99/yr)
-- BTCPay API key regeneration (full store permissions)
-- Coolify env vars: STRIPE_IL_MONTHLY_PRICE_ID, STRIPE_IL_YEARLY_PRICE_ID, STRIPE_MBS_MONTHLY_PRICE_ID, STRIPE_MBS_YEARLY_PRICE_ID
+### Premium UI Polish (all 5 platform pages)
+- Added ParticleField + AuroraBackground to all pages (AdminPage had NO background before)
+- Card hover elevation with purple glow shadows
+- Glow dividers between sections
+- Color-coded section icons on AccountPage
+- Category-colored left borders on ProductPickerPage
+- Gradient stat card icons and purple glow active tab on AdminPage
+
+### Critical Bug Fixes
+- **SectionHeading incompatibility**: `whileInView`/`useInView` never fires under ProtectedRoute. Replaced with inline headings on all 4 protected pages
+- **AnimatePresence initial mount**: Price toggles and admin tab content started invisible. Fixed with `initial={false}` on AnimatePresence
+- **Key learning**: Never use scroll-triggered animations on ProtectedRoute pages
+
+### Documentation
+- SESSION_9_PENDING_ITEMS.md — 21 items organized by priority
+- SESSION_10_PLAN.md — 12 enhancements planned for next session
+
+### 9 MBS commits: `65d0612`, `d460c36`, `f7418d8`, `0e542c5`, `a67c631`, `ff2a4c9`, `f66205e`, `f9aa92d`, `6ba2e57`
 
 ---
 
