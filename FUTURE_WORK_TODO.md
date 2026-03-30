@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 29, 2026
+**Last Updated**: March 30, 2026
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -73,23 +73,30 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] **Create Stripe products in Dashboard** — 6 products, 12 prices. Full table in SESSION_9_PENDING_ITEMS.md.
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
 
-### Session 10 Plan (12 Enhancements — see SESSION_10_PLAN.md)
-- [ ] #17 ADMIN_EMAILS env var (replace DB is_admin field)
-- [ ] #19 Response helpers adoption (10 route files)
-- [ ] #13 Activity log for subscription events
-- [ ] #20 AdminPage splitting (2067 lines → 11 files)
-- [ ] #14 User segmentation (full analytics)
-- [ ] #15 Revenue forecasting (new Analytics tab)
-- [ ] #11 Social login linking UI (Nostr/LNURL connect on Account page)
-- [ ] #18 GDPR delete confirmation (type DELETE)
-- [ ] #10 Onboarding flow per product (3-step wizard)
-- [ ] #12 Friends system enhancement
-- [ ] #4 Referral email invites (SendGrid)
-- [ ] #5 Promo code checkout flow (Stripe integration)
+### Completed — Session 10 (12 Enhancements — commit `0ba7114`)
+- [x] #17 ADMIN_EMAILS env var — `isEnvAdmin()` checks env before DB in requireAdmin + issueToken
+- [x] #19 Response helpers adoption — all 14 route files (~316 conversions)
+- [x] #13 Activity log for subscription events (subscribe-free, checkout, cancel, expire, upgrade, trial expire)
+- [x] #20 AdminPage splitting (2067 -> 767 lines + 6 tab components + 8 reusable admin components, 11 new files)
+- [x] #14 User segmentation — GET /api/admin/users/segments + filter chips (new/trial/paid/free/churned/inactive)
+- [x] #15 Revenue analytics — GET /api/admin/analytics/revenue + Analytics tab (MRR, ARR, ARPU, churn, growth, trend)
+- [x] #11 Connected Accounts UI — Google, Email, Nostr, LNURL status + link Nostr form
+- [x] #18 GDPR delete confirmation — "Type DELETE" on all 3 delete modals
+- [x] #10 Onboarding flow — 3-step wizard (welcome -> pick product -> success)
+- [x] #12 Friends system enhancement — avatar grid, remove friend, shared products endpoint
+- [x] #4 Referral email invites — SendGrid HTML template, 10/day rate limit
+- [x] #5 Promo code checkout flow — validate -> Stripe coupon (percentage/fixed/trial_extension) -> apply to session + UI
 
 ### Deferred to Future Session
 - [ ] #16 JWT upgrade to RS256 (multi-repo, 2-3 days)
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
+
+### Session 11 Potential Items
+- [ ] #3 Real-time entitlement sync after Stripe checkout
+- [ ] #16 RS256 JWT upgrade (deferred from Session 10)
+- [ ] #21 Test coverage expansion (deferred from Session 10)
+- [ ] Premium feature gating per product
+- [ ] Invoice generation (PDF)
 
 ### Post-Phase 5 Cleanup
 - [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
@@ -129,7 +136,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 
 ### Future Work (Decided but Deferred)
 - [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
-- [ ] **Admin accounts via ADMIN_EMAILS env var** — Currently `is_admin` is a DB field. Future: check email against `ADMIN_EMAILS` env var in Coolify. Easier to manage, no DB changes. Admin emails: `terracedreamer@gmail.com`, `1984.abhinav@gmail.com`.
+- [x] **Admin accounts via ADMIN_EMAILS env var** — Implemented in Session 10 (`0ba7114`). `isEnvAdmin()` checks `ADMIN_EMAILS` env var before DB `is_admin` field in both `requireAdmin` and `issueToken`.
 - [ ] **Premium feature gating (per-product)** — Entitlement infrastructure wired in all 13 apps but nothing enforces free vs paid. Needs per-product decisions on what's free vs premium for each app beyond CWG.
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
@@ -166,7 +173,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] **`req.user` shape `{ userId, email, name, avatar }`**: PARTIAL. The JWT payload (via `issueToken` in `middleware/auth.js`) correctly encodes `{ userId, email, name, avatar, isAdmin }` and `requireAuth` sets `req.user = decoded` which is correct. However, **7 auth route responses** return `user: { id: existingUser._id, ... }` instead of `user: { userId: ... }` — lines 98, 144, 187, 436, 598, 733, 826 in `server/routes/auth.js`. The `id` key in the response body does not match the `userId` convention.
 - [ ] **Winston logger (never `console.log`)**: NOT COMPLIANT. 155 `console.log/warn/error` calls across all 15 server files. Only `server/services/gdprCascade.js` imports a logger (`require("../utils/logger")`), but `server/utils/logger.js` does not exist — this import will crash at runtime if the GDPR cascade is invoked. No Winston setup anywhere.
 - [ ] **Centralized error handler middleware**: NOT COMPLIANT. No `app.use((err, req, res, next) => ...)` in `server/index.js`. Each route does its own try/catch with inline `res.status(500).json(...)`. No centralized error-handling middleware registered.
-- [ ] **Response helpers (`sendSuccess`, `sendError`, `sendNotFound`)**: NOT COMPLIANT. No response helper functions exist. All routes construct `{ success: true/false, ... }` manually inline.
+- [x] **Response helpers (`sendSuccess`, `sendError`, `sendNotFound`)**: COMPLIANT (Session 10). All 14 route files converted to use response helpers (~316 conversions). Created in Session 8, fully adopted in Session 10 (`0ba7114`).
 
 ### Frontend Standards (MBS/ src/)
 

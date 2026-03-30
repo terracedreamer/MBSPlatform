@@ -1,10 +1,54 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 30, 2026 (Session 9)
+**Last Updated**: March 30, 2026 (Session 10)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 10 SUMMARY (March 30, 2026)
+
+### What was done this session:
+
+**Batch 1 — Backend Hardening**
+1. **#17 ADMIN_EMAILS env var** — `isEnvAdmin()` checks env before DB in `requireAdmin` + `issueToken` (auth.js)
+2. **#19 Response helpers adoption** — all 14 route files converted (~316 conversions). No more inline `res.json({success})`.
+3. **#13 Activity logging for subscription events** — subscribe-free, checkout completed, cancelled, expired, upgraded, trial expired
+
+**Batch 2 — AccountPage Enhancements**
+4. **#11 Connected Accounts UI** — Google, Email, Nostr, LNURL connection status + link Nostr form on AccountPage
+5. **#18 GDPR "Type DELETE" confirmation** — all 3 delete modals (app, category, account) now require typing DELETE
+6. **#10 3-step onboarding flow** — Welcome categories -> Pick product (subscribe-free) -> Success
+
+**Batch 3 — Friends Enhancement**
+7. **#12 Friends system enhancement** — avatar grid UI, remove friend button, `DELETE /api/friends/:friendId`, `GET /api/friends/:friendId/shared-products`
+
+**Batch 4 — Admin Dashboard Overhaul**
+8. **#20 AdminPage split** — 2067 -> 767 lines + 6 tab components + 8 reusable admin components (11 new files)
+9. **#14 User segmentation** — `GET /api/admin/users/segments` endpoint + filter chips on Users tab (new/trial/paid/free/churned/inactive)
+10. **#15 Revenue analytics** — `GET /api/admin/analytics/revenue` + new Analytics tab (MRR, ARR, ARPU, churn rate, growth rate, monthly trend, revenue by product)
+
+**Batch 5 — Billing Features**
+11. **#4 Referral email invites** — SendGrid HTML template, 10/day rate limit, preference check
+12. **#5 Promo code checkout flow** — validate promo -> create Stripe coupon (percentage/fixed/trial_extension) -> apply to session + UI input on BillingPage
+
+### MBS Platform commit this session:
+| Commit | Message |
+|--------|---------|
+| `0ba7114` | feat: Session 10 — 12 enhancements in 5 batches (32 files changed, 3426 insertions, 1811 deletions) |
+
+### Pending — Owner Action:
+1. **Stripe Dashboard** — Create 6 products with 12 prices (see SESSION_9_PENDING_ITEMS.md for exact table)
+2. **BTCPay** — Regenerate API key with full store permissions (current returns 403)
+
+### For next session (Session 11):
+- #16 RS256 JWT upgrade (multi-repo, 2-3 days)
+- #21 Test coverage expansion (frontend + billing + entitlements)
+- #3 Real-time entitlement sync after Stripe checkout
+- Premium feature gating per product
+- Invoice generation (PDF)
 
 ---
 

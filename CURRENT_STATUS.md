@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 30, 2026 (Session 9 — End)
+**Last Updated**: March 30, 2026 (Session 10)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -41,8 +41,9 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
 | GDPR deletion | Deployed and verified. All endpoints live, cascade service working, deletion UI on AccountPage. | Owner: test delete from /account |
 | Subscribe gating + trial | Three-tier model deployed. ProductPickerPage at /products. 7-day free trial. Lazy downgrade. | Owner: test "Start Free Trial" |
-| Admin dashboard | 5 tabs (Overview, Users, Entitlements, Flags, Activity). Real-time "Live" badge. Push notifications. | Verified live |
-| 12 enhancements | AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push, real-time. All deployed. | Verified live |
+| Admin dashboard | 6 tabs (Overview, Users, Entitlements, Flags, Activity, Analytics). Real-time "Live" badge. Push notifications. Revenue analytics (MRR, ARR, ARPU, churn). User segmentation filters. | Verified live |
+| 12 Session 8 enhancements | AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push, real-time. All deployed. | Verified live |
+| 12 Session 10 enhancements | ADMIN_EMAILS env var, response helpers (all 14 routes), activity logging, connected accounts UI, GDPR type-DELETE, onboarding flow, friends enhancement, AdminPage split (11 files), user segmentation, revenue analytics, referral emails, promo code checkout. All deployed (`0ba7114`). | Verified live |
 | CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
@@ -55,7 +56,8 @@ This repo contains architecture decisions, migration plans, and reference files.
 | IndividualPlansPage | New page at /billing/individual | **DEPLOYED** — `0e542c5` |
 | Premium UI polish | All 5 platform pages match marketing quality | **DEPLOYED** — `ff2a4c9` |
 | VAPID keys for push | ✅ RESOLVED — VAPID keys configured, push working | Session 8 |
-| Response helpers adoption | sendSuccess/sendError created but routes still use inline { success } | Gradual migration when touching routes |
+| Response helpers adoption | ~~sendSuccess/sendError created but routes still use inline { success }~~ | **RESOLVED** — all 14 route files converted (~316 conversions) in Session 10 |
+| ADMIN_EMAILS env var | ~~Admin detected via DB is_admin field only~~ | **RESOLVED** — `isEnvAdmin()` checks env before DB in requireAdmin + issueToken (Session 10) |
 
 ## What Exists (Live Products)
 
