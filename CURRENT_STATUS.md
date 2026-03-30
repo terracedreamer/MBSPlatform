@@ -50,8 +50,6 @@ This repo contains architecture decisions, migration plans, and reference files.
 | CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
-| BTCPay API key 403 | Lightning payments fail | Regenerate API key (OWNER ACTION) |
-| Stripe bundle price IDs | IL All Access + MBS All Access checkout fail | Create in Stripe Dashboard (OWNER ACTION) |
 | Framer Motion opacity | ~~All 5 platform pages dark under ProtectedRoute~~ | **FIXED** in Session 9 (multiple commits) — initial={false} everywhere |
 | SectionHeading on protected pages | ~~whileInView never fires under ProtectedRoute~~ | **FIXED** — replaced with inline headings (`f66205e`) |
 | AnimatePresence initial mount | ~~Price toggles and tab content invisible~~ | **FIXED** — AnimatePresence initial={false} (`f9aa92d`, `6ba2e57`) |
