@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 29, 2026 (Session 8)
+**Last Updated**: March 30, 2026 (Session 9)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -48,7 +48,8 @@ This repo contains architecture decisions, migration plans, and reference files.
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key (OWNER ACTION) |
 | Stripe bundle price IDs | IL All Access + MBS All Access checkout fail | Create in Stripe Dashboard (OWNER ACTION) |
-| VAPID keys for push | Push notification routes built but can't send without VAPID keys | Add env vars to MBS B in Coolify (OWNER ACTION) |
+| Framer Motion opacity | ~~ProductPickerPage + BillingPage dark under ProtectedRoute~~ | **FIXED** in Session 9 (`65d0612`) — initial={false} |
+| VAPID keys for push | ✅ RESOLVED — VAPID keys configured, push working | Session 8 |
 | Response helpers adoption | sendSuccess/sendError created but routes still use inline { success } | Gradual migration when touching routes |
 
 ## What Exists (Live Products)

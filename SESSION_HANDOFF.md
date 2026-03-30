@@ -1,10 +1,28 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 29, 2026 (Session 8)
+**Last Updated**: March 30, 2026 (Session 9)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 9 SUMMARY (March 30, 2026)
+
+### What was done this session:
+1. **Fixed Framer Motion opacity on ProductPickerPage and BillingPage** (MBS `65d0612`) — same `initial={false}` fix applied to AdminPage in Session 8. Both pages now render visually under ProtectedRoute.
+2. **Stripe + BTCPay instructions provided** — Chrome extension cannot access Stripe Dashboard (financial site safety policy). Detailed manual instructions provided for creating IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr) products, copying price IDs, and adding env vars to Coolify.
+
+### Pending — Owner Action:
+1. **Stripe Dashboard** — Create IL All Access and MBS All Access products (instructions above)
+2. **BTCPay** — Regenerate API key with full store permissions
+3. **Coolify** — Add 4 Stripe price ID env vars to MBS B, then redeploy
+
+### MBS Platform commit this session:
+| Commit | Message | Files Changed |
+|--------|---------|---------------|
+| `65d0612` | fix: ProductPickerPage and BillingPage opacity animation under ProtectedRoute | 2 files |
 
 ---
 
@@ -102,8 +120,8 @@
 1. **Stripe Dashboard** — Create IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr)
 2. **BTCPay** — Regenerate API key with full store permissions (current returns 403)
 
-### Known issue to fix in next session:
-- **Framer Motion opacity on protected pages** — ProductPickerPage (and possibly BillingPage) visually appear dark. Same fix as AdminPage: change `initial={{ opacity: 0 }}` to `initial={false}` on the page wrapper motion.div. Content works functionally (verified via API).
+### Known issue FIXED in Session 9:
+- ~~**Framer Motion opacity on protected pages**~~ — Fixed in `65d0612`. ProductPickerPage and BillingPage now render properly under ProtectedRoute.
 
 ### For detailed file-by-file breakdown, see: SESSION_8_COMPLETE_REPORT.md
 

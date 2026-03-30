@@ -1,5 +1,17 @@
 # CHANGELOG — MBS Platform
 
+## March 30, 2026 — Session 9: Opacity Fix + Stripe/BTCPay Instructions
+
+### Bug Fix
+- **Fixed Framer Motion opacity on ProductPickerPage and BillingPage** (MBS `65d0612`) — same `initial={false}` fix from AdminPage Session 8. Both pages now visually render under ProtectedRoute.
+
+### Owner Action Items (provided instructions)
+- Stripe product creation: IL All Access ($19.99/mo, $159.99/yr) + MBS All Access ($29.99/mo, $249.99/yr)
+- BTCPay API key regeneration (full store permissions)
+- Coolify env vars: STRIPE_IL_MONTHLY_PRICE_ID, STRIPE_IL_YEARLY_PRICE_ID, STRIPE_MBS_MONTHLY_PRICE_ID, STRIPE_MBS_YEARLY_PRICE_ID
+
+---
+
 ## March 29, 2026 — Session 8: GDPR Deployed + 5 Roadmap Features + Standards Compliance
 
 ### Summary
