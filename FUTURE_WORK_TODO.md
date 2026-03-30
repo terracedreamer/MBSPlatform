@@ -88,7 +88,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [x] #5 Promo code checkout flow — validate -> Stripe coupon (percentage/fixed/trial_extension) -> apply to session + UI
 
 ### Deferred to Future Session
-- [ ] #16 JWT upgrade to RS256 (multi-repo, 2-3 days)
+- [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, committed, pushed. Env vars pending in Coolify.
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
 ### Completed — Session 10 continued (commits `c374a94`, `6150872`, `2278e1d`)
@@ -98,9 +98,13 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [x] Fix: AdminUsers segment filter chips — segments object converted to array (`c374a94`)
 - [x] Fix: admin tab content initial={false} for ProtectedRoute compat (`6150872`)
 
-### Session 11 Potential Items
-- [ ] **#16 RS256 JWT upgrade** (deferred from Session 10) — plan written and approved at `.claude/plans/humble-sparking-wigderson.md`, ready to execute
-- [ ] #21 Test coverage expansion (deferred from Session 10)
+### Completed — Session 11 (RS256 JWT Upgrade)
+- [x] **#16 RS256 JWT upgrade** — All 15 repos: MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. RSA-2048 key pair generated. `GET /api/auth/public-key` endpoint added. Pending: Coolify env vars (`JWT_PRIVATE_KEY` on MBS B, `JWT_PUBLIC_KEY` on all 15).
+
+### Session 12 Potential Items
+- [ ] #21 Test coverage expansion (deferred from Sessions 10-11)
+- [ ] RS256 Phase 2 cleanup — remove HS256 fallback after 7 days, remove `JWT_SECRET` from child apps
+- [ ] LazyChef — remove `create_jwt_token` self-issued auth
 
 ### Post-Phase 5 Cleanup
 - [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
@@ -139,7 +143,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [x] **Real-time admin dashboard** — Socket.io /admin namespace, "Live" badge, toast events for signups/entitlements
 
 ### Future Work (Decided but Deferred)
-- [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
+- [x] **JWT upgrade to RS256 asymmetric signing** — **COMPLETED Session 11**. MBS Platform signs RS256 (private key), all 15 child apps verify RS256→HS256 dual-mode (public key). Backward compatible. Phase 2 cleanup (remove HS256 fallback) after 7 days.
 - [x] **Admin accounts via ADMIN_EMAILS env var** — Implemented in Session 10 (`0ba7114`). `isEnvAdmin()` checks `ADMIN_EMAILS` env var before DB `is_admin` field in both `requireAdmin` and `issueToken`.
 - [x] **Premium feature gating (per-product)** — Middleware created (`requireEntitlement`, `requirePremium` in `server/middleware/entitlement.js`), `premiumFeatures` defined for all 22 products in `products.js`. Infrastructure ready; per-product route enforcement can be applied as needed.
 - [ ] Win-back offers — needs email + promo system working together

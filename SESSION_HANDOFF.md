@@ -1,10 +1,62 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 30, 2026 (Session 10)
+**Last Updated**: March 30, 2026 (Session 11)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 11 SUMMARY (March 30, 2026)
+
+### What was done this session:
+
+**#16 RS256 JWT Upgrade — All 15 repos upgraded, committed, pushed**
+
+Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) across the entire 15-app ecosystem. This is a security-critical change: previously, if any child app's `JWT_SECRET` leaked, an attacker could forge tokens for ALL apps. Now only MBS Platform holds the private signing key; child apps only have the public verification key.
+
+**Changes by repo:**
+
+| Repo | Branch | File(s) Changed | What Changed |
+|------|--------|-----------------|-------------|
+| MBS | main | `server/middleware/auth.js`, `server/routes/auth.js`, `server/routes/admin.js`, `server/services/realtimeService.js` | Sign with RS256 (private key), dual-mode verify (RS256→HS256), new `GET /api/auth/public-key` endpoint, centralized `verifyToken()` function |
+| Innerlab | main | `server/middleware/requireAuth.js` | Dual-mode verify |
+| YogaGhost | dev | `server/auth.js` | Dual-mode verify |
+| Brokenchain | main | `server/src/middleware/auth.js` | Dual-mode verify |
+| Wildlife | main | `server/middleware/auth.js` | Dual-mode verify + helper function |
+| Mindhacker | main | `server/src/middleware/auth.js` | Dual-mode verify |
+| Trivia | main | `server/middleware/auth.js` | Dual-mode verify |
+| Fakeartist | main | `server/middleware/requireAuth.js` | Dual-mode verify |
+| Shopping | main | `server/middleware/auth.js` | Dual-mode verify |
+| Movie | main | `server/middleware/auth.js` | Dual-mode verify |
+| TaskTracker | main | `server/middleware/auth.js` | Dual-mode verify |
+| CWG | test | `backend/utils/auth.py`, `backend/core/dependencies.py` | Dual-mode verify (PyJWT) |
+| LazyChef | main | `backend/auth_service.py` | Dual-mode verify (PyJWT) |
+| Tutor | main | `backend/auth_service.py` | Dual-mode verify (python-jose) |
+| Whispering House | main | `backend/app/core/auth.py` | Dual-mode verify (python-jose) |
+
+**Key design decisions:**
+- **Backward compatible**: All existing HS256 tokens continue to work via fallback
+- **Dual-mode verify pattern**: Try RS256 (public key) first → if `TokenExpiredError`, re-throw (genuinely expired) → otherwise fall back to HS256 (old token)
+- **RSA-2048 key pair generated**: Private key for MBS Backend only, public key for all 15 services
+- **New endpoint**: `GET /api/auth/public-key` on MBS Platform returns PEM public key (for future dynamic key fetching)
+- **LazyChef**: Still has legacy `create_jwt_token` (local auth). `verify_jwt_token` now supports RS256. Full removal of self-issued tokens is a separate cleanup task.
+
+### Pending — Owner Action:
+1. **Add `JWT_PRIVATE_KEY` env var** to MBS Backend in Coolify (PEM format, `\n`-escaped)
+2. **Add `JWT_PUBLIC_KEY` env var** to ALL 15 Coolify backend services (PEM format, `\n`-escaped)
+3. **Keep `JWT_SECRET`** on all services during migration (HS256 fallback for existing tokens)
+4. **Redeploy** all 15 services after adding env vars
+5. After 7 days: remove `JWT_SECRET` from child apps (Phase 2 cleanup)
+6. **Stripe Dashboard** — Create 6 products with 12 prices (still pending from Session 9)
+7. **BTCPay** — Regenerate API key with full store permissions (still pending)
+
+### For next session (Session 12):
+- #21 Test coverage expansion (frontend + billing + entitlements)
+- RS256 Phase 2 cleanup: remove HS256 fallback from all apps (after 7 days)
+- LazyChef: remove `create_jwt_token` self-issued auth (fully rely on MBS Platform)
+- Verify RS256 is working end-to-end via Chrome on live site
 
 ---
 
