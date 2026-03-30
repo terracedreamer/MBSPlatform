@@ -34,21 +34,30 @@
 11. **#4 Referral email invites** — SendGrid HTML template, 10/day rate limit, preference check
 12. **#5 Promo code checkout flow** — validate promo -> create Stripe coupon (percentage/fixed/trial_extension) -> apply to session + UI input on BillingPage
 
-### MBS Platform commit this session:
+**Bug Fixes (post-batch)**
+13. **Fix AdminUsers segment filter chips** — segments object was not being converted to array for filter chip rendering (`c374a94`)
+14. **Fix admin tab content visibility** — added `initial={false}` to AnimatePresence in admin tabs for ProtectedRoute compatibility (`6150872`)
+
+**Batch 6 — Entitlement & Billing Enhancements**
+15. **#3 Real-time entitlement sync** — `refreshUser()` called on BillingPage `?success=true` redirect after Stripe/BTCPay checkout, so user sees updated access immediately
+16. **#4 Premium feature gating** — `premiumFeatures` array added to all 22 products in `products.js`, `requireEntitlement(slug)` and `requirePremium` middleware created (`server/middleware/entitlement.js`), enhanced `GET /api/entitlements/:product` response with `isPremium` and `premiumFeatures`
+17. **#5 Invoice PDF generation** — PDFKit installed, `server/services/invoiceService.js` creates branded PDFs, `GET /api/billing/invoice/:transactionId` endpoint, download button in BillingPage transaction history
+
+### MBS Platform commits this session:
 | Commit | Message |
 |--------|---------|
 | `0ba7114` | feat: Session 10 — 12 enhancements in 5 batches (32 files changed, 3426 insertions, 1811 deletions) |
+| `c374a94` | fix: convert segments object to array for filter chips (AdminUsers) |
+| `6150872` | fix: admin tab content initial={false} for ProtectedRoute compat |
+| `2278e1d` | feat: entitlement sync, premium gating, invoice PDF generation |
 
 ### Pending — Owner Action:
 1. **Stripe Dashboard** — Create 6 products with 12 prices (see SESSION_9_PENDING_ITEMS.md for exact table)
 2. **BTCPay** — Regenerate API key with full store permissions (current returns 403)
 
 ### For next session (Session 11):
-- #16 RS256 JWT upgrade (multi-repo, 2-3 days)
+- **#16 RS256 JWT upgrade** (multi-repo, 2-3 days) — plan written and approved at `.claude/plans/humble-sparking-wigderson.md`, ready to execute
 - #21 Test coverage expansion (frontend + billing + entitlements)
-- #3 Real-time entitlement sync after Stripe checkout
-- Premium feature gating per product
-- Invoice generation (PDF)
 
 ---
 

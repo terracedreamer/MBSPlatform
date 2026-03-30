@@ -91,12 +91,16 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] #16 JWT upgrade to RS256 (multi-repo, 2-3 days)
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
+### Completed — Session 10 continued (commits `c374a94`, `6150872`, `2278e1d`)
+- [x] #3 Real-time entitlement sync after Stripe checkout — `refreshUser()` on BillingPage `?success=true` redirect
+- [x] Premium feature gating — `premiumFeatures` array on all 22 products, `requireEntitlement(slug)` + `requirePremium` middleware, enhanced entitlements response
+- [x] Invoice PDF generation — PDFKit, `server/services/invoiceService.js`, `GET /api/billing/invoice/:transactionId`, download button on BillingPage
+- [x] Fix: AdminUsers segment filter chips — segments object converted to array (`c374a94`)
+- [x] Fix: admin tab content initial={false} for ProtectedRoute compat (`6150872`)
+
 ### Session 11 Potential Items
-- [ ] #3 Real-time entitlement sync after Stripe checkout
-- [ ] #16 RS256 JWT upgrade (deferred from Session 10)
+- [ ] **#16 RS256 JWT upgrade** (deferred from Session 10) — plan written and approved at `.claude/plans/humble-sparking-wigderson.md`, ready to execute
 - [ ] #21 Test coverage expansion (deferred from Session 10)
-- [ ] Premium feature gating per product
-- [ ] Invoice generation (PDF)
 
 ### Post-Phase 5 Cleanup
 - [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
@@ -137,7 +141,7 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 ### Future Work (Decided but Deferred)
 - [ ] **JWT upgrade to RS256 asymmetric signing** — All products share same HS256 secret; leaked key = forge tokens for all apps. Important before real users/launch. Move to RS256: MBS Platform holds private key (signing), all products hold public key (verification only).
 - [x] **Admin accounts via ADMIN_EMAILS env var** — Implemented in Session 10 (`0ba7114`). `isEnvAdmin()` checks `ADMIN_EMAILS` env var before DB `is_admin` field in both `requireAdmin` and `issueToken`.
-- [ ] **Premium feature gating (per-product)** — Entitlement infrastructure wired in all 13 apps but nothing enforces free vs paid. Needs per-product decisions on what's free vs premium for each app beyond CWG.
+- [x] **Premium feature gating (per-product)** — Middleware created (`requireEntitlement`, `requirePremium` in `server/middleware/entitlement.js`), `premiumFeatures` defined for all 22 products in `products.js`. Infrastructure ready; per-product route enforcement can be applied as needed.
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Email campaigns + announcements + newsletter — post-launch
