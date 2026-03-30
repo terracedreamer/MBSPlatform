@@ -38,10 +38,10 @@
 - [x] MBS All Access: $29.99/mo, $249.99/yr
 - [x] Structured billing page design (category tabs → product → plans)
 - [x] Lightning as equal payment option alongside Stripe
-- [ ] FlowState pricing (no paid tier defined yet — currently free)
-- [ ] Arcade pricing (free for now)
-- [ ] Studio Works pricing (free for now)
-- [ ] Create actual Stripe products in Dashboard (manual step — owner must do before testing real payments)
+- [x] FlowState pricing — $5/mo, $45/yr (Session 9)
+- [x] Arcade pricing — $10/mo bundle, $5/mo individual (Session 9)
+- [x] Studio Works pricing — $10/mo bundle, $5/mo individual (Session 9)
+- [ ] Create actual Stripe products in Dashboard (OWNER ACTION — see SESSION_9_PENDING_ITEMS.md for exact prices)
 
 **CWG already has Stripe price IDs** in its Coolify env vars. The Phase 1 agent can either reuse those or create new platform-level ones.
 
@@ -70,8 +70,26 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - ~~Token refresh~~ → Phase 1 Addendum #12
 
 ### Reminders (Owner Action Required)
-- [ ] **Create Stripe products in Dashboard** — IL All Access ($19.99/mo, $159.99/yr) and MBS All Access ($29.99/mo, $249.99/yr). CWG prices already exist.
+- [ ] **Create Stripe products in Dashboard** — 6 products, 12 prices. Full table in SESSION_9_PENDING_ITEMS.md.
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
+
+### Session 10 Plan (12 Enhancements — see SESSION_10_PLAN.md)
+- [ ] #17 ADMIN_EMAILS env var (replace DB is_admin field)
+- [ ] #19 Response helpers adoption (10 route files)
+- [ ] #13 Activity log for subscription events
+- [ ] #20 AdminPage splitting (2067 lines → 11 files)
+- [ ] #14 User segmentation (full analytics)
+- [ ] #15 Revenue forecasting (new Analytics tab)
+- [ ] #11 Social login linking UI (Nostr/LNURL connect on Account page)
+- [ ] #18 GDPR delete confirmation (type DELETE)
+- [ ] #10 Onboarding flow per product (3-step wizard)
+- [ ] #12 Friends system enhancement
+- [ ] #4 Referral email invites (SendGrid)
+- [ ] #5 Promo code checkout flow (Stripe integration)
+
+### Deferred to Future Session
+- [ ] #16 JWT upgrade to RS256 (multi-repo, 2-3 days)
+- [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
 ### Post-Phase 5 Cleanup
 - [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
