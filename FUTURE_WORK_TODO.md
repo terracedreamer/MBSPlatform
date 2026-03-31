@@ -81,7 +81,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
 ### Completed — Session 11 (RS256 JWT Upgrade)
-- [x] **#16 RS256 JWT upgrade** — All 15 repos: MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. RSA-2048 key pair generated. `GET /api/auth/public-key` endpoint added. Pending: Coolify env vars (`JWT_PRIVATE_KEY` on MBS B, `JWT_PUBLIC_KEY` on all 15).
+- [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
 
 ### Session 12 Potential Items
 - [ ] #21 Test coverage expansion (deferred from Sessions 10-11)
