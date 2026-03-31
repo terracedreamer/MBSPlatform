@@ -1,5 +1,41 @@
 # CHANGELOG — MBS Platform
 
+## March 31, 2026 — Session 12: RS256 Phase 2 Cleanup + LazyChef Auth Removal
+
+### RS256 Phase 2 — Remove HS256 Fallback (all 15 repos)
+- Removed HS256 backward-compatibility fallback from all 15 apps
+- MBS Platform: `issueToken()` and `issueTempToken()` now require `JWT_PRIVATE_KEY` (no HS256 fallback)
+- MBS Platform: `verifyToken()` now requires `JWT_PUBLIC_KEY` (RS256-only)
+- 10 Node.js child apps: simplified verify to RS256-only, removed `JWT_SECRET` references
+- 4 Python child apps: simplified verify to RS256-only, removed HS256 fallback code
+- CWG: cleaned both `utils/auth.py` and `core/dependencies.py`
+
+### LazyChef Self-Issued Auth Removal
+- Removed `create_jwt_token()` function from `auth_service.py`
+- Local signup, login, and Google OAuth callback routes now return 410 Gone
+- LazyChef fully relies on MBS Platform SSO for all authentication
+
+### Commits (per repo)
+| Repo | Branch | Commit |
+|------|--------|--------|
+| MBS | main | `2b5dd8b` |
+| Innerlab | main | `2e542cc` |
+| YogaGhost | dev | `b463d86` |
+| Brokenchain | main | `bb35491` |
+| Wildlife | main | `e73b0aa` |
+| Mindhacker | main | `d45d260` |
+| Trivia | main | `87260b7` |
+| Fakeartist | main | `429311d` |
+| Shopping | main | `4260456` |
+| Movie | main | `7b0ad64` |
+| TaskTracker | main | `f7958d7` |
+| CWG | test | `9baaad7` |
+| LazyChef | main | `a00be57` |
+| Tutor | main | `339c5d8` |
+| Whispering House | main | `f49f79b` |
+
+---
+
 ## March 31, 2026 — Session 11: RS256 JWT Upgrade (15 repos)
 
 ### RS256 Asymmetric JWT Signing

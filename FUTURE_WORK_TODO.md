@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 31, 2026
+**Last Updated**: March 31, 2026 (Session 12)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -83,10 +83,13 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
 
-### Session 12 Potential Items
-- [ ] #21 Test coverage expansion (deferred from Sessions 10-11)
-- [ ] RS256 Phase 2 cleanup — remove HS256 fallback after 7 days, remove `JWT_SECRET` from child apps
-- [ ] LazyChef — remove `create_jwt_token` self-issued auth
+### Completed — Session 12 (RS256 Phase 2 + LazyChef Cleanup)
+- [x] RS256 Phase 2 cleanup — HS256 fallback removed from all 15 apps, RS256-only
+- [x] LazyChef — `create_jwt_token` removed, local auth routes return 410 Gone
+- [ ] Optional: Remove `JWT_SECRET` env var from child app Coolify services (no longer read by auth code)
+
+### Session 13 Potential Items
+- [ ] #21 Test coverage expansion (deferred from Sessions 10-12)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.

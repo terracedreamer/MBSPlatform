@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 31, 2026 (Session 11)
+**Last Updated**: March 31, 2026 (Session 12)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -39,7 +39,7 @@ This repo contains architecture decisions, migration plans, and reference files.
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
-| RS256 JWT upgrade | ✅ Complete. All 15 services have `JWT_PUBLIC_KEY`. MBS B signs RS256, verified working. | **DONE** (Session 11) |
+| RS256 JWT upgrade | ✅ Complete. Phase 2 done — HS256 fallback removed from all 15 apps. RS256-only. | **DONE** (Session 11 deploy + Session 12 cleanup) |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: merge when ready |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
@@ -70,5 +70,7 @@ Both fixes confirmed working across all affected apps.
 - [x] Platform-instructions synced to all 15 project folders
 - [x] GDPR cascade deployed and verified (Session 8)
 - [x] RS256 JWT upgrade — all 15 services configured with keys, verified working (Session 11)
+- [x] RS256 Phase 2 cleanup — HS256 fallback removed from all 15 apps (Session 12)
+- [x] LazyChef self-issued auth removed — fully relies on MBS Platform SSO (Session 12)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

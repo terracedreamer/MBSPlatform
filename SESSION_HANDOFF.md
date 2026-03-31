@@ -1,10 +1,46 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 31, 2026 (Session 11)
+**Last Updated**: March 31, 2026 (Session 12)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 12 SUMMARY (March 31, 2026)
+
+### What was done this session:
+
+**RS256 Phase 2 — HS256 Fallback Removed from All 15 Repos**
+
+Seven days after RS256 deployment (Session 11), all HS256 backward-compatibility code has been removed. The entire ecosystem now operates on RS256-only JWT verification.
+
+**Changes:**
+- **MBS Platform**: `verifyToken()`, `issueToken()`, `issueTempToken()` — all RS256-only. `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` are now required (no fallback).
+- **10 Node.js child apps**: Simplified auth middleware to RS256-only. Removed `JWT_SECRET` references from verification code. Removed unused env/config imports.
+- **4 Python child apps**: Simplified verify functions to RS256-only. Removed `JWT_SECRET_KEY` and `JWT_ALGORITHM` references.
+- **CWG**: Both `utils/auth.py` and `core/dependencies.py` cleaned (2 files).
+
+**LazyChef — Self-Issued Auth Removed**
+- Removed `create_jwt_token()` function from `auth_service.py`
+- Local signup (`POST /api/auth/register`), login (`POST /api/auth/login`), and Google OAuth callback routes now return `410 Gone` with redirect message to MBS Platform
+- LazyChef fully relies on MBS Platform SSO
+
+### Net effect:
+- **Deleted ~200 lines** of HS256 fallback code across 15 repos
+- **JWT_SECRET** can now be removed from all child app Coolify env vars (optional cleanup — it's no longer read by auth code)
+- **Zero new features** — pure security hardening
+
+### Pending — Owner Action:
+1. **Optional**: Remove `JWT_SECRET` env var from all child app Coolify services (no longer needed by auth code)
+2. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+3. **Regenerate BTCPay API key** — current returns 403
+
+### For next session (Session 13):
+- #21 Test coverage expansion (frontend + billing + entitlements)
+- CWG: merge `test` → `main` when ready
+- Verify RS256-only is working live via Chrome after Coolify redeploys
 
 ---
 
@@ -172,14 +208,15 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 
 ### Immediate (Owner Action)
 1. ~~Add `JWT_PUBLIC_KEY` to child apps~~ — **DONE**
-2. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
-3. **Regenerate BTCPay API key** — current returns 403
+2. ~~RS256 Phase 2 cleanup~~ — **DONE** (Session 12)
+3. **Optional**: Remove `JWT_SECRET` from child app Coolify env vars (no longer read by auth code)
+4. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
+5. **Regenerate BTCPay API key** — current returns 403
 
 ### Next Session
-4. RS256 Phase 2 cleanup: remove HS256 fallback from all apps (after 7 days)
-5. LazyChef: remove `create_jwt_token` self-issued auth
 6. Test coverage expansion (#21)
 7. CWG: merge `test` → `main` when ready
+8. Verify RS256-only working live after Coolify redeploys
 
 ---
 
