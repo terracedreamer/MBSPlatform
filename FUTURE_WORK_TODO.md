@@ -54,49 +54,32 @@ These items don't belong to any specific phase and can be done anytime:
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
 
-### Moved to Phase 1 Addendum (no longer future work)
-All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1 Addendum":
-- ~~Login button~~ → Phase 1 Addendum #1
-- ~~Rate limiting~~ → Phase 1 Addendum #2
-- ~~Lightning billing UI~~ → Phase 1 Addendum #3
-- ~~Nostr auth~~ → Phase 1 Addendum #4
-- ~~LNURL-Auth~~ → Phase 1 Addendum #5
-- ~~Auth method linking~~ → Phase 1 Addendum #6
-- ~~Email preferences~~ → Phase 1 Addendum #7
-- ~~Transactional emails~~ → Phase 1 Addendum #8
-- ~~Admin panel~~ → Phase 1 Addendum #9
-- ~~Promo codes~~ → Phase 1 Addendum #10
-- ~~Referrals~~ → Phase 1 Addendum #11
-- ~~Token refresh~~ → Phase 1 Addendum #12
+### Moved to Phase 1 Addendum
+12 items (login, rate limiting, Lightning, Nostr, LNURL, auth linking, email prefs, transactional emails, admin panel, promo codes, referrals, token refresh) — all completed and deployed. See `platform-instructions-for-mbs/CLAUDE.md` addendum section.
 
 ### Reminders (Owner Action Required)
-- [ ] **Create Stripe products in Dashboard** — 6 products, 12 prices. Full table in SESSION_9_PENDING_ITEMS.md.
+- [ ] **Create Stripe products in Dashboard** — 6 products, 12 prices:
+
+| Product | Monthly | Annual | Env Var (Monthly) | Env Var (Annual) |
+|---------|---------|--------|-------------------|------------------|
+| FlowState | $5 | $45 | `STRIPE_YOGA_MONTHLY_PRICE_ID` | `STRIPE_YOGA_ANNUAL_PRICE_ID` |
+| CWG | $15 | $135 | `STRIPE_CWG_MONTHLY_PRICE_ID` | `STRIPE_CWG_ANNUAL_PRICE_ID` |
+| Studio Works All Access | $10 | $90 | `STRIPE_SW_MONTHLY_PRICE_ID` | `STRIPE_SW_ANNUAL_PRICE_ID` |
+| Arcade All Access | $10 | $90 | `STRIPE_ARCADE_MONTHLY_PRICE_ID` | `STRIPE_ARCADE_ANNUAL_PRICE_ID` |
+| Inner Lab All Access | $20 | $180 | `STRIPE_IL_MONTHLY_PRICE_ID` | `STRIPE_IL_ANNUAL_PRICE_ID` |
+| MBS All Access | $30 | $270 | `STRIPE_MBS_MONTHLY_PRICE_ID` | `STRIPE_MBS_ANNUAL_PRICE_ID` |
+
+Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to Coolify MBS B env vars → redeploy.
+
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
 
-### Completed — Session 10 (12 Enhancements — commit `0ba7114`)
-- [x] #17 ADMIN_EMAILS env var — `isEnvAdmin()` checks env before DB in requireAdmin + issueToken
-- [x] #19 Response helpers adoption — all 14 route files (~316 conversions)
-- [x] #13 Activity log for subscription events (subscribe-free, checkout, cancel, expire, upgrade, trial expire)
-- [x] #20 AdminPage splitting (2067 -> 767 lines + 6 tab components + 8 reusable admin components, 11 new files)
-- [x] #14 User segmentation — GET /api/admin/users/segments + filter chips (new/trial/paid/free/churned/inactive)
-- [x] #15 Revenue analytics — GET /api/admin/analytics/revenue + Analytics tab (MRR, ARR, ARPU, churn, growth, trend)
-- [x] #11 Connected Accounts UI — Google, Email, Nostr, LNURL status + link Nostr form
-- [x] #18 GDPR delete confirmation — "Type DELETE" on all 3 delete modals
-- [x] #10 Onboarding flow — 3-step wizard (welcome -> pick product -> success)
-- [x] #12 Friends system enhancement — avatar grid, remove friend, shared products endpoint
-- [x] #4 Referral email invites — SendGrid HTML template, 10/day rate limit
-- [x] #5 Promo code checkout flow — validate -> Stripe coupon (percentage/fixed/trial_extension) -> apply to session + UI
+### Completed — Session 10
+12 enhancements (ADMIN_EMAILS, response helpers, activity logging, connected accounts, GDPR type-DELETE, onboarding, friends, AdminPage split, user segmentation, revenue analytics, referral emails, promo checkout) + 3 billing features (entitlement sync, premium gating, invoice PDFs). See CHANGELOG.md Session 10 entries.
 
 ### Deferred to Future Session
 - [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, committed, pushed. Env vars pending in Coolify.
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
-### Completed — Session 10 continued (commits `c374a94`, `6150872`, `2278e1d`)
-- [x] #3 Real-time entitlement sync after Stripe checkout — `refreshUser()` on BillingPage `?success=true` redirect
-- [x] Premium feature gating — `premiumFeatures` array on all 22 products, `requireEntitlement(slug)` + `requirePremium` middleware, enhanced entitlements response
-- [x] Invoice PDF generation — PDFKit, `server/services/invoiceService.js`, `GET /api/billing/invoice/:transactionId`, download button on BillingPage
-- [x] Fix: AdminUsers segment filter chips — segments object converted to array (`c374a94`)
-- [x] Fix: admin tab content initial={false} for ProtectedRoute compat (`6150872`)
 
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos: MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. RSA-2048 key pair generated. `GET /api/auth/public-key` endpoint added. Pending: Coolify env vars (`JWT_PRIVATE_KEY` on MBS B, `JWT_PUBLIC_KEY` on all 15).
@@ -106,46 +89,16 @@ All of these are now in `platform-instructions-for-mbs/CLAUDE.md` under "Phase 1
 - [ ] RS256 Phase 2 cleanup — remove HS256 fallback after 7 days, remove `JWT_SECRET` from child apps
 - [ ] LazyChef — remove `create_jwt_token` self-issued auth
 
-### Post-Phase 5 Cleanup
-- [x] **Dead code cleanup across Phase 5 apps** — Audited all 7 apps. Only bcryptjs in Wildlife was dead (removed). All others clean.
-- [x] **GDPR `DELETE /api/user-data` endpoint** — All 8 apps (including Whispering House). Committed, pushed, deployed to Coolify.
-- [x] **MBS Platform deletion UI + cascade service** — Deployed. AccountPage has Data Management section.
-- [x] **CWG entitlements** — check_entitlement() wired to profile endpoint (Session 8, `f9c38ab` on test branch).
-- [x] **TaskTracker MongoDB transactions** — Non-transactional fallback added (Session 8, `8053c11`).
+### Post-Phase 5 Cleanup — All Complete
+Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
 
-### Decided — Ready to Build (Session 7 Decisions, 2026-03-29)
-- [x] **Three-tier subscription model** — Built in Session 8 (`ca7fac6`). checkAccess() refactored to require explicit subscription.
-- [x] **Subscribe gating for all apps** — ProductPickerPage at /products with subscribe-free endpoint.
-- [x] **CWG entitlement enforcement** — Wired in Session 8 (`f9c38ab` on test branch).
-- [x] **Product/module picker (all products)** — ProductPickerPage covers all 22 products with category tabs.
-- [x] **Consolidate friends to MBS Platform level (Option A)** — No work needed. MBS already has friends API, CWG has no friends code.
-- [x] **Admin dashboard (hierarchical)** — AdminPage at /admin with overview, users, entitlements tabs.
-- [x] **Free trial (7 days premium)** — Bundled with subscribe-free. Lazy downgrade after trial expires.
+### Decided & Built — Session 8
+Subscribe gating, product picker, CWG entitlements, friends consolidation, admin dashboard, free trial (7 days). All built and deployed. See CHANGELOG.md Session 8.
 
-### Completed — 12 Enhancements (Session 8, MBS `d52eaba` + `e2a0364`)
-
-**Quick wins (1-5):**
-- [x] **Backfill auth_provider on legacy users** — 9 google + 10 email via MongoDB terminal
-- [x] **ProtectedRoute component** — wraps all protected routes, loading overlay, admin guard
-- [x] **Auth Context (React Context API)** — centralized user/token/admin state, cross-tab sync
-- [x] **User profile editing** — PUT /api/auth/profile + Edit button on AccountPage
-- [x] **Email verification** — already existed, verified working
-
-**Medium features (6-10):**
-- [x] **Notification center** — bell icon, announcements API, glass dropdown, dismiss tracking
-- [x] **Feature flags system** — admin CRUD + public check-flag + Flags tab on AdminPage
-- [x] **Activity feed on admin dashboard** — Activity tab, paginated ActivityLog, color-coded badges
-- [x] **Product analytics** — per-product subs, trial conversion, top products on Overview tab
-- [x] **Onboarding flow** — "Welcome to MagicBusStudios!" modal for users with 0 entitlements
-
-**Larger features (14-15):**
-- [x] **Push notifications** — web-push + service worker + AccountPage toggle + admin send modal. Needs VAPID keys in env vars.
-- [x] **Real-time admin dashboard** — Socket.io /admin namespace, "Live" badge, toast events for signups/entitlements
+### Completed — Session 8 Enhancements
+AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push notifications, real-time admin. See CHANGELOG.md Session 8.
 
 ### Future Work (Decided but Deferred)
-- [x] **JWT upgrade to RS256 asymmetric signing** — **COMPLETED Session 11**. MBS Platform signs RS256 (private key), all 15 child apps verify RS256→HS256 dual-mode (public key). Backward compatible. Phase 2 cleanup (remove HS256 fallback) after 7 days.
-- [x] **Admin accounts via ADMIN_EMAILS env var** — Implemented in Session 10 (`0ba7114`). `isEnvAdmin()` checks `ADMIN_EMAILS` env var before DB `is_admin` field in both `requireAdmin` and `issueToken`.
-- [x] **Premium feature gating (per-product)** — Middleware created (`requireEntitlement`, `requirePremium` in `server/middleware/entitlement.js`), `premiumFeatures` defined for all 22 products in `products.js`. Infrastructure ready; per-product route enforcement can be applied as needed.
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Email campaigns + announcements + newsletter — post-launch

@@ -86,6 +86,8 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 
 Auth API routes live on MBS Platform (magicbusstudios.com). Login/signup PAGES exist on both magicbusstudios.com and innerlab.ai (each with its own branding). Both call the same MBS Platform auth endpoints. Inner Lab modules redirect to innerlab.ai/auth/login. Standalone products redirect to magicbusstudios.com/auth/login.
 
+**JWT Signing**: RS256 asymmetric (Session 11). MBS Platform signs with private key (`JWT_PRIVATE_KEY`), all 15 child apps verify with public key (`JWT_PUBLIC_KEY`). Dual-mode HS256 fallback during migration. Public key available at `GET /api/auth/public-key`.
+
 ## Payments: Dual System
 - Stripe (subscriptions + one-time) — primary
 - BTCPay / Lightning (sats) — alternative
@@ -344,6 +346,12 @@ This repo is architecture-only (no code), but when writing instructions for chil
 | `MBS_PLATFORM_URL` / `PLATFORM_API_URL` | `PLATFORM_URL` |
 | `SENDGRID_FROM_EMAIL` | `FROM_EMAIL` |
 
+**RS256 JWT Keys** (added Session 11):
+| Env Var | Where | Notes |
+|---------|-------|-------|
+| `JWT_PRIVATE_KEY` | MBS Backend ONLY | PEM format. Coolify: must check "Is Multiline?" |
+| `JWT_PUBLIC_KEY` | ALL 15 services | PEM format. Coolify: must check "Is Multiline?" |
+
 Full reference: `~/.claude/rules/env-standards.md`
 
 ## GDPR — MBS Platform Role
@@ -353,8 +361,7 @@ MBS Platform is Layer 1 and **orchestrates** the data deletion cascade. It does 
 GDPR status by product:
 | Status | Products |
 |--------|----------|
-| Implemented (deployed) | Lazy Chef, SmartCart, TaskTracker, AI Tutor |
-| Committed (pending deploy) | BrokenChain, MindHacker, WildLens, Movie Picker, Fake Artist (stub), Trivia Roast (stub), Whispering House, MBS Platform (cascade service + deletion UI) |
+| Implemented (deployed) | MBS Platform (cascade + deletion UI), Lazy Chef, SmartCart, TaskTracker, AI Tutor, BrokenChain, MindHacker, WildLens, Movie Picker, Whispering House, Fake Artist (stub), Trivia Roast (stub), Inner Lab |
 | Not needed | Consciousness (no user accounts — email capture only) |
 
 ## Testing

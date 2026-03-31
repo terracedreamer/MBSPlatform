@@ -38,30 +38,11 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Issue | Impact | Resolution |
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
-| Stripe bundle price IDs | IL All Access + MBS All Access checkout buttons fail | Create products/prices in Stripe Dashboard |
-| GDPR deletion | Deployed and verified. All endpoints live, cascade service working, deletion UI on AccountPage. | Owner: test delete from /account |
-| Subscribe gating + trial | Three-tier model deployed. ProductPickerPage at /products. 7-day free trial. Lazy downgrade. | Owner: test "Start Free Trial" |
-| Admin dashboard | 6 tabs (Overview, Users, Entitlements, Flags, Activity, Analytics). Real-time "Live" badge. Push notifications. Revenue analytics (MRR, ARR, ARPU, churn). User segmentation filters. | Verified live |
-| 12 Session 8 enhancements | AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push, real-time. All deployed. | Verified live |
-| 12 Session 10 enhancements | ADMIN_EMAILS env var, response helpers (all 14 routes), activity logging, connected accounts UI, GDPR type-DELETE, onboarding flow, friends enhancement, AdminPage split (11 files), user segmentation, revenue analytics, referral emails, promo code checkout. All deployed (`0ba7114`). | Verified live |
-| Premium feature gating | `premiumFeatures` array defined for all 22 products in `products.js`. `requireEntitlement(slug)` and `requirePremium` middleware created in `server/middleware/entitlement.js`. Enhanced `GET /api/entitlements/:product` returns `isPremium` and `premiumFeatures`. Ready for per-product enforcement. | Deployed (`2278e1d`) |
-| Invoice PDF generation | PDFKit-based branded invoice PDFs. `server/services/invoiceService.js` + `GET /api/billing/invoice/:transactionId` endpoint. Download button in BillingPage transaction history. | Deployed (`2278e1d`) |
-| Entitlement sync after checkout | `refreshUser()` called on BillingPage when redirected with `?success=true` after Stripe/BTCPay checkout. User sees updated access immediately without manual refresh. | Deployed (`2278e1d`) |
-| RS256 JWT upgrade | All 15 repos upgraded to RS256 asymmetric JWT signing (Session 11). MBS Platform signs RS256 (private key), all child apps verify RS256→HS256 dual-mode (public key). `GET /api/auth/public-key` endpoint added. **MBS B verified RS256 working** (`alg: RS256` in token). Child app env vars in progress. Coolify requires "Is Multiline?" checkbox for PEM keys. | MBS B ✅, child apps 🔄 |
-| Tutor deploy fix | Initial RS256 commit used `from jose import jwt` (python-jose) but Tutor uses PyJWT. Fixed to `import jwt`. | **FIXED** (`1fb3e90`) |
-| Innerlab deploy fix | `package-lock.json` stale — jest/supertest in package.json but not in lock file. Regenerated. | **FIXED** (`2c25fa8`) |
-| CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch (`f9c38ab`). | Verify on CWG test site |
-| CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
+| Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
+| RS256 JWT upgrade | MBS B verified working (RS256 tokens). Child app `JWT_PUBLIC_KEY` env vars being added. | Add `JWT_PUBLIC_KEY` (multiline) to remaining child backends in Coolify |
+| CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
+| CWG on `test` branch | Running on test, not main — intentional | Owner decision: merge when ready |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
-| Framer Motion opacity | ~~All 5 platform pages dark under ProtectedRoute~~ | **FIXED** in Session 9 (multiple commits) — initial={false} everywhere |
-| SectionHeading on protected pages | ~~whileInView never fires under ProtectedRoute~~ | **FIXED** — replaced with inline headings (`f66205e`) |
-| AnimatePresence initial mount | ~~Price toggles and tab content invisible~~ | **FIXED** — AnimatePresence initial={false} (`f9aa92d`, `6ba2e57`) |
-| Modern pricing page | BillingPage redesigned with toggle + hero | **DEPLOYED** — `0e542c5` |
-| IndividualPlansPage | New page at /billing/individual | **DEPLOYED** — `0e542c5` |
-| Premium UI polish | All 5 platform pages match marketing quality | **DEPLOYED** — `ff2a4c9` |
-| VAPID keys for push | ✅ RESOLVED — VAPID keys configured, push working | Session 8 |
-| Response helpers adoption | ~~sendSuccess/sendError created but routes still use inline { success }~~ | **RESOLVED** — all 14 route files converted (~316 conversions) in Session 10 |
-| ADMIN_EMAILS env var | ~~Admin detected via DB is_admin field only~~ | **RESOLVED** — `isEnvAdmin()` checks env before DB in requireAdmin + issueToken (Session 10) |
 
 ## What Exists (Live Products)
 
@@ -85,12 +66,10 @@ Both fixes confirmed working across all affected apps.
 ## Pre-Build Checklist
 
 - [x] All phases 1-5 complete
-- [x] Phase 5 learnings cascaded to instructions (commit `0aa6711`)
-- [x] All 11 standalone products verified live via Chrome browser
-- [x] Phase 5 reports collected from all 11 project folders
-- [x] Platform-instructions synced to all 15 project folders (Session 6)
-- [x] CWG stays on `test` branch (owner decision — intentional)
+- [x] All 11 standalone products verified live via Chrome (2026-03-28)
+- [x] Platform-instructions synced to all 15 project folders
+- [x] GDPR cascade deployed and verified (Session 8)
+- [x] RS256 JWT upgrade deployed to MBS B, verified working (Session 11)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
-- [x] GDPR cascade to standalone products (code built Session 7, committed/pushed Session 8 — needs deploy)
-- [ ] Dead code cleanup across apps
+- [ ] `JWT_PUBLIC_KEY` added to all 14 child backends in Coolify

@@ -1,5 +1,7 @@
 # MBS Platform — Orchestration Guide
 
+> **STATUS: All 5 phases COMPLETE as of Session 6 (March 28, 2026).** This guide is preserved as reference for the orchestration workflow used to build the platform. Phase prompts below are historical. For current status, see `SESSION_HANDOFF.md`.
+
 **How to build the entire platform using Claude Code sessions as agents.**
 
 Each phase is a Claude Code session pointing to a project folder. You paste the prompt, the agent reads `platform-instructions/` and builds. You are the orchestrator.
