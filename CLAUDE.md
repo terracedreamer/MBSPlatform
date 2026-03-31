@@ -31,7 +31,7 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 ├── platform-instructions-for-standalone-products/ → each Arcade/SW project (SSO migration)
 ├── platform-instructions-for-new-modules/ → new IL module projects (starter kit)
 │
-├── marketing-docs/, archive/, session docs
+├── Brand Overview/, archive/, session docs
 └── SESSION_HANDOFF.md for continuity across sessions
 ```
 
@@ -256,13 +256,13 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── CLAUDE.md                               ← Full module template with architecture context
 │   └── README.md                               ← How to use
 │
-├── marketing-docs/                             ← Source of truth — synced to Desktop/Marketing/Overview/
+├── Brand Overview/                             ← Source of truth — synced to Desktop/Marketing/Overview/
 │   ├── MagicBusStudios_Brand_And_Company.md    ← Master: company + brand + all products + pricing
 │   ├── InnerLab_Product_Brief.md               ← Inner Lab deep dive (11 modules, framework)
 │   ├── ConversationsWithGod_Product_Brief.md   ← CWG deep dive (21 guides, features, pricing)
 │   └── TheArcade_Marketing_Brief.md            ← Arcade deep dive (5 games, campaigns)
 │
-├── architecture-docs/                           ← Human-readable reference documents
+├── Architecture Docs/                           ← Human-readable reference documents
 │   ├── MBS_Platform_Technical_Architecture.md  ← Comprehensive technical reference
 │   └── MBS_Platform_Overview.md                ← Non-technical overview (marketing-ready)
 │
@@ -304,7 +304,7 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 Each project's CLAUDE.md has been updated with a note to check `platform-instructions/` before starting work.
 
 **To Marketing folder:**
-- `marketing-docs/` contents are copied to `Desktop/Marketing/Overview/`
+- `Brand Overview/` contents are copied to `Desktop/Marketing/Overview/`
 - Marketing folder has its own README.md and folder structure per product line
 - Marketing agent points to `Desktop/Marketing/` and reads `README.md` first
 
@@ -315,8 +315,8 @@ Each project's CLAUDE.md has been updated with a note to check `platform-instruc
 4. Open Claude Code in that project — the agent picks up the new instructions
 
 ## Marketing Folder Sync
-When ANY file in `marketing-docs/` changes in this repo:
-1. Copy ALL `.md` files from `marketing-docs/` to `Desktop/Marketing/Overview/` (overwrite)
+When ANY file in `Brand Overview/` changes in this repo:
+1. Copy ALL `.md` files from `Brand Overview/` to `Desktop/Marketing/Overview/` (overwrite)
 2. Update `Desktop/Marketing/README.md` if the file listing changed
 3. Tell the user what was synced
 
@@ -406,7 +406,7 @@ All child apps built from MBS Platform instructions must follow:
 
 ## Architecture Reference
 
-Full platform architecture document: `~/Desktop/Codes/MBSPlatform/architecture-docs/MBS_Platform_Technical_Architecture.md`
+Full platform architecture document: `~/Desktop/Codes/MBSPlatform/Architecture Docs/MBS_Platform_Technical_Architecture.md`
 
 ---
 

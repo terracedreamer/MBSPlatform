@@ -457,9 +457,9 @@ Reviewed Phase 2 report (Inner Lab Middleware built and deployed). Added email/p
 - platform-instructions-for-cwg/PLATFORM_MIGRATION.md
 - platform-instructions-for-yogaghost/PLATFORM_MIGRATION.md
 - platform-instructions-for-new-modules/CLAUDE.md
-- marketing-docs/MagicBusStudios_Brand_And_Company.md
-- marketing-docs/InnerLab_Product_Brief.md
-- marketing-docs/TheArcade_Marketing_Brief.md
+- Brand Overview/MagicBusStudios_Brand_And_Company.md
+- Brand Overview/InnerLab_Product_Brief.md
+- Brand Overview/TheArcade_Marketing_Brief.md
 
 ### Completion Report System (added late Session 2)
 - Added `Completion Report (REQUIRED)` section to all 5 platform-instructions docs
