@@ -86,7 +86,7 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 
 Auth API routes live on MBS Platform (magicbusstudios.com). Login/signup PAGES exist on both magicbusstudios.com and innerlab.ai (each with its own branding). Both call the same MBS Platform auth endpoints. Inner Lab modules redirect to innerlab.ai/auth/login. Standalone products redirect to magicbusstudios.com/auth/login.
 
-**JWT Signing**: RS256 asymmetric (Session 11, Phase 2 cleanup Session 12). MBS Platform signs with private key (`JWT_PRIVATE_KEY`), all 15 child apps verify with public key (`JWT_PUBLIC_KEY`). RS256-only — HS256 fallback removed. Public key available at `GET /api/auth/public-key`.
+**JWT Signing**: RS256 asymmetric (Session 11). MBS Platform signs with private key (`JWT_PRIVATE_KEY`), all 15 child apps verify with public key (`JWT_PUBLIC_KEY`). Dual-mode: RS256 first, HS256 fallback active (Phase 2 removal attempted Session 12, reverted). `JWT_SECRET` still required on all services. Public key available at `GET /api/auth/public-key`.
 
 ## Payments: Dual System
 - Stripe (subscriptions + one-time) — primary

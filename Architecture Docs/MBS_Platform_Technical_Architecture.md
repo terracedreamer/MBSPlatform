@@ -150,7 +150,7 @@ Everything else — billing, promotions, referrals, analytics — is built on to
 - `email` can be null (Nostr/LNURL users are pseudonymous)
 - MBS Platform signs tokens with `JWT_PRIVATE_KEY`. All child apps verify with `JWT_PUBLIC_KEY`.
 - Token arrives via `?token=JWT` URL parameter after login redirect
-- RS256 upgrade completed Session 11. HS256 fallback removed Session 12.
+- RS256 upgrade completed Session 11. Dual-mode active: RS256 first, HS256 fallback. `JWT_SECRET` still required on all services.
 
 ### Login Pages
 
@@ -531,13 +531,14 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - CWG running on `test` branch (intentional)
 
 ### Planned Improvements
+- LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
+- RS256 Phase 2 — remove HS256 fallback (requires LazyChef SSO migration + verify all Coolify redeploys)
 - Multi-currency support, family plans
 - Win-back offers, email campaigns
 - Stripe subscription portal testing (once price IDs created)
 
 ### Completed (Sessions 8-12)
-- ✅ RS256 asymmetric JWT signing (Session 11) + HS256 fallback removal (Session 12)
-- ✅ LazyChef self-issued auth removed — fully relies on MBS Platform SSO (Session 12)
+- ✅ RS256 asymmetric JWT signing deployed (Session 11) — dual-mode active (RS256 first, HS256 fallback)
 - ✅ Premium feature gating per product (`requireEntitlement`/`requirePremium` middleware)
 - ✅ Subscribe gating + product picker + free trial (7 days premium)
 - ✅ GDPR cascade deployed to all apps except CWG and FlowState
