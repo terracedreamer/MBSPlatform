@@ -6,7 +6,7 @@
 
 **innerlab.ai** | A MagicBusStudios Product
 
-> **Last Updated**: March 27, 2026. Platform context updated — Phase 2 live, auth + middleware details added, pricing added.
+> **Last Updated**: March 31, 2026. Pricing finalized. All phases complete. RS256 JWT. All apps live with SSO.
 
 ## Platform Context (Live — Phase 2 Complete)
 - **Four auth methods** via MBS Platform: Google SSO, Email/Password (with optional 2FA/TOTP), Nostr identity, LNURL-Auth (Lightning wallet)
@@ -404,6 +404,6 @@ Approved messaging themes and taglines for marketing use:
 
 **Not yet built:**
 - No pricing visible on innerlab.ai (billing handled at magicbusstudios.com/billing)
-- Inner Lab All Access: $19.99/mo or $159.99/yr. MBS All Access: $29.99/mo or $249.99/yr.
+- Inner Lab All Access: $20/mo or $180/yr. MBS All Access: $30/mo or $270/yr.
 - No individual module detail pages
 - No daily briefing engine (needs data from multiple modules first)

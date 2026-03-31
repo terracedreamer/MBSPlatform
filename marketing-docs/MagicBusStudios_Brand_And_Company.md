@@ -4,7 +4,7 @@
 
 magicbusstudios.com | Toronto, Canada
 
-> **Last Updated**: March 27, 2026. CWG pricing confirmed, Arcade/SW pricing marked TBD, Lightning pricing added, migration statuses updated.
+> **Last Updated**: March 31, 2026. All pricing finalized (Session 9). RS256 JWT complete. All 15 apps live with SSO.
 > Merged from: MagicBusStudios_Company_Overview.docx + MagicBusStudios_Brand_Architecture.docx
 
 ## Platform Context (Live — deployed March 2026)
@@ -104,7 +104,7 @@ Together, they paint a picture of a creative studio that builds thoughtful, well
 | Module | Category | Status | URL | Description |
 |--------|----------|--------|-----|-------------|
 | Conversations With God | Dialogue | Live (migrated to platform) | conversationswithgod.ai | Dialogue & spiritual guidance with 21 AI guides |
-| FlowState | Movement | Live (migration in progress) | yoga.magicbusstudios.com | Structured yoga & movement sessions |
+| FlowState | Movement | Live | yoga.magicbusstudios.com | Structured yoga & movement sessions |
 | BreathArc | Breathwork | Coming Soon | -- | Guided breathwork for grounding and clarity |
 | StarMap | Astrology | Coming Soon | -- | Astrological chart exploration and pattern recognition |
 | AstroCompass | Astrocartography | Coming Soon | -- | Astrocartography and location-based energy mapping |
@@ -183,27 +183,16 @@ Wellness-oriented professionals (therapists, coaches, yoga instructors) looking 
 
 ### Subscription Tiers
 
-| Tier | Scope | Monthly | Annual |
+| Tier | Scope | Monthly | Annual (25% off) |
 |------|-------|---------|--------|
-| **Inner Lab -- CWG** | Conversations With God module | $9.99/mo | $79.99/yr |
-| **Inner Lab -- Other Modules** | Individual module (FlowState, etc.) | TBD | TBD |
-| **Inner Lab -- All Access** | All 11 Inner Lab modules | $19.99/mo | $159.99/yr |
-| **Arcade -- Game Pass** | Single game (one-time purchase) | TBD | -- |
-| **Arcade -- All Access** | All 5 Arcade games | TBD | TBD |
-| **Studio Works -- Individual App** | Single utility app | TBD | TBD |
-| **Studio Works -- All Access** | All 6 Studio Works apps | TBD | TBD |
-| **MBS Everything** | All 22 products across all divisions | $29.99/mo | $249.99/yr |
+| **FlowState** | FlowState module | $5/mo | $45/yr |
+| **CWG** | Conversations With God module | $15/mo | $135/yr |
+| **Studio Works All Access** | All 6 Studio Works apps | $10/mo | $90/yr |
+| **Arcade All Access** | All 5 Arcade games | $10/mo | $90/yr |
+| **Inner Lab All Access** | All 11 Inner Lab modules + dashboard | $20/mo | $180/yr |
+| **MBS Everything** | All 22 products across all divisions | $30/mo | $270/yr |
 
-### Arcade-Specific Pricing Options (PLANNED — not yet implemented)
-
-**Current status: All Arcade games are FREE. Pricing below is aspirational and not finalized.**
-
-| Option | Price (TBD) | What You Get |
-|--------|------------|-------------|
-| Free Tier | Free | Limited daily play time (30 min/day) |
-| Game Pass | $4.99 one-time (TBD) | Unlimited access to one game forever |
-| 10hr Time Bank | $9.99 one-time (TBD) | 10 hours of play across any game |
-| 25hr Time Bank | $19.99 one-time (TBD) | 25 hours of play across any game |
+**Current status: All Arcade and Studio Works products are FREE while pricing is being set up in Stripe. Premium gating is wired but not enforced (`effectivePremium = true`).**
 
 ### CWG Lightning / Bitcoin Pricing (Live)
 

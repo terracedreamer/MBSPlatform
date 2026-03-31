@@ -8,7 +8,7 @@
 
 ---
 
-> **Last Updated**: March 27, 2026. Platform migration complete.
+> **Last Updated**: March 31, 2026. Pricing updated. RS256 JWT complete. Platform migration complete.
 
 ## Platform Context (Migration Complete — Phase 3 Done)
 - CWG is fully migrated to the centralized MBS Platform for auth and billing
@@ -197,12 +197,12 @@ CWG is the first and flagship module of Inner Lab -- the unified system for inne
 
 | Plan | Price | What's Included |
 |------|-------|-----------------|
-| **CWG Premium Monthly** | $9.99/mo | Unlimited messages, custom meditations, advanced programs, full growth tracking, priority features |
-| **CWG Premium Yearly** | $79.99/yr | Same as monthly -- save ~33% |
-| **Inner Lab All Access Monthly** | $19.99/mo | All Inner Lab modules + cross-module intelligence |
-| **Inner Lab All Access Yearly** | $159.99/yr | Same as monthly -- save ~33% |
-| **MBS All Access Monthly** | $29.99/mo | Everything across all MBS products (Inner Lab, Arcade, Studio Works) |
-| **MBS All Access Yearly** | $249.99/yr | Same as monthly -- save ~30% |
+| **CWG Premium Monthly** | $15/mo | Unlimited messages, custom meditations, advanced programs, full growth tracking, priority features |
+| **CWG Premium Yearly** | $135/yr | Same as monthly -- save 25% |
+| **Inner Lab All Access Monthly** | $20/mo | All Inner Lab modules + cross-module intelligence |
+| **Inner Lab All Access Yearly** | $180/yr | Same as monthly -- save 25% |
+| **MBS All Access Monthly** | $30/mo | Everything across all MBS products (Inner Lab, Arcade, Studio Works) |
+| **MBS All Access Yearly** | $270/yr | Same as monthly -- save 25% |
 
 ### Premium Features (CWG)
 

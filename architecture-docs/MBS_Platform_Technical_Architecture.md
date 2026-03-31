@@ -1,7 +1,7 @@
 # Magic Bus Studios — Platform Technical Architecture
 
-**Version**: 1.1
-**Date**: March 29, 2026
+**Version**: 1.2
+**Date**: March 31, 2026
 **Author**: Magic Bus Studios Engineering
 **Status**: All 5 build phases complete. Platform live and operational.
 
@@ -47,7 +47,7 @@ Everything else — billing, promotions, referrals, analytics — is built on to
 | Frontend | React (Vite or Next.js), Tailwind CSS, shadcn/ui |
 | Backend | Node.js (Express) or Python (FastAPI) |
 | Database | MongoDB (single shared cluster, separate DB per concern) |
-| Auth | JWT (HS256), Google OAuth 2.0, Nostr, LNURL-Auth |
+| Auth | JWT (RS256 asymmetric), Google OAuth 2.0, Nostr, LNURL-Auth |
 | Payments | Stripe (subscriptions + one-time), BTCPay Server (Lightning/Bitcoin) |
 | Email | SendGrid (transactional + marketing) |
 | AI | OpenAI API (behind service layers) |
@@ -112,7 +112,7 @@ Everything else — billing, promotions, referrals, analytics — is built on to
 3. **User authenticates** (Google SSO, email/password, Nostr, or LNURL)
 4. **Platform issues JWT** and redirects back to the product with `?token=JWT` in the URL
 5. **Product stores JWT** in localStorage and sends it as `Authorization: Bearer` header on all API calls
-6. **Product's backend verifies JWT** using the shared `JWT_SECRET` (HS256)
+6. **Product's backend verifies JWT** using `JWT_PUBLIC_KEY` (RS256)
 7. **Product checks entitlement** via `GET api.magicbusstudios.com/api/entitlements/{slug}`
 
 ---
@@ -139,7 +139,7 @@ Everything else — billing, promotions, referrals, analytics — is built on to
 
 | Field | Value |
 |-------|-------|
-| Algorithm | HS256 (symmetric, shared secret) |
+| Algorithm | RS256 (asymmetric — private key signs, public key verifies) |
 | Expiry | 7 days |
 | Payload | `{ userId, email, name, avatar, isAdmin, iat, exp }` |
 | Header | `Authorization: Bearer <JWT>` |
@@ -148,8 +148,9 @@ Everything else — billing, promotions, referrals, analytics — is built on to
 **Important notes:**
 - `userId` is a string (MongoDB ObjectId.toString())
 - `email` can be null (Nostr/LNURL users are pseudonymous)
-- All products use the same `JWT_SECRET` to verify tokens
+- MBS Platform signs tokens with `JWT_PRIVATE_KEY`. All child apps verify with `JWT_PUBLIC_KEY`.
 - Token arrives via `?token=JWT` URL parameter after login redirect
+- RS256 upgrade completed Session 11. HS256 fallback removed Session 12.
 
 ### Login Pages
 
@@ -209,10 +210,12 @@ Reason values: `product_pass`, `category_access`, `mbs_all_access`, `free_tier`,
 
 | Product | Monthly | Annual | Lightning |
 |---------|---------|--------|-----------|
-| CWG | $9.99 | $79.99 | 21K sats/mo |
-| Inner Lab All Access | $19.99 | $159.99 | TBD |
-| MBS All Access | $29.99 | $249.99 | TBD |
-| Arcade / Studio Works | Free (premium TBD) | — | — |
+| FlowState | $5 | $45 | TBD |
+| CWG | $15 | $135 | 21K sats/mo |
+| Studio Works All Access | $10 | $90 | TBD |
+| Arcade All Access | $10 | $90 | TBD |
+| Inner Lab All Access | $20 | $180 | TBD |
+| MBS All Access | $30 | $270 | TBD |
 
 ---
 
@@ -449,7 +452,8 @@ All applications run on Coolify (self-hosted VPS). Each application deploys as e
 
 | Variable | Purpose | Where |
 |----------|---------|-------|
-| `JWT_SECRET` | Must match MBS Platform exactly | Backend runtime |
+| `JWT_PUBLIC_KEY` | RSA public key for JWT verification (PEM format) | All backends (runtime) |
+| `JWT_PRIVATE_KEY` | RSA private key for JWT signing (PEM format) | MBS Platform backend ONLY |
 | `MONGO_URL` | MongoDB connection string (also accepts MONGODB_URI, MONGO_URI) | Backend runtime |
 | `DB_NAME` | Product's database name | Backend runtime |
 | `PLATFORM_URL` | `https://magicbusstudios.com` | Backend runtime |
@@ -475,7 +479,7 @@ api.*.magicbusstudios.com    — All other products (backend)
 
 ### Authentication Security
 - Passwords hashed with bcrypt (cost factor 10)
-- JWT signed with HS256 shared secret (planned upgrade to RS256 asymmetric)
+- JWT signed with RS256 asymmetric keys (MBS Platform holds private key, child apps have public key only)
 - 2FA/TOTP with bcrypt-hashed backup codes
 - Rate limiting: 100 req/15min general, 20 req/15min auth, 30 req/15min billing
 - Open redirect protection on login redirects (validated against CORS_ORIGINS)
@@ -520,25 +524,27 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 ## 13. Known Limitations & Future Work
 
 ### Current Limitations
-- JWT uses HS256 (symmetric) — all products share the same secret
-- Entitlement check is wired but no product enforces premium gating yet
+- Entitlement check is wired but no product enforces premium gating yet (`effectivePremium = true`)
 - BTCPay API key has insufficient permissions (Lightning payments non-functional)
-- Stripe bundle price IDs (IL All Access, MBS All Access) not yet created in Dashboard
-- GDPR cascade service built locally (Session 7) but not yet committed/deployed to individual repos
+- Stripe price IDs for 6 products not yet created in Dashboard
+- CWG and FlowState missing GDPR `DELETE /api/user-data` endpoint
 - CWG running on `test` branch (intentional)
 
 ### Planned Improvements
 - Multi-currency support, family plans
 - Win-back offers, email campaigns
-- LazyChef: remove self-issued tokens (fully rely on MBS Platform)
+- Stripe subscription portal testing (once price IDs created)
 
-### Completed (Sessions 8-11)
+### Completed (Sessions 8-12)
+- ✅ RS256 asymmetric JWT signing (Session 11) + HS256 fallback removal (Session 12)
+- ✅ LazyChef self-issued auth removed — fully relies on MBS Platform SSO (Session 12)
 - ✅ Premium feature gating per product (`requireEntitlement`/`requirePremium` middleware)
 - ✅ Subscribe gating + product picker + free trial (7 days premium)
-- ✅ JWT upgraded to RS256 asymmetric signing (Session 11 — all 15 repos)
+- ✅ GDPR cascade deployed to all apps except CWG and FlowState
 - ✅ Friends system enhanced at platform level
 - ✅ Admin dashboard with analytics, revenue tracking, user segmentation (6 tabs)
 - ✅ Push notifications (web-push + service worker)
+- ✅ Invoice PDF generation
 
 ---
 
@@ -552,7 +558,7 @@ Deployment details for every product in the ecosystem, sourced from Phase 5 repo
 |---------|------------------|-------------------|------------|-------|----------|--------|
 | MBS Platform | magicbusstudios.com | api.magicbusstudios.com | 2 | Express + React (Vite) | mbs_platform | — |
 | Inner Lab | innerlab.ai | api.innerlab.ai | 2 | Express + React (Vite) | inner_lab | Backend Dockerfile is `Dockerfile.server` (not `Dockerfile`) |
-| CWG | conversationswithgod.ai | api.conversationswithgod.ai | 2 | FastAPI + React (Vite) | inner_lab (cwg_*) | Python app — JWT_SECRET_KEY vs JWT_SECRET fallback needed. Running on `test` branch. |
+| CWG | conversationswithgod.ai | api.conversationswithgod.ai | 2 | FastAPI + React (Vite) | inner_lab (cwg_*) | Python app. RS256-only (JWT_PUBLIC_KEY). Running on `test` branch. |
 | FlowState | yoga.magicbusstudios.com | api.yoga.magicbusstudios.com | 2 | Express + React (Vite) | inner_lab (yoga_*) | — |
 
 ### The Arcade (Layer 3)

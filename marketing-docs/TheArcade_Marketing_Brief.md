@@ -4,17 +4,17 @@
 
 *Marketing Brief & Website Content Guide — March 2026*
 
-> **Last Updated**: March 27, 2026. Platform decisions integrated, pricing marked as TBD, auth methods updated.
-> **Note**: Arcade product information has been absorbed into `MagicBusStudios_Brand_And_Company.md` (the master doc). This file is kept as detailed reference for Arcade-specific marketing campaigns and content strategy. The master doc is the source of truth for product descriptions and pricing.
+> **Last Updated**: March 31, 2026. SSO migration complete (Phase 5). Pricing finalized. RS256 JWT. All 5 games live.
+> **Note**: Arcade product information has been absorbed into `MagicBusStudios_Brand_And_Company.md` (the master doc). This file is kept as detailed reference for Arcade-specific marketing campaigns and content strategy.
 
-## Platform Context (SSO Migration Pending — Phase 5)
-- The Arcade will use the centralized MBS Platform for auth and billing (no per-game payment handling)
+## Platform Context (SSO Migration Complete — Phase 5 Done)
+- All 5 Arcade games use the centralized MBS Platform for auth (SSO migration completed March 28, 2026)
 - **Four auth methods** via MBS Platform: Google SSO, Email/Password (with optional 2FA/TOTP), Nostr identity, LNURL-Auth (Lightning wallet)
 - Login redirects to magicbusstudios.com/auth/login with MBS branding (not Inner Lab)
 - Arcade games do NOT share data between each other — SSO only via MBS Platform
 - Each game keeps its own database (no migration to shared DB)
 - No separate Arcade marketing folder — Arcade is marketed under MBS brand
-- Tiered access: MBS All Access ($29.99/mo or $249.99/yr — includes everything). Individual game pricing TBD.
+- Tiered access: Arcade All Access ($10/mo or $90/yr). MBS All Access ($30/mo or $270/yr — includes everything).
 
 ---
 
@@ -61,14 +61,12 @@ Age range: 16-40. Tech-savvy. Browser-based gaming.
 
 **Current status: All games are FREE.** Pricing below is planned/aspirational and has not been finalized or implemented.
 
-| Option | Price (PLANNED) | What You Get |
-|--------|----------------|-------------|
-| Free Tier | Free | Limited daily play time (30 min/day) |
-| Game Pass | $4.99 one-time (TBD) | Unlimited access to one game forever |
-| All Access Monthly | $14.99/month (TBD) | All games unlimited |
-| All Access Yearly | $119.99/year (TBD) | All games unlimited (save 33%) |
-| 10hr Time Bank | $9.99 one-time (TBD) | 10 hours across any game |
-| 25hr Time Bank | $19.99 one-time (TBD) | 25 hours across any game |
+| Option | Price | What You Get |
+|--------|-------|-------------|
+| Free Tier | Free | Currently all games are free (premium gating not yet enforced) |
+| Arcade All Access Monthly | $10/mo | All 5 games unlimited |
+| Arcade All Access Yearly | $90/yr | All 5 games unlimited (save 25%) |
+| MBS All Access | $30/mo or $270/yr | Everything — Arcade + Inner Lab + Studio Works |
 
 ## 6. Website Content (magicbusstudios.com/arcade)
 
