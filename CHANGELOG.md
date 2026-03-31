@@ -11,7 +11,16 @@
 - MBSPlatform is now self-contained for all MBS project documentation
 - Claude Setup slimmed to Claude Code infrastructure only
 
-### RS256 Phase 2 — Remove HS256 Fallback (all 15 repos)
+### RS256 Phase 2 — Attempted and Reverted
+- Removed HS256 fallback from all 15 repos (committed + pushed)
+- Chrome verification: MBS Platform RS256 confirmed, SmartCart RS256 working
+- Found: Lazy Chef Coolify hadn't redeployed (old HS256 code still running)
+- Found: LazyChef frontend still calls local auth routes — removing `create_jwt_token` breaks login
+- **Reverted all 15 repos** back to dual-mode (RS256 first, HS256 fallback)
+- LazyChef self-issued auth restored
+- Lesson: need to verify every Coolify redeploy + migrate LazyChef frontend before removing fallback
+
+### RS256 Phase 2 (original, before revert) — Remove HS256 Fallback (all 15 repos)
 - Removed HS256 backward-compatibility fallback from all 15 apps
 - MBS Platform: `issueToken()` and `issueTempToken()` now require `JWT_PRIVATE_KEY` (no HS256 fallback)
 - MBS Platform: `verifyToken()` now requires `JWT_PUBLIC_KEY` (RS256-only)

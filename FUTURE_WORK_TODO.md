@@ -83,10 +83,12 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
 
-### Completed — Session 12 (RS256 Phase 2 + LazyChef Cleanup)
-- [x] RS256 Phase 2 cleanup — HS256 fallback removed from all 15 apps, RS256-only
-- [x] LazyChef — `create_jwt_token` removed, local auth routes return 410 Gone
-- [ ] Optional: Remove `JWT_SECRET` env var from child app Coolify services (no longer read by auth code)
+### Session 12 — RS256 Phase 2 Attempted and Reverted
+- [x] RS256 Phase 2 attempted — HS256 fallback removed from all 15 apps
+- [x] Chrome verification found issues — Coolify hadn't redeployed some apps, LazyChef frontend needs SSO migration first
+- [x] **Reverted** — all 15 repos back to dual-mode (RS256 first, HS256 fallback)
+- [ ] RS256 Phase 2 (future) — requires: verify all Coolify services have redeployed, migrate LazyChef frontend to MBS SSO, Chrome-verify each app
+- [ ] LazyChef SSO migration — frontend still uses local auth routes; must redirect to MBS Platform before removing `create_jwt_token`
 
 ### Session 13 Potential Items
 - [ ] #21 Test coverage expansion (deferred from Sessions 10-12)

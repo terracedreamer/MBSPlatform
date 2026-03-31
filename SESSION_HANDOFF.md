@@ -12,9 +12,18 @@
 
 ### What was done this session:
 
-**RS256 Phase 2 — HS256 Fallback Removed from All 15 Repos**
+**RS256 Phase 2 — Attempted and Reverted**
 
-Seven days after RS256 deployment (Session 11), all HS256 backward-compatibility code has been removed. The entire ecosystem now operates on RS256-only JWT verification.
+Attempted to remove HS256 fallback from all 15 repos. Chrome verification revealed:
+- MBS Platform issues RS256 tokens correctly (`alg: RS256` confirmed)
+- SmartCart (Node.js) accepted RS256 token and loaded data
+- Lazy Chef (Python) still ran old code (Coolify hadn't redeployed) — HS256 token still accepted
+- LazyChef frontend still calls local auth routes (`/api/auth/login`, `/api/auth/google/callback`) — removing `create_jwt_token` would break login
+
+**Decision: Reverted all 15 repos back to dual-mode (RS256 first, HS256 fallback).** The fallback is a safety net that costs nothing. Removing it requires:
+1. Verifying every Coolify service has redeployed with `JWT_PUBLIC_KEY` working
+2. Migrating LazyChef frontend to MBS Platform SSO before removing local auth
+3. Verifying all 15 apps end-to-end via Chrome after each Coolify redeploy
 
 **Changes:**
 - **MBS Platform**: `verifyToken()`, `issueToken()`, `issueTempToken()` — all RS256-only. `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` are now required (no fallback).
@@ -22,15 +31,16 @@ Seven days after RS256 deployment (Session 11), all HS256 backward-compatibility
 - **4 Python child apps**: Simplified verify functions to RS256-only. Removed `JWT_SECRET_KEY` and `JWT_ALGORITHM` references.
 - **CWG**: Both `utils/auth.py` and `core/dependencies.py` cleaned (2 files).
 
-**LazyChef — Self-Issued Auth Removed**
-- Removed `create_jwt_token()` function from `auth_service.py`
-- Local signup (`POST /api/auth/register`), login (`POST /api/auth/login`), and Google OAuth callback routes now return `410 Gone` with redirect message to MBS Platform
-- LazyChef fully relies on MBS Platform SSO
+**LazyChef — Self-Issued Auth Removal Attempted and Reverted**
+- Removed `create_jwt_token()` and set local auth routes to 410 Gone
+- Chrome verification found LazyChef frontend still calls local `/api/auth/login` and `/api/auth/google/callback` — removing these breaks login
+- **Reverted**: `create_jwt_token` and all local auth routes restored
 
-### Net effect:
-- **Deleted ~200 lines** of HS256 fallback code across 15 repos
-- **JWT_SECRET** can now be removed from all child app Coolify env vars (optional cleanup — it's no longer read by auth code)
-- **Zero new features** — pure security hardening
+### Net effect after revert:
+- All 15 repos back to **dual-mode**: RS256 first, HS256 fallback (same as Session 11)
+- LazyChef self-issued auth restored (same as Session 11)
+- RS256 is confirmed working on MBS Platform (token shows `alg: RS256`)
+- HS256 fallback ensures no app breaks regardless of Coolify redeploy timing
 
 **Repo consolidation (same session):**
 - Absorbed 3 audit files from Claude Setup into `MBSPlatform/audits/` (compliance audit, Arcade brand audit, platform review)
