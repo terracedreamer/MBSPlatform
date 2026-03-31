@@ -1,5 +1,7 @@
 # MBS Platform Review — March 30, 2026
 
+> **Historical snapshot.** This audit was conducted before the RS256 JWT upgrade (Session 11, March 31, 2026). JWT algorithm is now RS256, not HS256. HS256 fallback was fully removed in Session 12.
+
 ## Key Findings
 
 ### SSO (Verified from actual code)
