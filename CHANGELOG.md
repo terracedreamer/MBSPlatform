@@ -1,6 +1,15 @@
 # CHANGELOG — MBS Platform
 
-## March 31, 2026 — Session 12: RS256 Phase 2 Cleanup + LazyChef Auth Removal
+## March 31, 2026 — Session 12: RS256 Phase 2 + LazyChef + Repo Consolidation
+
+### Repo Consolidation — Claude Setup / MBSPlatform Boundary
+- Created `audits/` folder with 3 audit files absorbed from Claude Setup
+- Merged per-app compliance items into FUTURE_WORK_TODO.md
+- Fixed stale GDPR table in CLAUDE.md (added CWG + FlowState as missing)
+- Fixed stale JWT reference in CLAUDE.md (removed HS256 fallback mention)
+- Updated folder structure in CLAUDE.md to include audits/
+- MBSPlatform is now self-contained for all MBS project documentation
+- Claude Setup slimmed to Claude Code infrastructure only
 
 ### RS256 Phase 2 — Remove HS256 Fallback (all 15 repos)
 - Removed HS256 backward-compatibility fallback from all 15 apps

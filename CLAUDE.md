@@ -86,7 +86,7 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 
 Auth API routes live on MBS Platform (magicbusstudios.com). Login/signup PAGES exist on both magicbusstudios.com and innerlab.ai (each with its own branding). Both call the same MBS Platform auth endpoints. Inner Lab modules redirect to innerlab.ai/auth/login. Standalone products redirect to magicbusstudios.com/auth/login.
 
-**JWT Signing**: RS256 asymmetric (Session 11). MBS Platform signs with private key (`JWT_PRIVATE_KEY`), all 15 child apps verify with public key (`JWT_PUBLIC_KEY`). Dual-mode HS256 fallback during migration. Public key available at `GET /api/auth/public-key`.
+**JWT Signing**: RS256 asymmetric (Session 11, Phase 2 cleanup Session 12). MBS Platform signs with private key (`JWT_PRIVATE_KEY`), all 15 child apps verify with public key (`JWT_PUBLIC_KEY`). RS256-only — HS256 fallback removed. Public key available at `GET /api/auth/public-key`.
 
 ## Payments: Dual System
 - Stripe (subscriptions + one-time) — primary
@@ -273,7 +273,12 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── PHASE_4_REPORT.md
 │   └── README.md                               ← Report workflow documentation
 │
-├── archive/                                    ← Old reference (absorbed)
+├── audits/                                      ← Compliance and brand audits
+│   ├── 2026-03-29-compliance-audit.md           ← 17-project standards audit
+│   ├── 2026-03-29-arcade-brand-audit.md         ← Arcade Brand DNA audit
+│   └── 2026-03-30-platform-review.md            ← SSO/entitlements/GDPR/billing review
+│
+├── archive/                                     ← Old reference (absorbed)
 │   ├── ChatGPT-architecture/
 │   └── MBS_Platform_Technical_Architecture.docx
 │
@@ -362,6 +367,7 @@ GDPR status by product:
 | Status | Products |
 |--------|----------|
 | Implemented (deployed) | MBS Platform (cascade + deletion UI), Lazy Chef, SmartCart, TaskTracker, AI Tutor, BrokenChain, MindHacker, WildLens, Movie Picker, Whispering House, Fake Artist (stub), Trivia Roast (stub), Inner Lab |
+| Missing | CWG (on `test` branch), FlowState |
 | Not needed | Consciousness (no user accounts — email capture only) |
 
 ## Testing

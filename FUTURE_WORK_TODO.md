@@ -110,5 +110,27 @@ AuthContext, ProtectedRoute, profile editing, notifications, feature flags, acti
 
 ---
 
-## Standards Compliance — All Passing (Audited Session 8)
-Backend + frontend standards audit completed. All items pass. See CHANGELOG.md Session 8 for details.
+## Standards Compliance
+
+### Audit History
+Full audit reports in `audits/`:
+- `2026-03-29-compliance-audit.md` — 17-project audit (62% compliant, 78 items remaining at time of audit)
+- `2026-03-29-arcade-brand-audit.md` — Brand DNA audit of 5 Arcade games
+- `2026-03-30-platform-review.md` — SSO, entitlements, GDPR, billing verification against actual code
+
+### Remaining Per-App Items (check each project's FUTURE_WORK_TODO.md)
+- [ ] CWG — GDPR `DELETE /api/user-data` endpoint (on `test` branch)
+- [ ] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint
+- [ ] LazyChef — react-hot-toast → Sonner migration (33+ files, low priority)
+- [ ] WildLens — ToastContext → Sonner migration
+- [ ] TaskTracker — CRA → Vite migration
+- [ ] Test suites — most projects still missing (LazyChef + Tutor are gold standards)
+- [ ] Per-app response helpers, input validation, rate limiting — see individual project TODOs
+
+### Resolved Since Audit (Sessions 8-12)
+- [x] MBS P0 logger crash — Winston logger + gdprCascade fix (Session 8)
+- [x] MBS response helpers — all 14 route files converted (Session 10)
+- [x] MBS centralized error handler (Session 8)
+- [x] GDPR endpoints — all apps except CWG and FlowState (Session 8)
+- [x] RS256 JWT upgrade + Phase 2 cleanup (Sessions 11-12)
+- [x] LazyChef self-issued auth removed (Session 12)

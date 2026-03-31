@@ -32,15 +32,23 @@ Seven days after RS256 deployment (Session 11), all HS256 backward-compatibility
 - **JWT_SECRET** can now be removed from all child app Coolify env vars (optional cleanup — it's no longer read by auth code)
 - **Zero new features** — pure security hardening
 
+**Repo consolidation (same session):**
+- Absorbed 3 audit files from Claude Setup into `MBSPlatform/audits/` (compliance audit, Arcade brand audit, platform review)
+- Merged per-app standards compliance items into FUTURE_WORK_TODO.md
+- Fixed stale GDPR table in CLAUDE.md (CWG and FlowState still missing)
+- Fixed stale JWT comment in CLAUDE.md (HS256 fallback reference removed)
+- Added `audits/` folder to CLAUDE.md folder structure
+- Claude Setup slimmed to Claude infrastructure only (skills, rules, tasks, backups)
+
 ### Pending — Owner Action:
 1. **Optional**: Remove `JWT_SECRET` env var from all child app Coolify services (no longer needed by auth code)
 2. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
 3. **Regenerate BTCPay API key** — current returns 403
 
 ### For next session (Session 13):
+- Verify RS256-only is working live via Chrome after Coolify redeploys
 - #21 Test coverage expansion (frontend + billing + entitlements)
 - CWG: merge `test` → `main` when ready
-- Verify RS256-only is working live via Chrome after Coolify redeploys
 
 ---
 
@@ -99,8 +107,8 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 
 ### Pending — Owner Action:
 1. ~~Add `JWT_PUBLIC_KEY` to child apps~~ — **DONE** (all 15 services configured)
-2. **Keep `JWT_SECRET`** on all services during migration (HS256 fallback for existing tokens)
-3. After 7 days: remove `JWT_SECRET` from child apps (Phase 2 cleanup)
+2. ~~Keep `JWT_SECRET` during migration~~ — **DONE** (Phase 2 cleanup removed HS256 fallback in Session 12)
+3. ~~Remove `JWT_SECRET` from child apps~~ — **Optional** (`JWT_SECRET` is no longer read by auth code but can stay in Coolify)
 4. **Stripe Dashboard** — Create 6 products with 12 prices (still pending from Session 9)
 5. **BTCPay** — Regenerate API key with full store permissions (still pending)
 

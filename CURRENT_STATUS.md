@@ -1,10 +1,10 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 31, 2026 (Session 12)
+**Last Updated**: March 31, 2026 (Session 12 — consolidation pass)
 
-## Repo Purpose: Architecture Think Tank (No Code)
+## Repo Purpose: MBS Ecosystem Documentation
 
-This repo contains architecture decisions, migration plans, and reference files. No code is built here. Code gets built in the actual project folders.
+This repo contains architecture decisions, migration plans, reference files, audits, and project status tracking for the entire MBS ecosystem. No code is built here. Code gets built in the actual project folders. Claude Code infrastructure (skills, rules, tasks) is tracked separately in `~/Desktop/Codes/Claude Setup/`.
 
 ## Phase Status
 
