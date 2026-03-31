@@ -1,10 +1,46 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 31, 2026 (Session 12 — end of session)
+**Last Updated**: March 31, 2026 (Session 13)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 13 SUMMARY (March 31, 2026)
+
+### What was done this session:
+
+**GDPR Documentation Fix — CWG + FlowState Already Implemented**
+- Session 12 docs said CWG and FlowState GDPR endpoints were "Missing" — they were already implemented
+- CWG: `DELETE /api/user-data` in `server.py` (38 cwg_* + 7 il_* collections)
+- FlowState: `DELETE /api/user-data` in `index.js` (7 yoga_* collections)
+- Fixed GDPR status tables in: CLAUDE.md, CURRENT_STATUS.md, FUTURE_WORK_TODO.md, `~/.claude/rules/data-sovereignty.md`
+- All 15 apps now confirmed to have GDPR endpoints
+
+**#21 Test Coverage Expansion — Billing + Entitlements (MBS Platform)**
+
+Added 40 new tests across 2 test files. Total MBS Platform test count: 61 (up from 21).
+
+| File | Tests | What's Covered |
+|------|-------|---------------|
+| `billing.test.js` | 19 | Checkout (priceId, slug+period, validation, Stripe customer), Portal, History, Webhook (all 4 event types + signature + unknown events) |
+| `entitlements.test.js` | 21 | List, Subscribe-free (trial, duplicate, validation), My-subscriptions (enriched+trial), Category check, Product access (not_subscribed, paid, free_tier, mbs_all_access priority, trialing) |
+| `testApp.js` | — | Added `createBillingApp()` and `createEntitlementsApp()` factory functions |
+
+All 61 tests pass. Mocked Stripe + Mongoose models — no real DB or Stripe needed.
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+2. **Regenerate BTCPay API key** — current returns 403
+
+### For next session (Session 14):
+- Commit + push MBS Platform test files (billing.test.js, entitlements.test.js, updated testApp.js)
+- Commit + push MBSPlatform docs (GDPR fix + Session 13 updates)
+- CWG: merge `test` → `main` when ready
+- LazyChef SSO migration (frontend must redirect to MBS Platform before RS256 Phase 2)
+- Consider: admin.test.js, friends.test.js, or frontend tests
 
 ---
 
@@ -231,15 +267,17 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 3. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 4. **Regenerate BTCPay API key** — current returns 403
 
-### Next Session (Quick Wins)
-5. CWG GDPR endpoint — `DELETE /api/user-data` (pure addition, `test` branch)
-6. FlowState GDPR endpoint — `DELETE /api/user-data` (pure addition, `dev` branch)
-7. #21 Test coverage expansion
-8. CWG: merge `test` → `main` when ready
+### Next Session
+5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13)
+6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13)
+7. ~~#21 Test coverage expansion (billing + entitlements)~~ — **DONE Session 13** (40 new tests)
+8. Commit + push MBS test files and MBSPlatform doc updates
+9. CWG: merge `test` → `main` when ready
+10. More test coverage: admin routes, friends, frontend (Vitest)
 
 ### Future (Requires Migration Work)
-9. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
-10. RS256 Phase 2 redo — only after LazyChef SSO migration + verify all Coolify redeploys
+11. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
+12. RS256 Phase 2 redo — only after LazyChef SSO migration + verify all Coolify redeploys
 
 ---
 

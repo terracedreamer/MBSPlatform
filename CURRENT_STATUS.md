@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 31, 2026 (Session 12 — consolidation pass)
+**Last Updated**: March 31, 2026 (Session 13)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -70,6 +70,8 @@ Both fixes confirmed working across all affected apps.
 - [x] Platform-instructions synced to all 15 project folders
 - [x] GDPR cascade deployed and verified (Session 8)
 - [x] RS256 JWT upgrade — all 15 services configured with keys, verified working (Session 11)
+- [x] CWG GDPR endpoint — already implemented in `server.py` (38 cwg_* + 7 il_* collections). Docs were stale.
+- [x] FlowState GDPR endpoint — already implemented in `index.js` (7 yoga_* collections). Docs were stale.
 - [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
 - [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
 - [ ] Stripe bundle price IDs created in Dashboard

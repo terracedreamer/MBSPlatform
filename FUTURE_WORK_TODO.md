@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 31, 2026 (Session 12)
+**Last Updated**: March 31, 2026 (Session 13)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -90,8 +90,14 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] RS256 Phase 2 (future) — requires: verify all Coolify services have redeployed, migrate LazyChef frontend to MBS SSO, Chrome-verify each app
 - [ ] LazyChef SSO migration — frontend still uses local auth routes; must redirect to MBS Platform before removing `create_jwt_token`
 
-### Session 13 Potential Items
-- [ ] #21 Test coverage expansion (deferred from Sessions 10-12)
+### Session 13 — Completed
+- [x] #21 Test coverage expansion — billing.test.js (19 tests) + entitlements.test.js (21 tests) = 40 new tests. Total: 61.
+- [x] GDPR documentation fix — CWG + FlowState were already implemented, docs were stale
+
+### Session 14 Potential Items
+- [ ] Commit + push MBS test files and MBSPlatform doc updates
+- [ ] More test coverage: admin routes, friends, frontend (Vitest)
+- [ ] CWG: merge `test` → `main`
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -121,8 +127,8 @@ Full audit reports in `audits/`:
 - `2026-03-30-platform-review.md` — SSO, entitlements, GDPR, billing verification against actual code
 
 ### Remaining Per-App Items (check each project's FUTURE_WORK_TODO.md)
-- [ ] CWG — GDPR `DELETE /api/user-data` endpoint (on `test` branch)
-- [ ] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint
+- [x] CWG — GDPR `DELETE /api/user-data` endpoint (implemented — 38 cwg_* + 7 il_* collections)
+- [x] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint (implemented — 7 yoga_* collections)
 - [ ] LazyChef — react-hot-toast → Sonner migration (33+ files, low priority)
 - [ ] WildLens — ToastContext → Sonner migration
 - [ ] TaskTracker — CRA → Vite migration

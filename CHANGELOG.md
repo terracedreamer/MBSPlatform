@@ -1,5 +1,29 @@
 # CHANGELOG — MBS Platform
 
+## March 31, 2026 — Session 13: Test Coverage + GDPR Doc Fix
+
+### GDPR Documentation Fix
+- CWG and FlowState GDPR endpoints were already implemented but docs said "Missing"
+- Fixed GDPR status tables in: CLAUDE.md, CURRENT_STATUS.md, FUTURE_WORK_TODO.md, data-sovereignty.md
+- All 15 apps now confirmed to have `DELETE /api/user-data` endpoints
+
+### #21 Test Coverage Expansion — Billing + Entitlements
+- Created `billing.test.js` — 19 tests covering:
+  - POST `/api/billing/checkout` — direct priceId, slug+period resolution, invalid price, user not found, Stripe customer creation/reuse, invalid period, auth
+  - POST `/api/billing/portal` — portal URL, no billing account, auth
+  - GET `/api/billing/history` — transaction list, empty list, auth
+  - POST `/api/billing/webhook` — checkout.session.completed (entitlement + transaction creation), subscription.deleted (cancellation), subscription.updated (past_due/active), invalid signature, unknown events
+- Created `entitlements.test.js` — 21 tests covering:
+  - GET `/api/entitlements` — empty list, active entitlements, auth
+  - POST `/api/entitlements/subscribe-free` — 7-day trial creation, 409 duplicate, missing slug, unknown product, auth
+  - GET `/api/entitlements/my-subscriptions` — enriched data with trial info, empty list
+  - GET `/api/entitlements/category/:cat` — category product access, invalid category, auth
+  - GET `/api/entitlements/:product` — not_subscribed, paid product_pass, free_tier, mbs_all_access priority, unknown product, trialing state, auth
+- Updated `testApp.js` — added `createBillingApp()` and `createEntitlementsApp()` factory functions
+- Total test count: 21 (auth) + 19 (billing) + 21 (entitlements) = 61 tests, all passing
+
+---
+
 ## March 31, 2026 — Session 12: RS256 Phase 2 + LazyChef + Repo Consolidation
 
 ### Marketing + Architecture Docs Updated
