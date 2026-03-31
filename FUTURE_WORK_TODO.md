@@ -41,7 +41,7 @@
 - [x] FlowState pricing — $5/mo, $45/yr (Session 9)
 - [x] Arcade pricing — $10/mo bundle, $5/mo individual (Session 9)
 - [x] Studio Works pricing — $10/mo bundle, $5/mo individual (Session 9)
-- [ ] Create actual Stripe products in Dashboard (OWNER ACTION — see SESSION_9_PENDING_ITEMS.md for exact prices)
+- [ ] Create actual Stripe products in Dashboard (OWNER ACTION — see Stripe price table below in Reminders section)
 
 **CWG already has Stripe price IDs** in its Coolify env vars. The Phase 1 agent can either reuse those or create new platform-level ones.
 
@@ -80,7 +80,6 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, committed, pushed. Env vars pending in Coolify.
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
-
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos: MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. RSA-2048 key pair generated. `GET /api/auth/public-key` endpoint added. Pending: Coolify env vars (`JWT_PRIVATE_KEY` on MBS B, `JWT_PUBLIC_KEY` on all 15).
 
@@ -99,6 +98,8 @@ Subscribe gating, product picker, CWG entitlements, friends consolidation, admin
 AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push notifications, real-time admin. See CHANGELOG.md Session 8.
 
 ### Future Work (Decided but Deferred)
+- [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
+- [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
 - [ ] Win-back offers — needs email + promo system working together
 - [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
 - [ ] Email campaigns + announcements + newsletter — post-launch
@@ -106,39 +107,5 @@ AuthContext, ProtectedRoute, profile editing, notifications, feature flags, acti
 
 ---
 
-## Standards Compliance (Global CLAUDE.md Audit)
-
-> Reference: Check global CLAUDE.md and ~/.claude/rules/ for full standards.
-> Audited against MBS/ codebase (Layer 1 — magicbusstudios.com) on 2026-03-29.
-
-### Architecture Docs & Rules Files
-
-- [x] **Verify Architecture Docs**: Fixed Movie Picker (single container, not 2), updated GDPR limitation note for Session 7 cascade service, bumped version to 1.1 (2026-03-29)
-- [x] **Verify GDPR Status Table**: Updated data-sovereignty.md and CLAUDE.md — 6 apps moved from "Missing" to "Built (pending deploy)", Whispering House still missing
-- [x] **Verify Deployment Quirks**: Added Movie Picker (single container, TMDB API) and AI Tutor (Python/FastAPI, JWT fallback chain) entries. Fixed Lazy Chef DB name in env-standards.md (`lazychef` → `lazy_chef`)
-
-### Backend Standards (MBS/ server/)
-
-- [x] **CORS before helmet()**: Compliant. `server/index.js` lines 48-51: `app.use(cors(...))` then `app.use(helmet())`.
-- [x] **Response format `{ success: true/false, ... }`**: Compliant. All 10 route files and index.js health endpoints use `{ success: true, ...data }` or `{ success: false, message: "..." }`. 217 `success:` occurrences across 232 `res.json`/`res.status` calls — no response missing the `success` field.
-- [x] **Rate limiting on API routes**: Compliant. Three tiers: general (100/15min), auth (20/15min), billing (30/15min) in `server/index.js`.
-- [x] **Input validation on routes**: Compliant. Auth routes validate required fields, password length, terms acceptance. Billing validates priceId. Promotions validates code. Friends validates invite code format.
-- [x] **Route pattern (authenticate -> validate -> business logic -> respond)**: Compliant. All protected routes use `requireAuth` middleware, admin routes stack `requireAuth` + `requireAdmin`, then validate, then business logic.
-- [x] **Env vars: `CORS_ORIGINS` (canonical)**: Compliant. Uses `process.env.CORS_ORIGINS` in `server/index.js`. No legacy `CORS_ORIGIN`/`CLIENT_URL`/`ALLOWED_ORIGINS`.
-- [x] **Env vars: `JWT_SECRET` (canonical)**: Compliant. `server/middleware/auth.js` uses `process.env.JWT_SECRET`. No `JWT_SECRET_KEY` or `SECRET_KEY`.
-- [x] **Env vars: `DB_NAME` (canonical)**: Compliant. `server/config/database.js` reads `process.env.DB_NAME` with default `mbs_platform`.
-- [x] **Env vars: `PORT` (canonical)**: Compliant. `server/index.js` line 9: `process.env.PORT || 3001`.
-- [x] **Env var: `MONGO_URL` (canonical with fallback)**: Compliant. `server/config/database.js` reads `MONGO_URL || MONGODB_URI` — canonical first, legacy fallback acceptable per env-standards.md.
-- [x] **Health check endpoints**: Compliant. Both `/health` and `/api/health` return `{ success: true, service: "mbs-platform", database: bool, timestamp: ISO }`.
-- [x] **Git branch**: Compliant. On `main` (correct for MBS — single-branch workflow per project CLAUDE.md).
-- [x] **`req.user` shape `{ userId, email, name, avatar }`**: COMPLIANT (Session 8). JWT payload encodes `{ userId, email, name, avatar, isAdmin }` and `requireAuth` sets `req.user = decoded`. Auth route responses fixed from `id` to `userId` in Session 8.
-- [x] **Winston logger (never `console.log`)**: COMPLIANT (Session 8). `server/utils/logger.js` created with Winston, all 155 `console.log` calls migrated to logger by audit agent. `SERVICE_NAME` env var supported.
-- [x] **Centralized error handler middleware**: COMPLIANT (Session 8). `server/middleware/errorHandler.js` created and registered after all routes in `server/index.js`.
-- [x] **Response helpers (`sendSuccess`, `sendError`, `sendNotFound`)**: COMPLIANT (Session 10). All 14 route files converted to use response helpers (~316 conversions). Created in Session 8, fully adopted in Session 10 (`0ba7114`).
-
-### Frontend Standards (MBS/ src/)
-
-- [x] **No `alert()`/`prompt()`/`confirm()`**: Compliant. Zero occurrences in `src/`.
-- [x] **Sonner toasts (never react-hot-toast)**: Compliant. `sonner` imported in `main.jsx` (Toaster component) and across 6 page/component files. No `react-hot-toast` in codebase or `package.json`.
-- [x] **Fonts: Space Grotesk (headings), DM Sans (body)**: Compliant. Both declared as CSS custom properties in `src/index.css` (`--font-heading`, `--font-body`). Font packages imported in `main.jsx` (`@fontsource-variable/space-grotesk`, `@fontsource-variable/dm-sans`). Also includes Instrument Serif (accent) and JetBrains Mono (mono) per standard.
-- [x] **Safe array mapping `(array || []).map()`**: Mostly compliant. 7 instances of `(x || []).map()` in `AccountPage.jsx`, `BillingPage.jsx`, `Games.jsx`, `OtherWork.jsx`, `RoadmapTimeline.jsx`, `Home.jsx`. Other `.map()` calls use arrays initialized as `useState([])` or hardcoded arrays (safe). No unguarded dynamic data `.map()` found.
+## Standards Compliance — All Passing (Audited Session 8)
+Backend + frontend standards audit completed. All items pass. See CHANGELOG.md Session 8 for details.
