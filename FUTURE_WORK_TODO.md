@@ -33,9 +33,9 @@
 
 **Status: CWG pricing decided. Bundles decided. Arcade/SW/FlowState deferred.**
 
-- [x] CWG pricing: $9.99/mo, $79.99/yr (Stripe) + 21K sats/mo, 126K sats/yr (Lightning)
-- [x] Inner Lab All Access: $19.99/mo, $159.99/yr
-- [x] MBS All Access: $29.99/mo, $249.99/yr
+- [x] CWG pricing: $15/mo, $135/yr (updated Session 9) + 21K sats/mo, 126K sats/yr (Lightning)
+- [x] Inner Lab All Access: $20/mo, $180/yr (updated Session 9)
+- [x] MBS All Access: $30/mo, $270/yr (updated Session 9)
 - [x] Structured billing page design (category tabs → product → plans)
 - [x] Lightning as equal payment option alongside Stripe
 - [x] FlowState pricing — $5/mo, $45/yr (Session 9)
@@ -134,5 +134,6 @@ Full audit reports in `audits/`:
 - [x] MBS response helpers — all 14 route files converted (Session 10)
 - [x] MBS centralized error handler (Session 8)
 - [x] GDPR endpoints — all apps except CWG and FlowState (Session 8)
-- [x] RS256 JWT upgrade + Phase 2 cleanup (Sessions 11-12)
-- [x] LazyChef self-issued auth removed (Session 12)
+- [x] RS256 JWT upgrade — dual-mode deployed to all 15 apps (Session 11)
+- [ ] RS256 Phase 2 — attempted and **reverted** (Session 12). All 15 apps back to dual-mode.
+- [ ] LazyChef self-issued auth — attempted and **reverted** (Session 12). Frontend needs SSO migration first.

@@ -39,7 +39,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
-| RS256 JWT upgrade | ✅ Complete. Phase 2 done — HS256 fallback removed from all 15 apps. RS256-only. | **DONE** (Session 11 deploy + Session 12 cleanup) |
+| RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: merge when ready |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
@@ -70,7 +70,7 @@ Both fixes confirmed working across all affected apps.
 - [x] Platform-instructions synced to all 15 project folders
 - [x] GDPR cascade deployed and verified (Session 8)
 - [x] RS256 JWT upgrade — all 15 services configured with keys, verified working (Session 11)
-- [x] RS256 Phase 2 cleanup — HS256 fallback removed from all 15 apps (Session 12)
-- [x] LazyChef self-issued auth removed — fully relies on MBS Platform SSO (Session 12)
+- [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
+- [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

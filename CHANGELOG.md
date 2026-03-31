@@ -2,6 +2,14 @@
 
 ## March 31, 2026 — Session 12: RS256 Phase 2 + LazyChef + Repo Consolidation
 
+### Marketing + Architecture Docs Updated
+- All 4 marketing briefs updated with Session 9 pricing (CWG $15, FL $5, SW $10, Arcade $10, IL $20, MBS $30)
+- FlowState status: "migration in progress" → "Live"
+- Arcade brief: "SSO Migration Pending" → "SSO Migration Complete"
+- Technical Architecture doc v1.1 → v1.2: all HS256 → RS256, pricing table, env vars, known limitations
+- Historical disclaimer added to `audits/2026-03-30-platform-review.md` (pre-RS256 audit)
+- All marketing docs synced to `Desktop/Marketing/Overview/`
+
 ### Repo Consolidation — Claude Setup / MBSPlatform Boundary
 - Created `audits/` folder with 3 audit files absorbed from Claude Setup
 - Merged per-app compliance items into FUTURE_WORK_TODO.md
