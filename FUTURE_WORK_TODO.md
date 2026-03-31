@@ -77,7 +77,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 12 enhancements (ADMIN_EMAILS, response helpers, activity logging, connected accounts, GDPR type-DELETE, onboarding, friends, AdminPage split, user segmentation, revenue analytics, referral emails, promo checkout) + 3 billing features (entitlement sync, premium gating, invoice PDFs). See CHANGELOG.md Session 10 entries.
 
 ### Deferred to Future Session
-- [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, committed, pushed. Env vars pending in Coolify.
+- [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, all Coolify env vars configured, verified working.
 - [ ] #21 Test coverage expansion (frontend + billing + entitlements)
 
 ### Completed — Session 11 (RS256 JWT Upgrade)

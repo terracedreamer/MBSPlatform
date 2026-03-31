@@ -45,7 +45,7 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 
 ### Coolify deployment progress:
 - ✅ **MBS Backend**: `JWT_PRIVATE_KEY` + `JWT_PUBLIC_KEY` added (multiline format), redeployed, **RS256 verified working** (token shows `alg: RS256`)
-- 🔄 **Child apps**: `JWT_PUBLIC_KEY` being added to all 14 child backends (multiline format in Coolify, "Is Multiline?" checkbox must be checked)
+- ✅ **All 14 child apps**: `JWT_PUBLIC_KEY` added (multiline format in Coolify, "Is Multiline?" checkbox checked)
 
 ### Bug fixes during deployment:
 - **Coolify PEM format**: Single-line env vars truncate PEM keys. Must use "Is Multiline?" checkbox in Coolify UI.
@@ -120,7 +120,7 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 | `2278e1d` | feat: entitlement sync, premium gating, invoice PDF generation |
 
 ### Pending — Owner Action:
-1. **Stripe Dashboard** — Create 6 products with 12 prices (see SESSION_9_PENDING_ITEMS.md for exact table)
+1. **Stripe Dashboard** — Create 6 products with 12 prices (see FUTURE_WORK_TODO.md for table)
 2. **BTCPay** — Regenerate API key with full store permissions (current returns 403)
 
 ### For next session (Session 11):
@@ -171,7 +171,7 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 ## WHAT NEEDS TO HAPPEN NEXT
 
 ### Immediate (Owner Action)
-1. **Finish adding `JWT_PUBLIC_KEY`** to remaining child app backends in Coolify (multiline, "Is Multiline?" checked)
+1. ~~Add `JWT_PUBLIC_KEY` to child apps~~ — **DONE**
 2. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 3. **Regenerate BTCPay API key** — current returns 403
 
