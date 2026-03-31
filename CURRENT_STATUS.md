@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: March 30, 2026 (Session 11)
+**Last Updated**: March 31, 2026 (Session 11)
 
 ## Repo Purpose: Architecture Think Tank (No Code)
 
@@ -47,7 +47,9 @@ This repo contains architecture decisions, migration plans, and reference files.
 | Premium feature gating | `premiumFeatures` array defined for all 22 products in `products.js`. `requireEntitlement(slug)` and `requirePremium` middleware created in `server/middleware/entitlement.js`. Enhanced `GET /api/entitlements/:product` returns `isPremium` and `premiumFeatures`. Ready for per-product enforcement. | Deployed (`2278e1d`) |
 | Invoice PDF generation | PDFKit-based branded invoice PDFs. `server/services/invoiceService.js` + `GET /api/billing/invoice/:transactionId` endpoint. Download button in BillingPage transaction history. | Deployed (`2278e1d`) |
 | Entitlement sync after checkout | `refreshUser()` called on BillingPage when redirected with `?success=true` after Stripe/BTCPay checkout. User sees updated access immediately without manual refresh. | Deployed (`2278e1d`) |
-| RS256 JWT upgrade | All 15 repos upgraded to RS256 asymmetric JWT signing (Session 11). MBS Platform signs RS256 (private key), all child apps verify RS256→HS256 dual-mode (public key). `GET /api/auth/public-key` endpoint added. Code deployed, env vars pending in Coolify. | Code pushed, awaiting env vars |
+| RS256 JWT upgrade | All 15 repos upgraded to RS256 asymmetric JWT signing (Session 11). MBS Platform signs RS256 (private key), all child apps verify RS256→HS256 dual-mode (public key). `GET /api/auth/public-key` endpoint added. **MBS B verified RS256 working** (`alg: RS256` in token). Child app env vars in progress. Coolify requires "Is Multiline?" checkbox for PEM keys. | MBS B ✅, child apps 🔄 |
+| Tutor deploy fix | Initial RS256 commit used `from jose import jwt` (python-jose) but Tutor uses PyJWT. Fixed to `import jwt`. | **FIXED** (`1fb3e90`) |
+| Innerlab deploy fix | `package-lock.json` stale — jest/supertest in package.json but not in lock file. Regenerated. | **FIXED** (`2c25fa8`) |
 | CWG entitlement enforcement | check_entitlement() wired to profile endpoint on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: stay on `test` indefinitely |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |

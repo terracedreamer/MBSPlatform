@@ -1,5 +1,47 @@
 # CHANGELOG — MBS Platform
 
+## March 31, 2026 — Session 11: RS256 JWT Upgrade (15 repos)
+
+### RS256 Asymmetric JWT Signing
+- Upgraded JWT signing from HS256 (symmetric) to RS256 (asymmetric) across all 15 apps
+- MBS Platform: signs tokens with RS256 private key, dual-mode verify (RS256→HS256 fallback)
+- 10 Node.js apps + 4 Python apps: dual-mode verify with `JWT_PUBLIC_KEY`
+- New endpoint: `GET /api/auth/public-key` returns PEM public key
+- RSA-2048 key pair generated, private key on MBS Backend only
+
+### Bug Fixes During Deployment
+- Coolify PEM format: must use "Is Multiline?" checkbox — single-line truncates PEM keys
+- MBS `parsePemKey()`: handles Coolify's double-escaped `\\n` with `while` loop
+- MBS graceful fallback: `jwt.sign()` wrapped in try/catch, falls back to HS256 on failure
+- Tutor: fixed wrong import `from jose import jwt` → `import jwt` (PyJWT, not python-jose)
+- Innerlab: regenerated stale `package-lock.json` (jest/supertest missing from lock file)
+
+### Verified
+- MBS Backend issuing RS256 tokens (confirmed `alg: RS256` via Chrome localStorage)
+- All 15 repos committed and pushed
+- Tutor and Innerlab deploy fixes pushed
+
+### MBS commits: `d1173e6`, `49cf712`, `b33ff67`, `a0b4a74`
+
+---
+
+## March 30, 2026 — Session 10: 15 Enhancements + Entitlement Infrastructure
+
+### 12 Enhancements (commit `0ba7114`)
+- ADMIN_EMAILS env var, response helpers adoption (all 14 routes), activity logging
+- Connected accounts UI, GDPR type-DELETE confirmation, 3-step onboarding flow
+- Friends enhancement, AdminPage split (11 files), user segmentation, revenue analytics
+- Referral email invites, promo code checkout flow
+
+### 3 More Features (commit `2278e1d`)
+- Real-time entitlement sync after Stripe checkout
+- Premium feature gating (premiumFeatures for all 22 products, requireEntitlement/requirePremium middleware)
+- Invoice PDF generation with PDFKit
+
+### Bug fixes: `c374a94` (segment filter chips), `6150872` (admin tab visibility)
+
+---
+
 ## March 30, 2026 — Session 9: Pricing Redesign + Premium UI Polish
 
 ### Pricing Overhaul

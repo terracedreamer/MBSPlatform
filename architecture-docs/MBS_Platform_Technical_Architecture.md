@@ -528,13 +528,17 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - CWG running on `test` branch (intentional)
 
 ### Planned Improvements
-- Premium feature gating per product (free tier limits)
-- Post-signup module picker on innerlab.ai
-- JWT upgrade to RS256 asymmetric signing
-- Friends consolidation (product-level to platform-level)
-- Admin dashboard with analytics and revenue tracking
-- Free trial support with auto-conversion
-- Multi-currency support, family plans, push notifications
+- Multi-currency support, family plans
+- Win-back offers, email campaigns
+- LazyChef: remove self-issued tokens (fully rely on MBS Platform)
+
+### Completed (Sessions 8-11)
+- ✅ Premium feature gating per product (`requireEntitlement`/`requirePremium` middleware)
+- ✅ Subscribe gating + product picker + free trial (7 days premium)
+- ✅ JWT upgraded to RS256 asymmetric signing (Session 11 — all 15 repos)
+- ✅ Friends system enhanced at platform level
+- ✅ Admin dashboard with analytics, revenue tracking, user segmentation (6 tabs)
+- ✅ Push notifications (web-push + service worker)
 
 ---
 

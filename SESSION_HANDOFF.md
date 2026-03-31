@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: March 30, 2026 (Session 11)
+**Last Updated**: March 31, 2026 (Session 11)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -8,11 +8,11 @@
 
 ---
 
-## SESSION 11 SUMMARY (March 30, 2026)
+## SESSION 11 SUMMARY (March 31, 2026)
 
 ### What was done this session:
 
-**#16 RS256 JWT Upgrade — All 15 repos upgraded, committed, pushed**
+**#16 RS256 JWT Upgrade — All 15 repos upgraded, committed, pushed, verified live**
 
 Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) across the entire 15-app ecosystem. This is a security-critical change: previously, if any child app's `JWT_SECRET` leaked, an attacker could forge tokens for ALL apps. Now only MBS Platform holds the private signing key; child apps only have the public verification key.
 
@@ -33,7 +33,7 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 | TaskTracker | main | `server/middleware/auth.js` | Dual-mode verify |
 | CWG | test | `backend/utils/auth.py`, `backend/core/dependencies.py` | Dual-mode verify (PyJWT) |
 | LazyChef | main | `backend/auth_service.py` | Dual-mode verify (PyJWT) |
-| Tutor | main | `backend/auth_service.py` | Dual-mode verify (python-jose) |
+| Tutor | main | `backend/auth_service.py` | Dual-mode verify (PyJWT — NOT python-jose) |
 | Whispering House | main | `backend/app/core/auth.py` | Dual-mode verify (python-jose) |
 
 **Key design decisions:**
@@ -43,14 +43,31 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 - **New endpoint**: `GET /api/auth/public-key` on MBS Platform returns PEM public key (for future dynamic key fetching)
 - **LazyChef**: Still has legacy `create_jwt_token` (local auth). `verify_jwt_token` now supports RS256. Full removal of self-issued tokens is a separate cleanup task.
 
+### Coolify deployment progress:
+- ✅ **MBS Backend**: `JWT_PRIVATE_KEY` + `JWT_PUBLIC_KEY` added (multiline format), redeployed, **RS256 verified working** (token shows `alg: RS256`)
+- 🔄 **Child apps**: `JWT_PUBLIC_KEY` being added to all 14 child backends (multiline format in Coolify, "Is Multiline?" checkbox must be checked)
+
+### Bug fixes during deployment:
+- **Coolify PEM format**: Single-line env vars truncate PEM keys. Must use "Is Multiline?" checkbox in Coolify UI.
+- **MBS `parsePemKey()`**: Added `while` loop to handle Coolify's double-escaped `\\n`, plus graceful fallback if RS256 signing fails (falls back to HS256 with error logging).
+- **Tutor import bug**: Initial commit used `from jose import jwt` (python-jose) but Tutor only has `pyjwt`. Fixed to `import jwt` (PyJWT). Caused Coolify deploy failure (`ModuleNotFoundError: No module named 'jose'`).
+- **Innerlab lock file**: `jest` + `supertest` added to `package.json` but `package-lock.json` not regenerated. Fixed with `npm install`. Caused ~6 failed Coolify deploys.
+
+### MBS Platform commits this session:
+| Commit | Message |
+|--------|---------|
+| `d1173e6` | feat: RS256 JWT signing — MBS Platform issuer upgrade |
+| `49cf712` | fix: RS256 signing graceful fallback + robust PEM parsing |
+| `b33ff67` | fix: improve RS256 error logging with key format diagnostics |
+| `a0b4a74` | fix: handle double-escaped \n in PEM keys from Coolify |
+
 ### Pending — Owner Action:
-1. **Add `JWT_PRIVATE_KEY` env var** to MBS Backend in Coolify (PEM format, `\n`-escaped)
-2. **Add `JWT_PUBLIC_KEY` env var** to ALL 15 Coolify backend services (PEM format, `\n`-escaped)
+1. **Finish adding `JWT_PUBLIC_KEY`** to remaining child app backends in Coolify (multiline format, "Is Multiline?" checked)
+2. **Redeploy** each child app after adding the env var
 3. **Keep `JWT_SECRET`** on all services during migration (HS256 fallback for existing tokens)
-4. **Redeploy** all 15 services after adding env vars
-5. After 7 days: remove `JWT_SECRET` from child apps (Phase 2 cleanup)
-6. **Stripe Dashboard** — Create 6 products with 12 prices (still pending from Session 9)
-7. **BTCPay** — Regenerate API key with full store permissions (still pending)
+4. After 7 days: remove `JWT_SECRET` from child apps (Phase 2 cleanup)
+5. **Stripe Dashboard** — Create 6 products with 12 prices (still pending from Session 9)
+6. **BTCPay** — Regenerate API key with full store permissions (still pending)
 
 ### For next session (Session 12):
 - #21 Test coverage expansion (frontend + billing + entitlements)
@@ -293,7 +310,7 @@ See `SESSION_10_PLAN.md` — 12 enhancements in 5 batches:
 - **Admin dashboard: hierarchical at MBS level** — drill-down from MBS → Inner Lab → CWG, etc. Absorbs CWG's existing admin data.
 - **Admin accounts** — both `terracedreamer@gmail.com` and `1984.abhinav@gmail.com` are `is_admin: true`. Future: switch to `ADMIN_EMAILS` env var.
 - **Free trial: 7 days premium** — on subscription, per product. Only relevant for products with premium features. Future: require credit card, auto-charge.
-- **RS256 JWT upgrade** — moved to future work (pre-launch, not now).
+- **RS256 JWT upgrade** — ~~moved to future work~~ **COMPLETED in Session 11**.
 - **Enterprise SSO** — removed from list entirely (not needed).
 
 ---
@@ -362,9 +379,9 @@ See `SESSION_10_PLAN.md` — 12 enhancements in 5 batches:
 11. **Free trial support** — X days free, auto-convert (needs pricing decision)
 
 ### Long-Term
-12. JWT upgrade to RS256 asymmetric signing
-13. Multi-currency, family plan, teams, push notifications
-14. Enterprise SSO (SAML/OIDC)
+12. ~~JWT upgrade to RS256 asymmetric signing~~ — **DONE (Session 11)**
+13. Multi-currency, family plan, teams
+14. ~~Enterprise SSO (SAML/OIDC)~~ — Removed from roadmap (Session 8)
 
 ---
 
