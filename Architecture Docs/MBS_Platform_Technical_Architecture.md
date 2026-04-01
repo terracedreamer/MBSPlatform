@@ -527,7 +527,7 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - Entitlement check is wired but no product enforces premium gating yet (`effectivePremium = true`)
 - BTCPay API key has insufficient permissions (Lightning payments non-functional)
 - Stripe price IDs for 6 products not yet created in Dashboard
-- CWG and FlowState missing GDPR `DELETE /api/user-data` endpoint
+- ~~CWG and FlowState missing GDPR endpoint~~ — **Resolved**: both already implemented (confirmed Session 13)
 - CWG running on `test` branch (intentional)
 
 ### Planned Improvements

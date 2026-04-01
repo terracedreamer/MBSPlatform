@@ -22,6 +22,19 @@
 - Updated `testApp.js` — added `createBillingApp()` and `createEntitlementsApp()` factory functions
 - Total test count: 21 (auth) + 19 (billing) + 21 (entitlements) = 61 tests, all passing
 
+### WildLens Toast Cleanup
+- Confirmed all 21 files already using Sonner — custom ToastContext was orphaned dead code
+- Deleted `context/ToastContext.js`, `components/shared/Toast.js`, removed `.toast-container` CSS
+- Updated WildLens CLAUDE.md. Committed + pushed (`dfcb726`)
+
+### LazyChef Sonner Migration — Already Complete
+- Discovered migration was already done (commit `21881ba` on main, 30 files, 186 toast calls)
+- No work needed — marked complete in FUTURE_WORK_TODO
+
+### Standards Compliance Progress
+- Updated remaining per-app items: LazyChef Sonner [x], WildLens Sonner [x]
+- Remaining: TaskTracker CRA→Vite, per-app response helpers/validation/rate limiting
+
 ---
 
 ## March 31, 2026 — Session 12: RS256 Phase 2 + LazyChef + Repo Consolidation

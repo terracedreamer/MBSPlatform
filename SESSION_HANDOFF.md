@@ -31,16 +31,40 @@ Added 40 new tests across 2 test files. Total MBS Platform test count: 61 (up fr
 
 All 61 tests pass. Mocked Stripe + Mongoose models — no real DB or Stripe needed.
 
+**WildLens Toast Cleanup**
+- Confirmed all 21 files already import from Sonner — custom ToastContext was orphaned
+- Deleted `context/ToastContext.js`, `components/shared/Toast.js`, removed `.toast-container` CSS
+- Updated WildLens CLAUDE.md. Committed + pushed (`dfcb726`)
+
+**LazyChef Sonner Migration — Already Done**
+- Discovered migration was already completed (commit `21881ba` on main)
+- 30 files, 186 toast calls, all using Sonner. No work needed.
+
+**Exploration for next session:**
+- MBS admin/friends/promos/referrals routes fully analyzed — ready for test writing
+- TaskTracker CRA→Vite scope: 71 files, 4 REACT_APP_ vars, 3 deploy targets (Coolify/Vercel/VPS)
+
+### MBS Platform commits this session:
+| Commit | Message |
+|--------|---------|
+| `bae89d9` | feat: add billing + entitlements test coverage (40 new tests) |
+
+### Other repo commits this session:
+| Repo | Commit | Message |
+|------|--------|---------|
+| MBSPlatform | `69f2f7a` | docs: Session 13 — test coverage + GDPR doc fix |
+| Wildlife | `dfcb726` | chore: remove orphaned custom toast files (Sonner migration complete) |
+
 ### Pending — Owner Action:
 1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
 2. **Regenerate BTCPay API key** — current returns 403
 
 ### For next session (Session 14):
-- Commit + push MBS Platform test files (billing.test.js, entitlements.test.js, updated testApp.js)
-- Commit + push MBSPlatform docs (GDPR fix + Session 13 updates)
+- More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed)
+- TaskTracker CRA → Vite migration (71 files, 4 env vars, 3 deploy targets)
 - CWG: merge `test` → `main` when ready
-- LazyChef SSO migration (frontend must redirect to MBS Platform before RS256 Phase 2)
-- Consider: admin.test.js, friends.test.js, or frontend tests
+- Per-app standards improvements (response helpers, input validation, rate limiting)
+- LazyChef SSO migration (future — frontend must redirect to MBS Platform before RS256 Phase 2)
 
 ---
 
@@ -267,17 +291,21 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 3. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 4. **Regenerate BTCPay API key** — current returns 403
 
-### Next Session
+### Next Session (Session 14)
 5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13)
 6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13)
 7. ~~#21 Test coverage expansion (billing + entitlements)~~ — **DONE Session 13** (40 new tests)
-8. Commit + push MBS test files and MBSPlatform doc updates
-9. CWG: merge `test` → `main` when ready
-10. More test coverage: admin routes, friends, frontend (Vitest)
+8. ~~Commit + push MBS test files and MBSPlatform doc updates~~ — **DONE Session 13**
+9. ~~LazyChef Sonner migration~~ — **Already done** (commit `21881ba`)
+10. ~~WildLens Sonner migration~~ — **Cleaned up Session 13** (commit `dfcb726`)
+11. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
+12. TaskTracker CRA → Vite migration (71 files, 4 env vars, 3 deploy targets — scope analyzed)
+13. CWG: merge `test` → `main` when ready
+14. Per-app standards improvements (response helpers, input validation, rate limiting)
 
 ### Future (Requires Migration Work)
-11. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
-12. RS256 Phase 2 redo — only after LazyChef SSO migration + verify all Coolify redeploys
+15. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
+16. RS256 Phase 2 redo — only after LazyChef SSO migration + verify all Coolify redeploys
 
 ---
 

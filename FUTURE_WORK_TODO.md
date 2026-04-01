@@ -129,8 +129,8 @@ Full audit reports in `audits/`:
 ### Remaining Per-App Items (check each project's FUTURE_WORK_TODO.md)
 - [x] CWG — GDPR `DELETE /api/user-data` endpoint (implemented — 38 cwg_* + 7 il_* collections)
 - [x] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint (implemented — 7 yoga_* collections)
-- [ ] LazyChef — react-hot-toast → Sonner migration (33+ files, low priority)
-- [ ] WildLens — ToastContext → Sonner migration
+- [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
+- [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
 - [ ] TaskTracker — CRA → Vite migration
 - [ ] Test suites — most projects still missing (LazyChef + Tutor are gold standards)
 - [ ] Per-app response helpers, input validation, rate limiting — see individual project TODOs
