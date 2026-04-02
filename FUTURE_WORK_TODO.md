@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: March 31, 2026 (Session 13)
+**Last Updated**: April 2, 2026 (Session 13 — end of session)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -78,7 +78,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 
 ### Deferred to Future Session
 - [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, all Coolify env vars configured, verified working.
-- [ ] #21 Test coverage expansion (frontend + billing + entitlements)
+- [x] #21 Test coverage expansion — billing + entitlements done (Session 13, 40 new tests). Frontend tests still pending.
 
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
@@ -95,9 +95,11 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] GDPR documentation fix — CWG + FlowState were already implemented, docs were stale
 
 ### Session 14 Potential Items
-- [ ] Commit + push MBS test files and MBSPlatform doc updates
-- [ ] More test coverage: admin routes, friends, frontend (Vitest)
+- [x] ~~Commit + push MBS test files and MBSPlatform doc updates~~ — DONE Session 13
+- [ ] More MBS Platform tests: admin, friends, promos, referrals (routes already analyzed)
+- [ ] TaskTracker CRA → Vite migration (71 files, 4 REACT_APP_ vars, 3 deploy targets)
 - [ ] CWG: merge `test` → `main`
+- [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -139,7 +141,7 @@ Full audit reports in `audits/`:
 - [x] MBS P0 logger crash — Winston logger + gdprCascade fix (Session 8)
 - [x] MBS response helpers — all 14 route files converted (Session 10)
 - [x] MBS centralized error handler (Session 8)
-- [x] GDPR endpoints — all apps except CWG and FlowState (Session 8)
+- [x] GDPR endpoints — all 15 apps confirmed implemented (Session 8 + Session 13 doc fix)
 - [x] RS256 JWT upgrade — dual-mode deployed to all 15 apps (Session 11)
 - [ ] RS256 Phase 2 — attempted and **reverted** (Session 12). All 15 apps back to dual-mode.
 - [ ] LazyChef self-issued auth — attempted and **reverted** (Session 12). Frontend needs SSO migration first.
