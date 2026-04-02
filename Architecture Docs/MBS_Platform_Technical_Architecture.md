@@ -1,7 +1,7 @@
 # Magic Bus Studios — Platform Technical Architecture
 
-**Version**: 1.2
-**Date**: March 31, 2026
+**Version**: 1.3
+**Date**: April 2, 2026
 **Author**: Magic Bus Studios Engineering
 **Status**: All 5 build phases complete. Platform live and operational.
 
@@ -537,15 +537,18 @@ All 11 standalone products (5 Arcade + 6 Studio Works) migrated to platform SSO.
 - Win-back offers, email campaigns
 - Stripe subscription portal testing (once price IDs created)
 
-### Completed (Sessions 8-12)
+### Completed (Sessions 8-14)
 - ✅ RS256 asymmetric JWT signing deployed (Session 11) — dual-mode active (RS256 first, HS256 fallback)
 - ✅ Premium feature gating per product (`requireEntitlement`/`requirePremium` middleware)
 - ✅ Subscribe gating + product picker + free trial (7 days premium)
-- ✅ GDPR cascade deployed to all apps except CWG and FlowState
+- ✅ GDPR cascade deployed to all apps (CWG and FlowState confirmed Session 13)
 - ✅ Friends system enhanced at platform level
 - ✅ Admin dashboard with analytics, revenue tracking, user segmentation (6 tabs)
 - ✅ Push notifications (web-push + service worker)
 - ✅ Invoice PDF generation
+- ✅ 17-project standards + Brand DNA audit sweep (Session 13)
+- ✅ MBS Platform test suite: 107 tests across auth, billing, entitlements, admin, friends, promotions, referrals (Session 13)
+- ✅ TaskTracker CRA → Vite migration (Session 14) — all `.js` → `.jsx`, `REACT_APP_*` → `VITE_*`
 
 ---
 
@@ -580,7 +583,7 @@ Deployment details for every product in the ecosystem, sourced from Phase 5 repo
 | Lazy Chef | lazy-chef.magicbusstudios.com | lazy-chef-backend.magicbusstudios.com | 2 | FastAPI + React (Vite) | lazy_chef | Python app. Backend domain convention differs (lazy-chef-backend, not api-lazy-chef). CI uses GitHub Actions. |
 | Movie Picker | moviepicker.magicbusstudios.com | (same container) | **1** | Express + React (Vite) | moviepicker | SINGLE CONTAINER — Express builds Vite frontend and serves from `/client/dist`. Uses TMDB API. resolveUser middleware with in-memory Set cache for legacy migration. |
 | SmartCart | smartcart.magicbusstudios.com | (same container) | **1** | Express serves frontend + API | smartcart | SINGLE CONTAINER — Express builds Vite frontend and serves from `/public`. No separate frontend service. Dockerfile has `ARG` for VITE_* vars. |
-| TaskTracker | tasktracker.magicbusstudios.com | (same service) | 1 (Nixpacks) | Express + React (CRA) | tasktracker | Uses Nixpacks (not Dockerfile). `CI=true` treats ESLint warnings as errors. React app uses `REACT_APP_*` (not `VITE_*`). Legacy migration uses MongoDB TRANSACTIONS — requires replica set, fails on standalone. |
+| TaskTracker | tasktracker.magicbusstudios.com | (same service) | 1 (Nixpacks) | Express + React (Vite) | tasktracker | Uses Nixpacks (not Dockerfile). Migrated from CRA to Vite (Session 14). Uses `VITE_*` build args. All `.js` files renamed to `.jsx`. Legacy migration uses MongoDB TRANSACTIONS — requires replica set, fails on standalone. |
 | AI Tutor | tutor.magicbusstudios.com | api.tutor.magicbusstudios.com | 2 | FastAPI + React (Vite) | ai_tutor | Python app. Both SSO bugs confirmed here (JWT_SECRET naming + legacy user collision). Onboarding flow kept for new users. |
 
 ### Deployment Learnings (Phase 5)
