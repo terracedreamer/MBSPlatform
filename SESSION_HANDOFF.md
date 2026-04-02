@@ -1,10 +1,54 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 2, 2026 (Session 14 — in progress)
+**Last Updated**: April 2, 2026 (Session 15 — end of session)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 15 SUMMARY (April 2, 2026)
+
+### What was done this session:
+
+**Brand Documentation Gap Analysis & Fixes**
+- Created `FlowState_Product_Brief.md` in `Desktop/Marketing/Brand Overview/` (400+ lines from codebase exploration — three-pillar wellness, pose detection, mastery system, AI coaching, breathwork, meditation)
+- Updated `MagicBusStudios_Brand_And_Company.md` — added "The Consciousness Brand Layer" subsection (consciousness.dev, myconsciousness.io, consciousness.tools ecosystem diagram)
+- Updated `InnerLab_Product_Brief.md` — added Section 7C: "Inner Lab in the Consciousness Ecosystem" (relationship table, flywheel model, marketing positioning)
+- Verified CWG 67-language count was factually correct (marketing agent's update confirmed against actual locale directories)
+
+**Documentation Consolidation — Single Source of Truth**
+- Marketing folder (`Desktop/Marketing/`) is now the single source of truth for all brand briefs and architecture docs
+- Deleted `MBSPlatform/Architecture Docs/` (5 files — identical to Marketing copies)
+- Deleted `MBSPlatform/Brand Overview/` (8 files — Marketing copies were more up-to-date)
+- Updated `MBSPlatform/CLAUDE.md` to reference Marketing folder instead of local copies
+
+**TaskTracker SSO Redirect Fix (ROOT CAUSE FOUND)**
+- Issue: After Google SSO login, user ended up at `magicbusstudios.com` instead of being redirected back to TaskTracker
+- Root cause: Coolify build arg `VITE_PRODUCT_DOMAIN=https://tasktracker.magicbusstudios.com` had `https://` prefix, but the code already prepends `https://` in the redirect URL construction
+- Result: redirect URL became `https://https://tasktracker.magicbusstudios.com` — `validateRedirectUrl()` parsed hostname as `"https"` which isn't in CORS_ORIGINS → returned safe default `magicbusstudios.com`
+- Fix: User removed `https://` prefix from Coolify build arg → `VITE_PRODUCT_DOMAIN=tasktracker.magicbusstudios.com`
+- This also resolved the 403 errors on all data routes (AuthCallback flow now executes properly)
+
+**TaskTracker Chrome Verification — ALL PASSING**
+- `/api/auth/me` → 200, `/api/tasks` → 200, `/api/family` → 200, `/api/approvals` → 200, `/api/rewards` → 200, `/api/goals` → 200
+- No console errors. Sentry initialized. Vite hash-pattern assets confirmed (`index-DB661mMO.js`)
+- Dashboard: "Abi's Family" loaded, tasks visible with assignments, all 8 navigation tabs working
+- Standards compliance: 8/8 PASS (Chrome verification now complete)
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+2. **Regenerate BTCPay API key** — current returns 403
+3. **CWG merge test → main** — requires passphrase
+
+### For next session (Session 16):
+- More MBS Platform tests — admin, friends, promos, referrals
+- CWG: merge `test` → `main` when ready
+- Per-app standards improvements
+- LazyChef SSO migration
+- BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
+- Consciousness DNS completion
 
 ---
 
@@ -37,17 +81,10 @@
 | MBSPlatform | `9ee72cc` | docs: add comprehensive architecture docs for Codex onboarding |
 
 ### Pending — Owner Action:
-1. **Update Coolify build args for TaskTracker**: `REACT_APP_PLATFORM_URL` → `VITE_PLATFORM_URL`, `REACT_APP_PRODUCT_DOMAIN` → `VITE_PRODUCT_DOMAIN`, `REACT_APP_SENTRY_DSN` → `VITE_SENTRY_DSN`, `REACT_APP_API_URL` → `VITE_API_URL`. Then trigger Coolify rebuild.
+1. ~~Update Coolify build args for TaskTracker~~ — **DONE** (Session 15). Also fixed `VITE_PRODUCT_DOMAIN` prefix bug.
 2. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
 3. **Regenerate BTCPay API key** — current returns 403
-4. **Verify TaskTracker live** after Coolify rebuild with new env vars
-
-### For next session (Session 15):
-- More MBS Platform tests — admin, friends, promos, referrals
-- CWG: merge `test` → `main` when ready
-- Per-app standards improvements
-- LazyChef SSO migration
-- Inner Lab dashboard enhancements (if Codex needs guidance)
+4. ~~Verify TaskTracker live~~ — **DONE** (Session 15). All 6 API routes returning 200, Chrome verified.
 
 ---
 
@@ -335,7 +372,7 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 3. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 4. **Regenerate BTCPay API key** — current returns 403
 
-### Next Session (Session 15)
+### Next Session (Session 16)
 5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13)
 6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13)
 7. ~~#21 Test coverage expansion (billing + entitlements)~~ — **DONE Session 13** (40 new tests)
@@ -344,9 +381,15 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 10. ~~WildLens Sonner migration~~ — **Cleaned up Session 13** (commit `dfcb726`)
 11. ~~TaskTracker CRA → Vite migration~~ — **DONE Session 14** (commit `0b75506`)
 12. ~~Architecture docs for Codex onboarding~~ — **DONE Session 14** (4 docs created/updated)
-13. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
-14. CWG: merge `test` → `main` when ready
-15. Per-app standards improvements (response helpers, input validation, rate limiting)
+13. ~~TaskTracker SSO redirect fix~~ — **DONE Session 15** (VITE_PRODUCT_DOMAIN prefix bug)
+14. ~~TaskTracker Chrome verification~~ — **DONE Session 15** (8/8 standards PASS)
+15. ~~Brand doc gap analysis + FlowState brief~~ — **DONE Session 15**
+16. ~~Documentation consolidation (Marketing = single source of truth)~~ — **DONE Session 15**
+17. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
+18. CWG: merge `test` → `main` when ready
+19. Per-app standards improvements (response helpers, input validation, rate limiting)
+20. BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
+21. Consciousness DNS completion
 
 ### Future (Requires Migration Work)
 15. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal

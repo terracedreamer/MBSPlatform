@@ -2,10 +2,11 @@
 
 ## Purpose of This Repo
 **This is NOT a deployable project.** This is the **architecture think tank** for the MBS Platform ecosystem. It contains:
-- All architecture decisions, specs, and planning documents
-- Migration plans for CWG (28 collections) and FlowState (7 collections)
 - Reference CLAUDE.md files that get copied into the actual project folders for building
-- Marketing docs and product briefs for reference
+- Migration plans for CWG (28 collections) and FlowState (7 collections)
+- Phase reports and audit records
+
+**Architecture Docs and Brand Overview have moved to `Desktop/Marketing/`.** That folder is now the single source of truth for all marketing briefs and architecture reference documents. Do NOT recreate these folders here.
 
 **No code is built here.** The actual platform code is built inside:
 - `MBS/` folder (magicbusstudios.com) — gets the MBS Platform backend + frontend additions
@@ -31,7 +32,7 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 ├── platform-instructions-for-standalone-products/ → each Arcade/SW project (SSO migration)
 ├── platform-instructions-for-new-modules/ → new IL module projects (starter kit)
 │
-├── Brand Overview/, archive/, session docs
+├── archive/, session docs
 └── SESSION_HANDOFF.md for continuity across sessions
 ```
 
@@ -256,15 +257,8 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 │   ├── CLAUDE.md                               ← Full module template with architecture context
 │   └── README.md                               ← How to use
 │
-├── Brand Overview/                             ← Source of truth — synced to Desktop/Marketing/Overview/
-│   ├── MagicBusStudios_Brand_And_Company.md    ← Master: company + brand + all products + pricing
-│   ├── InnerLab_Product_Brief.md               ← Inner Lab deep dive (11 modules, framework)
-│   ├── ConversationsWithGod_Product_Brief.md   ← CWG deep dive (21 guides, features, pricing)
-│   └── TheArcade_Marketing_Brief.md            ← Arcade deep dive (5 games, campaigns)
-│
-├── Architecture Docs/                           ← Human-readable reference documents
-│   ├── MBS_Platform_Technical_Architecture.md  ← Comprehensive technical reference
-│   └── MBS_Platform_Overview.md                ← Non-technical overview (marketing-ready)
+├── (MOVED) Brand Overview/                     ← Now lives at Desktop/Marketing/Brand Overview/
+├── (MOVED) Architecture Docs/                  ← Now lives at Desktop/Marketing/Architecture Docs/
 │
 ├── phase-reports/                               ← Completion reports from each build phase
 │   ├── PHASE_1_REPORT.md, PHASE_1_LEARNINGS.md, PHASE_1_ADDENDUM_REPORT.md
@@ -303,30 +297,18 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 
 Each project's CLAUDE.md has been updated with a note to check `platform-instructions/` before starting work.
 
-**To Marketing folder:**
-- `Brand Overview/` contents are copied to `Desktop/Marketing/Overview/`
-- Marketing folder has its own README.md and folder structure per product line
-- Marketing agent points to `Desktop/Marketing/` and reads `README.md` first
+**Marketing & Architecture Docs (single source of truth):**
+- All brand briefs and architecture docs live at `Desktop/Marketing/`
+- `Desktop/Marketing/Brand Overview/` — product briefs, pricing reference
+- `Desktop/Marketing/Architecture Docs/` — technical architecture, database schemas, module building guide, dashboard vision
+- Marketing agent points to `Desktop/Marketing/` and reads `_INSTRUCTIONS.md` first
+- These folders were previously duplicated here in MBSPlatform — that duplication was removed Session 14 (April 2, 2026)
 
 ### When you make changes:
-1. Update files in this repo (the think tank)
-2. Push to GitHub
+1. Update architecture/brand files directly in `Desktop/Marketing/` (the single source of truth)
+2. Update platform-instructions files in this repo, push to GitHub
 3. Re-copy the relevant `platform-instructions-for-*` folder to the target project
 4. Open Claude Code in that project — the agent picks up the new instructions
-
-## Marketing Folder Sync
-When ANY file in `Brand Overview/` changes in this repo:
-1. Copy ALL `.md` files from `Brand Overview/` to `Desktop/Marketing/Overview/` (overwrite)
-2. Update `Desktop/Marketing/README.md` if the file listing changed
-3. Tell the user what was synced
-
-- The Marketing folder at `Desktop/Marketing/` is NOT a git repo — just copy files directly.
-- Marketing folder structure:
-  - `Overview/` — product briefs (synced from this repo)
-  - `Magic Bus Studios/` — MBS brand marketing (social, campaigns)
-  - `Inner Lab/` — IL product line marketing
-  - `Inner Lab/Conversations with God/` — CWG campaigns, social, guides, emails
-- No separate Arcade or Studio Works folders — marketed under MBS brand.
 
 ## What NOT to Do
 - Do NOT write code in this repo — this is architecture/planning only
@@ -405,7 +387,7 @@ All child apps built from MBS Platform instructions must follow:
 
 ## Architecture Reference
 
-Full platform architecture document: `~/Desktop/Codes/MBSPlatform/Architecture Docs/MBS_Platform_Technical_Architecture.md`
+Full platform architecture document: `~/Desktop/Marketing/Architecture Docs/MBS_Platform_Technical_Architecture.md`
 
 ---
 

@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 2, 2026 (Session 13 — end of session)
+**Last Updated**: April 2, 2026 (Session 15 — end of session)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -30,7 +30,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Lazy Chef | studioworks | lazy-chef.magicbusstudios.com | Authenticated + live verified |
 | Movie Picker | studioworks | moviepicker.magicbusstudios.com | Authenticated + live verified |
 | SmartCart | studioworks | smartcart.magicbusstudios.com | Authenticated (My Lists loaded) |
-| TaskTracker | studioworks | tasktracker.magicbusstudios.com | Authenticated (parent dashboard) |
+| TaskTracker | studioworks | tasktracker.magicbusstudios.com | ✅ Authenticated — Chrome verified Session 15 (all 6 API routes 200, Vite build confirmed) |
 | AI Tutor | studioworks | tutor.magicbusstudios.com | Authenticated (dashboard, 50 XP) |
 
 ## Known Issues
@@ -42,7 +42,8 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional | Owner decision: merge when ready |
-| CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, not migration-related |
+| CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, mitigated with ErrorBoundary (root cause unknown) |
+| TaskTracker VITE_PRODUCT_DOMAIN | ✅ RESOLVED — had `https://` prefix causing double protocol in redirect URL | Fixed Session 15 — removed prefix from Coolify build arg |
 
 ## What Exists (Live Products)
 

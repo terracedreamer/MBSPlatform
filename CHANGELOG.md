@@ -1,5 +1,39 @@
 # CHANGELOG — MBS Platform
 
+## April 2, 2026 — Session 15: Brand Docs + TaskTracker SSO Fix + Documentation Consolidation
+
+### Brand Documentation Gap Analysis
+- Created `FlowState_Product_Brief.md` (400+ lines) in `Desktop/Marketing/Brand Overview/`
+- Added "Consciousness Brand Layer" to `MagicBusStudios_Brand_And_Company.md`
+- Added "Inner Lab in the Consciousness Ecosystem" to `InnerLab_Product_Brief.md`
+- Verified CWG 67-language count (marketing agent update was factually correct)
+
+### Documentation Consolidation
+- Marketing folder (`Desktop/Marketing/`) is now the **single source of truth** for all brand briefs and architecture docs
+- Deleted `MBSPlatform/Architecture Docs/` (5 files) and `MBSPlatform/Brand Overview/` (8 files) — duplicates
+- Updated `MBSPlatform/CLAUDE.md` to reference Marketing folder
+
+### TaskTracker SSO Redirect Fix
+- Root cause found: `VITE_PRODUCT_DOMAIN` Coolify build arg had `https://` prefix
+- Code already prepends `https://` → redirect became `https://https://tasktracker.magicbusstudios.com`
+- `validateRedirectUrl()` parsed hostname as `"https"` (not in CORS_ORIGINS) → returned safe default
+- Fix: removed `https://` prefix from build arg. Also resolved 403 errors on all data routes.
+- Chrome verified: all 6 API routes returning 200, dashboard fully functional, 8/8 standards PASS
+
+---
+
+## April 2, 2026 — Session 14: TaskTracker Vite + Architecture Docs
+
+### TaskTracker CRA → Vite Migration
+- Replaced react-scripts with vite@5. Renamed 70 `.js` → `.jsx`. Updated env vars to `VITE_*`.
+- Committed (`0b75506`) and pushed to TaskTracker main.
+
+### Architecture Documents for Codex Onboarding
+- Updated Technical Architecture (v1.3), created Database Schema Reference, Module Building Guide, Dashboard Vision
+- Committed (`9ee72cc`) and pushed to MBSPlatform main.
+
+---
+
 ## March 31, 2026 — Session 13: Test Coverage + GDPR Doc Fix
 
 ### GDPR Documentation Fix

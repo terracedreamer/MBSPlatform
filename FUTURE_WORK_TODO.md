@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 2, 2026 (Session 13 — end of session)
+**Last Updated**: April 2, 2026 (Session 15 — end of session)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -94,12 +94,23 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] #21 Test coverage expansion — billing.test.js (19 tests) + entitlements.test.js (21 tests) = 40 new tests. Total: 61.
 - [x] GDPR documentation fix — CWG + FlowState were already implemented, docs were stale
 
-### Session 14 Potential Items
+### Session 14 Completed
 - [x] ~~Commit + push MBS test files and MBSPlatform doc updates~~ — DONE Session 13
+- [x] TaskTracker CRA → Vite migration — DONE Session 14 (commit `0b75506`)
+- [x] Architecture docs for Codex onboarding — DONE Session 14 (4 docs)
+
+### Session 15 Completed
+- [x] Brand documentation gap analysis — FlowState brief created, Consciousness layer added to master doc + InnerLab brief
+- [x] Documentation consolidation — Marketing folder is now single source of truth, duplicates deleted from MBSPlatform
+- [x] TaskTracker SSO redirect fix — `VITE_PRODUCT_DOMAIN` had extra `https://` prefix causing double protocol
+- [x] TaskTracker Chrome verification — 8/8 standards PASS, all 6 API routes returning 200
+
+### Session 16 Potential Items
 - [ ] More MBS Platform tests: admin, friends, promos, referrals (routes already analyzed)
-- [ ] TaskTracker CRA → Vite migration (71 files, 4 REACT_APP_ vars, 3 deploy targets)
 - [ ] CWG: merge `test` → `main`
 - [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
+- [ ] BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
+- [ ] Consciousness DNS completion
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -133,7 +144,7 @@ Full audit reports in `audits/`:
 - [x] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint (implemented — 7 yoga_* collections)
 - [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
-- [ ] TaskTracker — CRA → Vite migration
+- [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
 - [ ] Test suites — most projects still missing (LazyChef + Tutor are gold standards)
 - [ ] Per-app response helpers, input validation, rate limiting — see individual project TODOs
 
