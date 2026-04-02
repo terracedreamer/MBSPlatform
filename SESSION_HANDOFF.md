@@ -1,10 +1,57 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 2, 2026 (Session 15 — end of session)
+**Last Updated**: April 2, 2026 (Session 16 — mid-session pause)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 16 SUMMARY (April 2, 2026) — Mid-session pause
+
+### What was done this session:
+
+**Innerlab Incubator Cross-Reference Review (Full)**
+- Reviewed `docs/27-claude-cross-reference-pack.md` against live code in MBS/, Innerlab/, CWG/, YogaGhost/
+- Answered all 30 original question IDs + 7 follow-up questions from Codex
+- 3 critical findings: FlowState has breathwork+meditation (not movement-only), CWG auto-extracts memories silently, Nexus premiumFeatures conflict
+- Full responses appended to `Innerlab Incubator/docs/28-claude-response-log.md`
+
+**BreathArc Provisional Removal Decision**
+- FlowState confirmed as three-pillar module (yoga + breathwork + meditation)
+- BreathArc provisionally removed from module catalog (pending final confirmation ~mid-April 2026)
+- Wave 1 build order changed: dreamlens → rituals (was: breatharc → dreamlens → rituals)
+- All cleanup deferred — no live repo changes until confirmed
+
+**Layer 2 Contract Reference for Codex**
+- Added complete il_* schema documentation to doc 28 (all 11 live collections with exact fields, types, indexes)
+- Added module build guardrails (what modules must/must not do)
+- Added build ownership split (Claude Code builds platform, Codex builds modules)
+- Added module graduation checklist
+
+**MBS Platform Test Verification**
+- All 107 tests pass across 7 test suites (admin, friends, promos, referrals tests were already written — verified working)
+- npm install needed locally (otplib wasn't installed) — now resolved
+
+**Arcade SSO Verification (Chrome)**
+- BrokenChain: SSO redirect confirmed → magicbusstudios.com/auth/login?redirect=brokenchain
+- MindHacker: SSO redirect confirmed → magicbusstudios.com/auth/login?redirect=mindhacker
+- FakeArtist: SSO redirect confirmed → magicbusstudios.com/auth/login?redirect=fakeartist
+- All three working correctly
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+2. **Regenerate BTCPay API key** — current returns 403
+3. **CWG merge test → main** — requires passphrase
+4. **Confirm BreathArc removal** — ~mid-April 2026, then cleanup across all repos + marketing
+
+### For next session:
+- **Build il_reflections** in Innerlab/server/ (prerequisite for Wave 1 modules)
+- Build Journal UI page in Innerlab/ dashboard
+- Per-app standards improvements
+- LazyChef SSO migration
+- Consciousness DNS completion
 
 ---
 
