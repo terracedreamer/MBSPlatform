@@ -1,10 +1,53 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 2, 2026 (Session 13 — end of session)
+**Last Updated**: April 2, 2026 (Session 14 — in progress)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 14 SUMMARY (April 2, 2026)
+
+### What was done this session:
+
+**TaskTracker CRA → Vite Migration (COMPLETE)**
+- Replaced react-scripts with vite@5 + @vitejs/plugin-react-swc
+- Renamed all 70 `.js` files to `.jsx` (required by Vite's esbuild pipeline)
+- Replaced all `process.env.REACT_APP_*` with `import.meta.env.VITE_*`
+- Replaced all `process.env.NODE_ENV` checks with `import.meta.env.MODE/DEV/PROD`
+- Moved `index.html` from `client/public/` to `client/` root
+- Updated nixpacks.toml and build scripts for `client/dist` output
+- Build succeeds: 848 modules transformed in 2.01s
+- Committed (`0b75506`) and pushed to TaskTracker main
+
+**Architecture Documents for Codex Onboarding (COMPLETE)**
+- Updated `MBS_Platform_Technical_Architecture.md` (v1.3): Fixed TaskTracker CRA→Vite ref, GDPR status, added Session 13-14 completed items
+- Created `MBS_Database_Schema_Reference.md`: Complete MongoDB schemas for mbs_platform + inner_lab databases (all 29+ collections documented with field types, constraints, indexes)
+- Created `Inner_Lab_Module_Building_Guide.md`: Full guardrails for building new IL modules — auth patterns, database rules, deployment setup, coding standards, 13 critical guardrails, 15+ lessons learned
+- Created `Inner_Lab_Dashboard_Vision.md`: Product vision for making Inner Lab the star — dashboard enhancement priorities, API specs for daily briefing/trends, data flow diagrams
+- Updated `deployment-quirks.md`: TaskTracker now uses Vite (not CRA)
+- Committed (`9ee72cc`) and pushed to MBSPlatform main
+
+### Commits this session:
+| Repo | Commit | Message |
+|------|--------|---------|
+| TaskTracker | `0b75506` | feat: migrate frontend from CRA to Vite |
+| MBSPlatform | `9ee72cc` | docs: add comprehensive architecture docs for Codex onboarding |
+
+### Pending — Owner Action:
+1. **Update Coolify build args for TaskTracker**: `REACT_APP_PLATFORM_URL` → `VITE_PLATFORM_URL`, `REACT_APP_PRODUCT_DOMAIN` → `VITE_PRODUCT_DOMAIN`, `REACT_APP_SENTRY_DSN` → `VITE_SENTRY_DSN`, `REACT_APP_API_URL` → `VITE_API_URL`. Then trigger Coolify rebuild.
+2. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+3. **Regenerate BTCPay API key** — current returns 403
+4. **Verify TaskTracker live** after Coolify rebuild with new env vars
+
+### For next session (Session 15):
+- More MBS Platform tests — admin, friends, promos, referrals
+- CWG: merge `test` → `main` when ready
+- Per-app standards improvements
+- LazyChef SSO migration
+- Inner Lab dashboard enhancements (if Codex needs guidance)
 
 ---
 
@@ -292,17 +335,18 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 3. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 4. **Regenerate BTCPay API key** — current returns 403
 
-### Next Session (Session 14)
+### Next Session (Session 15)
 5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13)
 6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13)
 7. ~~#21 Test coverage expansion (billing + entitlements)~~ — **DONE Session 13** (40 new tests)
 8. ~~Commit + push MBS test files and MBSPlatform doc updates~~ — **DONE Session 13**
 9. ~~LazyChef Sonner migration~~ — **Already done** (commit `21881ba`)
 10. ~~WildLens Sonner migration~~ — **Cleaned up Session 13** (commit `dfcb726`)
-11. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
-12. TaskTracker CRA → Vite migration (71 files, 4 env vars, 3 deploy targets — scope analyzed)
-13. CWG: merge `test` → `main` when ready
-14. Per-app standards improvements (response helpers, input validation, rate limiting)
+11. ~~TaskTracker CRA → Vite migration~~ — **DONE Session 14** (commit `0b75506`)
+12. ~~Architecture docs for Codex onboarding~~ — **DONE Session 14** (4 docs created/updated)
+13. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
+14. CWG: merge `test` → `main` when ready
+15. Per-app standards improvements (response helpers, input validation, rate limiting)
 
 ### Future (Requires Migration Work)
 15. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal
