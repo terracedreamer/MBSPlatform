@@ -40,12 +40,6 @@
 - FakeArtist: SSO redirect confirmed → magicbusstudios.com/auth/login?redirect=fakeartist
 - All three working correctly
 
-### Pending — Owner Action:
-1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
-2. **Regenerate BTCPay API key** — current returns 403
-3. **CWG merge test → main** — requires passphrase
-4. **Confirm BreathArc removal** — ~mid-April 2026, then cleanup across all repos + marketing
-
 **Inner Lab Platform Build (8 dashboard pages, all pushed to main)**
 - il_reflections model + CRUD API (6 entry types, first-class module fields)
 - Journal page, Check-In History page, Wellness page, Weekly Review page
@@ -81,12 +75,22 @@
 4. **Confirm BreathArc removal** — ~mid-April 2026
 
 ### For next session (Session 17):
-- **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
-- **CWG migration** — run migration script, move consciousness profile + personal history to il_*
-- **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile pulls from CWG
-- **Chrome verification** — test all new Inner Lab pages live after Coolify redeploy
-- Per-app standards improvements
-- LazyChef SSO migration
+1. **Re-discuss shared data architecture** — owner wants to confirm understanding of: same data different views, where data lives, how modules read/write from il_* collections, mobile app implications
+2. **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
+3. **CWG consciousness profile + personal history migration** — move from cwg_user_profiles to il_consciousness_profiles and il_personal_histories. Keep CWG frontend UI, rewire backend to read/write from il_* collections.
+4. **Run CWG journal migration script** — copy existing cwg_journal_entries to il_reflections
+5. **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile shows, personal history shows
+6. **Chrome verification** — test all 8 new Inner Lab dashboard pages live after Coolify redeploy
+7. Per-app standards improvements
+8. LazyChef SSO migration
+
+### Key architecture decisions to confirm at start of Session 17:
+- **il_reflections is the ONLY journal store** — no module-local journal collections
+- **Module-specific fields are first-class schema fields** on il_reflections (mood, symbols, emotions, etc.), NOT metadata
+- **Same data, different views** — CWG shows entries with mood words + guide context; Inner Lab shows them plain. Both read from il_reflections.
+- **Data lives at Inner Lab level, UI can exist in multiple places** — Inner Lab, CWG, DreamLens all can show My Story / Consciousness Profile / Journal. First write wins. All read from the same il_* collections.
+- **Mobile-ready** — standalone apps collect data locally if no Inner Lab, sync to il_* when connected. Not built yet but architecture supports it.
+- **CWG keeps its frontend** for My Story and Consciousness Profile — just rewires backend to read/write from il_* instead of cwg_user_profiles
 
 ---
 
