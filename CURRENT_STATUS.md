@@ -56,7 +56,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Component | Status | Where |
 |-----------|--------|-------|
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
-| Inner Lab website + Middleware + Auth | **Deployed — Session 16: 8 dashboard pages, 12 il_* collections, full Journal + notifications + wellness** | innerlab.ai / api.innerlab.ai |
+| Inner Lab website + Middleware + Auth | **Deployed — Session 18: 8 dashboard pages, 13 il_* collections (added il_birth_profiles), 13 route files, full Journal + notifications + wellness** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
@@ -77,11 +77,11 @@ Both fixes confirmed working across all affected apps.
 - [x] Platform-instructions synced to all 15 project folders
 - [x] GDPR cascade deployed and verified (Session 8)
 - [x] RS256 JWT upgrade — all 15 services configured with keys, verified working (Session 11)
-- [x] CWG GDPR endpoint — already implemented in `server.py` (38 cwg_* + 7 il_* collections). Docs were stale.
+- [x] CWG GDPR endpoint — implemented + fixed Session 18 (commit `88b4e11`). Now filters 6 il_* activity collections by `source_module: "cwg"`, excludes identity singletons.
 - [x] FlowState GDPR endpoint — already implemented in `index.js` (7 yoga_* collections). Docs were stale.
 - [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
 - [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
-- [x] Inner Lab platform interface — 8 dashboard pages, 12 route files, 12 il_* collections (Session 16)
+- [x] Inner Lab platform interface — 8 dashboard pages, 13 route files, 13 il_* collections (Session 16 + Session 18 il_birth_profiles)
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
 - [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)

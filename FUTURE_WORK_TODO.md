@@ -108,7 +108,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 ### Session 16 Completed
 - [x] MBS Platform tests verified — 107 tests across 7 suites (admin, friends, promos, referrals already written)
 - [x] BrokenChain/MindHacker/FakeArtist SSO — all 3 verified working via Chrome
-- [x] Inner Lab platform build — 8 dashboard pages, 12 backend route files, 12 il_* collections
+- [x] Inner Lab platform build — 8 dashboard pages, 13 backend route files, 13 il_* collections (Session 18: added il_birth_profiles)
 - [x] il_reflections shared journal — model + CRUD API + Journal page + first-class module fields
 - [x] Notification routes + bell UI, Wellness routes + page, Check-In History, Weekly Review
 - [x] Dashboard enhancements — state-aware greeting, continue-where-left-off, sparkline, memory resurfacing
@@ -177,7 +177,7 @@ Full audit reports in `audits/`:
 - `2026-03-30-platform-review.md` — SSO, entitlements, GDPR, billing verification against actual code
 
 ### Remaining Per-App Items (check each project's FUTURE_WORK_TODO.md)
-- [x] CWG — GDPR `DELETE /api/user-data` endpoint (implemented — 38 cwg_* + 7 il_* collections)
+- [x] CWG — GDPR `DELETE /api/user-data` endpoint (fixed Session 18 — 6 il_* activity collections filtered by source_module, singletons excluded)
 - [x] FlowState (YogaGhost) — GDPR `DELETE /api/user-data` endpoint (implemented — 7 yoga_* collections)
 - [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
