@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 2, 2026 (Session 15 — end of session)
+**Last Updated**: April 2, 2026 (Session 16 — end of session)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -41,8 +41,9 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
-| CWG on `test` branch | Running on test, not main — intentional | Owner decision: merge when ready |
+| CWG on `test` branch | Running on test, not main — intentional. Session 16: partial il_reflections refactor in progress (3/14 files done, 11 remaining). | Owner decision: finish refactor, then merge when ready |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, mitigated with ErrorBoundary (root cause unknown) |
+| CWG → Inner Lab data migration | Journals, consciousness profile, personal history moving to il_* collections. Migration script written, not yet run. | Complete CWG refactor in Session 17, then run migration |
 | TaskTracker VITE_PRODUCT_DOMAIN | ✅ RESOLVED — had `https://` prefix causing double protocol in redirect URL | Fixed Session 15 — removed prefix from Coolify build arg |
 
 ## What Exists (Live Products)
@@ -50,7 +51,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Component | Status | Where |
 |-----------|--------|-------|
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
-| Inner Lab website + Middleware + Auth | **Deployed — Phase 2 complete** | innerlab.ai / api.innerlab.ai |
+| Inner Lab website + Middleware + Auth | **Deployed — Session 16: 8 dashboard pages, 12 il_* collections, full Journal + notifications + wellness** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
@@ -75,5 +76,11 @@ Both fixes confirmed working across all affected apps.
 - [x] FlowState GDPR endpoint — already implemented in `index.js` (7 yoga_* collections). Docs were stale.
 - [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
 - [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
+- [x] Inner Lab platform interface — 8 dashboard pages, 12 route files, 12 il_* collections (Session 16)
+- [x] il_reflections — shared journal store with first-class module fields (Session 16)
+- [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
+- [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)
+- [ ] CWG journal migration to il_reflections — 11 files remaining (Session 17)
+- [ ] CWG consciousness profile + personal history migration to il_* — not started (Session 17)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

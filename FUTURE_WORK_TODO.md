@@ -105,11 +105,27 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] TaskTracker SSO redirect fix — `VITE_PRODUCT_DOMAIN` had extra `https://` prefix causing double protocol
 - [x] TaskTracker Chrome verification — 8/8 standards PASS, all 6 API routes returning 200
 
-### Session 16 Potential Items
-- [ ] More MBS Platform tests: admin, friends, promos, referrals (routes already analyzed)
-- [ ] CWG: merge `test` → `main`
+### Session 16 Completed
+- [x] MBS Platform tests verified — 107 tests across 7 suites (admin, friends, promos, referrals already written)
+- [x] BrokenChain/MindHacker/FakeArtist SSO — all 3 verified working via Chrome
+- [x] Inner Lab platform build — 8 dashboard pages, 12 backend route files, 12 il_* collections
+- [x] il_reflections shared journal — model + CRUD API + Journal page + first-class module fields
+- [x] Notification routes + bell UI, Wellness routes + page, Check-In History, Weekly Review
+- [x] Dashboard enhancements — state-aware greeting, continue-where-left-off, sparkline, memory resurfacing
+- [x] Incubator cross-reference review — 30 questions + 7 follow-ups answered in doc 28
+- [x] BreathArc provisionally removed (FlowState keeps yoga+breathwork+meditation)
+- [x] CWG partial refactor — journal_routes.py, journal_insights_routes.py, chat_routes.py refactored to il_reflections
+
+### Session 17 Items
+- [ ] CWG refactor: finish remaining 11 files that reference cwg_journal_entries
+- [ ] CWG: migrate consciousness profile + personal history ("My Story") to il_* collections
+- [ ] CWG: run migration script (cwg_journal_entries → il_reflections)
+- [ ] CWG: verify journal, consciousness, personal history all work from il_* collections
+- [ ] Inner Lab: verify Journal page shows CWG data after migration
+- [ ] Inner Lab: verify Consciousness page shows CWG data after migration
+- [ ] Chrome verification: test all new Inner Lab pages live after Coolify redeploy
+- [ ] CWG: merge `test` → `main` (after refactor is complete, requires passphrase)
 - [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
-- [ ] BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
 - [ ] Consciousness DNS completion
 
 ### Post-Phase 5 Cleanup — All Complete
