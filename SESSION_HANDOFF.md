@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 2, 2026 (Session 16 — mid-session pause)
+**Last Updated**: April 2, 2026 (Session 16 — end of session)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -8,7 +8,7 @@
 
 ---
 
-## SESSION 16 SUMMARY (April 2, 2026) — Mid-session pause
+## SESSION 16 SUMMARY (April 2, 2026) — End of session
 
 ### What was done this session:
 
@@ -46,12 +46,47 @@
 3. **CWG merge test → main** — requires passphrase
 4. **Confirm BreathArc removal** — ~mid-April 2026, then cleanup across all repos + marketing
 
-### For next session:
-- **Build il_reflections** in Innerlab/server/ (prerequisite for Wave 1 modules)
-- Build Journal UI page in Innerlab/ dashboard
+**Inner Lab Platform Build (8 dashboard pages, all pushed to main)**
+- il_reflections model + CRUD API (6 entry types, first-class module fields)
+- Journal page, Check-In History page, Wellness page, Weekly Review page
+- Notification routes (6 endpoints) + NotificationBell component in header
+- Wellness profile routes (get + upsert)
+- Dashboard enhancements: state-aware greeting, continue-where-left-off, sparkline, memory resurfacing
+- GDPR cascade updated (12 collections)
+
+**CWG → Inner Lab Data Architecture Decision**
+- Journals: il_reflections is the ONLY journal store. CWG (and all modules) write directly there.
+- Module-specific fields (mood, symbols, emotions, etc.) are first-class schema fields, NOT metadata.
+- Consciousness profile + Personal history ("My Story") will also move to Inner Lab level.
+- CWG becomes a thin module that reads identity data from il_* collections.
+
+**CWG Partial Refactor (pushed to test, WIP)**
+- journal_routes.py fully refactored to read/write il_reflections
+- journal_insights_routes.py and chat_routes.py refactored
+- Migration script written (not yet run)
+- 11 CWG files still reference cwg_journal_entries
+- Consciousness profile sync added
+- Memory schema fix (memory→content, added source_module/memory_type/shared)
+- Check-in schema fix (added source_module, mapped spirit_level→mood)
+
+**Incubator Cross-Reference + BreathArc Decision**
+- Full 30-question review + 7 follow-ups answered in doc 28
+- BreathArc provisionally removed (FlowState keeps yoga+breathwork+meditation)
+- Doc 28 updated with: Layer 2 contract reference, module guardrails, build ownership split, journaling architecture
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+2. **Regenerate BTCPay API key** — current returns 403
+3. **CWG merge test → main** — requires passphrase (do AFTER CWG refactor is complete)
+4. **Confirm BreathArc removal** — ~mid-April 2026
+
+### For next session (Session 17):
+- **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
+- **CWG migration** — run migration script, move consciousness profile + personal history to il_*
+- **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile pulls from CWG
+- **Chrome verification** — test all new Inner Lab pages live after Coolify redeploy
 - Per-app standards improvements
 - LazyChef SSO migration
-- Consciousness DNS completion
 
 ---
 
