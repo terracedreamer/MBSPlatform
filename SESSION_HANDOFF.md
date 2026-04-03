@@ -8,7 +8,7 @@
 
 ---
 
-## SESSION 18 SUMMARY (April 3, 2026) — CWG il_reflections Migration + GDPR Fix
+## SESSION 18 SUMMARY (April 3, 2026) — CWG Migration + Incubator Review + Birth Profiles
 
 ### What was done this session:
 
@@ -26,21 +26,38 @@
 - Personal history saves now sync to `il_personal_histories`
 - Created migration script for existing data (`migrate_identity_to_il.py`)
 
+**CWG Chrome Verified** — deployed to test site, all API calls returning 200, journal write+read confirmed
+
+**Incubator Full Module Review** (doc 28 — Round 3 + Round 4)
+- All 11 modules reviewed against 10 architecture rules
+- 10 systemic issues documented (response format, frontend stack, sharing toggle, etc.)
+- Per-module findings for all 11 modules
+- Follow-up questions AUTH-04, JOURNAL-09, JOURNAL-10, BUILD-03, NEXUS-05, ASTRO-05, ASTRO-06 answered
+- Round 3 RS256 finding corrected (RS256-first with HS256 fallback IS correct)
+- Birth data ownership resolved: Inner Lab owns it at Layer 2
+
+**il_birth_profiles Built** (Innerlab commits `c7f5542` + `fc9b136`)
+- New Layer 2 identity collection for astrology modules
+- Schema reconciled with StarMap/AstroCompass incubator docs (flat fields, birth_time_precision, structured place)
+- CRUD API at `/api/birth-profile` (GET/PUT upsert/DELETE)
+- GDPR cascade updated to 13 collections
+- Frontend dashboard UI still pending
+
 ### Pending — Owner Action:
-1. **Run migration scripts** — inside CWG Docker container on test backend
-2. **Chrome verify CWG test site** — after Coolify redeploy
-3. **Create Stripe products** — still pending from Session 9
-4. **Regenerate BTCPay API key** — still pending
-5. **CWG merge test → main** — after verification (requires passphrase)
+1. **Run CWG migration scripts** — inside CWG Docker container (Coolify terminal kept logging out)
+2. **Create Stripe products** — still pending from Session 9
+3. **Regenerate BTCPay API key** — still pending
+4. **CWG merge test → main** — after migration + verification (requires passphrase)
 
 ### For next session (Session 19):
-1. Run CWG migration scripts (journals + identity) — must verify data appears in il_reflections
-2. Chrome verify CWG test site — journal CRUD, insights, search, progress, wisdom book
-3. Chrome verify Inner Lab dashboard — journal entries, consciousness profile (needs IL entitlement)
-4. CWG merge test → main (with passphrase)
-5. Sharing toggle implementation
-6. Per-app standards improvements
-7. LazyChef SSO migration
+1. **Run CWG migration scripts** — `migrate_journals_to_il_reflections.py` + `migrate_identity_to_il.py` in Coolify terminal
+2. **Chrome verify CWG** — journal CRUD, insights, search, progress after migration data exists
+3. **Chrome verify Inner Lab dashboard** — journal entries, consciousness profile (needs IL entitlement)
+4. **Build Birth Profile dashboard UI** — form for entering birth date/time/place on Inner Lab dashboard
+5. **CWG merge test → main** (requires passphrase)
+6. Sharing toggle implementation
+7. Per-app standards improvements
+8. LazyChef SSO migration
 
 ---
 
