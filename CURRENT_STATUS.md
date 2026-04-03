@@ -85,9 +85,9 @@ Both fixes confirmed working across all affected apps.
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
 - [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)
-- [x] Session 17 architecture review — 14 decisions confirmed, critical bugs documented, 10+ docs updated (Session 17)
+- [x] Session 17 architecture review — 14 decisions confirmed, critical bugs documented, 20+ docs updated, 26 OneDrive conflicts cleaned (Session 17)
 - [ ] CWG GDPR fix — add il_reflections + il_activity_feed, add source_module filtering (Session 18)
-- [ ] il_reflections visibility default fix — change "private" to "shared" (Session 18)
+- [x] il_reflections visibility default fix — changed to "shared" + smart GET filtering (Session 17, commit `117d99b`)
 - [ ] CWG journal migration to il_reflections — 11 files remaining (Session 18)
 - [ ] CWG consciousness profile + personal history migration to il_* — not started (Session 18)
 - [ ] Stripe bundle price IDs created in Dashboard

@@ -16,16 +16,28 @@
 - Comprehensive architecture review across all codebases (CWG, Inner Lab, FlowState, MBS Platform)
 - 14 architecture decisions confirmed for shared data, GDPR, sharing toggle, dashboard access
 
-**Critical Bugs Found (Not Yet Fixed)**
-- CWG GDPR endpoint missing il_reflections + il_activity_feed from deletion scope
-- CWG GDPR endpoint not filtering il_* collections by source_module (would delete other modules' data)
-- FlowState writes zero il_* data (no check-ins, no memories, no reflections to shared collections)
-- FlowState GDPR endpoint has inconsistent user_id fields (mix of userId vs user_id)
-- il_reflections Mongoose model has visibility default "private" — should be "shared" per architecture decision
+**Critical Bugs Found**
+- CWG GDPR endpoint missing il_reflections + il_activity_feed from deletion scope (NOT YET FIXED)
+- CWG GDPR endpoint not filtering il_* collections by source_module (NOT YET FIXED)
+- FlowState writes zero il_* data (DEFERRED)
+- FlowState GDPR endpoint has inconsistent user_id fields (DEFERRED)
+- ~~il_reflections Mongoose model visibility default "private"~~ — **FIXED this session** (commit `117d99b`)
 
-**Documentation Updated (10+ files)**
-- Updated docs across Marketing/Architecture Docs, Innerlab, global rules, Incubator doc 28
-- Created new `Inner_Lab_GDPR_Deletion_Scoping.md` architecture doc
+**Code Fix (Innerlab repo — commit `117d99b`)**
+- Reflection.js: visibility default changed from "private" to "shared"
+- reflections.js: create fallback changed to "shared"
+- reflections.js: GET route now defaults to visibility="shared" for unified dashboard view, shows all entries when filtered by source_module
+
+**Documentation Updated (20+ files across 6 locations)**
+- Marketing/Architecture Docs: 6 files updated + 1 new (Inner_Lab_GDPR_Deletion_Scoping.md)
+- Innerlab: CLAUDE.md, platform-instructions/CLAUDE.md + 2 new supplementary docs in docs/
+- CWG: CLAUDE.md, FUTURE_WORK_TODO.md, SESSION_HANDOFF.md
+- YogaGhost: CLAUDE.md, FUTURE_WORK_TODO.md
+- Global rules: innerlab-data.md, data-sovereignty.md
+- Incubator: doc 28 (Session 17 decisions + Codex references)
+- Global + MBS CLAUDE.md: Nexus marketplace note, GDPR scoping, architecture doc paths
+- 14 stale architecture doc path references fixed across all project CLAUDE.md files
+- 26 OneDrive Nitro/MSI sync conflict files compared and cleaned up (all verified safe to delete)
 
 **14 Architecture Decisions Confirmed**
 - Identity data (consciousness profile, personal history) = always shared, no toggle needed
@@ -44,21 +56,22 @@
 4. **Confirm BreathArc removal** — ~mid-April 2026
 
 ### For next session (Session 18):
-1. **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
-2. **Fix CWG GDPR endpoint** — add il_reflections + il_activity_feed to deletion scope, add source_module filtering on all il_* deletes
-3. **Fix il_reflections Mongoose model** — change visibility default from "private" to "shared"
-4. **CWG consciousness profile + personal history migration** — move from cwg_user_profiles to il_consciousness_profiles and il_personal_histories
-5. **Run CWG journal migration script** — copy existing cwg_journal_entries to il_reflections
-6. **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile shows, personal history shows
-7. **Chrome verification** — test all changes live after Coolify redeploy
-8. Per-app standards improvements
-9. LazyChef SSO migration
+1. **Chrome verify il_reflections visibility fix** — Innerlab commit `117d99b` should be deployed via Coolify. Check innerlab.ai/journal shows entries correctly.
+2. **Fix CWG GDPR endpoint** — add il_reflections + il_activity_feed to deletion scope, add source_module filtering on all il_* deletes, remove singletons from deletion
+3. **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
+4. **Fix journal_insights_routes.py:70** — references metadata.mood instead of first-class mood field
+5. **CWG consciousness profile + personal history migration** — move from cwg_user_profiles to il_consciousness_profiles and il_personal_histories
+6. **Run CWG journal migration script** — copy existing cwg_journal_entries to il_reflections
+7. **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile shows, personal history shows
+8. **Chrome verification** — test all changes live after Coolify redeploy
+9. Per-app standards improvements
+10. LazyChef SSO migration
 
 ### Key architecture decisions confirmed in Session 17:
 - **Identity data is always shared** — consciousness profile and personal history have no per-module toggle. They are singleton documents at IL level.
 - **Module activity data has per-module sharing toggle** — default ON, retroactive (Option B: when toggled ON, past data becomes visible to other modules)
 - **GDPR app-level deletion filters by source_module** — CWG delete only removes `source_module: "cwg"` entries from il_reflections, il_check_ins, il_user_memories, il_activity_feed. Does NOT delete singleton identity docs (consciousness profile, personal history).
-- **il_reflections visibility default = "shared"** — the Mongoose model currently defaults to "private", which contradicts the decision. Must be fixed.
+- **il_reflections visibility default = "shared"** — ✅ FIXED this session (commit `117d99b`). Model default, route fallback, and GET query filtering all updated.
 - **Dashboard access requires any IL module subscription** — not a separate product. `category_access: "innerlab"` or any `product_pass` for an IL module.
 - **Nexus = marketplace** for spiritual practitioners (not a social network)
 - **FlowState il_* integration deferred** — FlowState currently writes zero shared data. Will be addressed separately from CWG refactor.

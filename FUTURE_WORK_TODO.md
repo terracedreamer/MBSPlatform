@@ -116,12 +116,16 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] BreathArc provisionally removed (FlowState keeps yoga+breathwork+meditation)
 - [x] CWG partial refactor — journal_routes.py, journal_insights_routes.py, chat_routes.py refactored to il_reflections
 
-### Session 17 Completed (Architecture Review — No Code Changes)
+### Session 17 Completed (Architecture Review + Visibility Fix)
 - [x] Full architecture review across CWG, Inner Lab, FlowState, MBS Platform codebases
 - [x] 14 architecture decisions confirmed (shared data, GDPR scoping, sharing toggle, dashboard access)
-- [x] Critical bugs documented: CWG GDPR missing collections + no source_module filter, FlowState zero il_* writes, FlowState GDPR user_id inconsistency, il_reflections visibility default wrong
-- [x] 10+ documentation files updated across Marketing/Architecture Docs, Innerlab, global rules, Incubator doc 28
+- [x] Critical bugs documented: CWG GDPR missing collections + no source_module filter, FlowState zero il_* writes, FlowState GDPR user_id inconsistency
+- [x] il_reflections visibility default fixed: "private" → "shared" + smart GET filtering (Innerlab commit `117d99b`)
+- [x] 20+ documentation files updated across Marketing/Architecture Docs, Innerlab, CWG, YogaGhost, global rules, Incubator doc 28, global + MBS CLAUDE.md
 - [x] Created `Inner_Lab_GDPR_Deletion_Scoping.md` architecture doc
+- [x] Created `Innerlab/docs/session-17-architecture-decisions.md` + `sharing-toggle-implementation.md`
+- [x] Fixed 14 stale architecture doc path references across all project CLAUDE.md files
+- [x] Cleaned up 26 OneDrive Nitro/MSI sync conflict files (all compared and verified safe to delete)
 
 ### Session 18 Items
 - [ ] CWG refactor: finish remaining 11 files that reference cwg_journal_entries
