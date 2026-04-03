@@ -1,10 +1,67 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 2, 2026 (Session 16 — end of session)
+**Last Updated**: April 3, 2026 (Session 17 — end of session)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 17 SUMMARY (April 3, 2026) — Architecture Review, No Code Changes
+
+### What was done this session:
+
+**Full Architecture Review & Deep Dive**
+- Comprehensive architecture review across all codebases (CWG, Inner Lab, FlowState, MBS Platform)
+- 14 architecture decisions confirmed for shared data, GDPR, sharing toggle, dashboard access
+
+**Critical Bugs Found (Not Yet Fixed)**
+- CWG GDPR endpoint missing il_reflections + il_activity_feed from deletion scope
+- CWG GDPR endpoint not filtering il_* collections by source_module (would delete other modules' data)
+- FlowState writes zero il_* data (no check-ins, no memories, no reflections to shared collections)
+- FlowState GDPR endpoint has inconsistent user_id fields (mix of userId vs user_id)
+- il_reflections Mongoose model has visibility default "private" — should be "shared" per architecture decision
+
+**Documentation Updated (10+ files)**
+- Updated docs across Marketing/Architecture Docs, Innerlab, global rules, Incubator doc 28
+- Created new `Inner_Lab_GDPR_Deletion_Scoping.md` architecture doc
+
+**14 Architecture Decisions Confirmed**
+- Identity data (consciousness profile, personal history) = always shared, no toggle needed
+- Module activity data = per-module sharing toggle (default ON, retroactive Option B)
+- GDPR app-level: filter il_* by source_module, don't delete singleton identity docs
+- Dashboard requires any IL module subscription (not a separate subscription)
+- Nexus = marketplace for spiritual practitioners
+- BreathArc: keep in products.js for now (not yet removed from code)
+- il_reflections visibility default = "shared" (code currently says "private" — fix needed)
+- FlowState il_* integration deferred (not blocking CWG refactor)
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (still pending from Session 9)
+2. **Regenerate BTCPay API key** — current returns 403
+3. **CWG merge test → main** — requires passphrase (do AFTER CWG refactor is complete)
+4. **Confirm BreathArc removal** — ~mid-April 2026
+
+### For next session (Session 18):
+1. **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
+2. **Fix CWG GDPR endpoint** — add il_reflections + il_activity_feed to deletion scope, add source_module filtering on all il_* deletes
+3. **Fix il_reflections Mongoose model** — change visibility default from "private" to "shared"
+4. **CWG consciousness profile + personal history migration** — move from cwg_user_profiles to il_consciousness_profiles and il_personal_histories
+5. **Run CWG journal migration script** — copy existing cwg_journal_entries to il_reflections
+6. **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile shows, personal history shows
+7. **Chrome verification** — test all changes live after Coolify redeploy
+8. Per-app standards improvements
+9. LazyChef SSO migration
+
+### Key architecture decisions confirmed in Session 17:
+- **Identity data is always shared** — consciousness profile and personal history have no per-module toggle. They are singleton documents at IL level.
+- **Module activity data has per-module sharing toggle** — default ON, retroactive (Option B: when toggled ON, past data becomes visible to other modules)
+- **GDPR app-level deletion filters by source_module** — CWG delete only removes `source_module: "cwg"` entries from il_reflections, il_check_ins, il_user_memories, il_activity_feed. Does NOT delete singleton identity docs (consciousness profile, personal history).
+- **il_reflections visibility default = "shared"** — the Mongoose model currently defaults to "private", which contradicts the decision. Must be fixed.
+- **Dashboard access requires any IL module subscription** — not a separate product. `category_access: "innerlab"` or any `product_pass` for an IL module.
+- **Nexus = marketplace** for spiritual practitioners (not a social network)
+- **FlowState il_* integration deferred** — FlowState currently writes zero shared data. Will be addressed separately from CWG refactor.
 
 ---
 
@@ -74,23 +131,29 @@
 3. **CWG merge test → main** — requires passphrase (do AFTER CWG refactor is complete)
 4. **Confirm BreathArc removal** — ~mid-April 2026
 
-### For next session (Session 17):
-1. **Re-discuss shared data architecture** — owner wants to confirm understanding of: same data different views, where data lives, how modules read/write from il_* collections, mobile app implications
-2. **CWG refactor** — finish remaining 11 files that reference cwg_journal_entries
-3. **CWG consciousness profile + personal history migration** — move from cwg_user_profiles to il_consciousness_profiles and il_personal_histories. Keep CWG frontend UI, rewire backend to read/write from il_* collections.
-4. **Run CWG journal migration script** — copy existing cwg_journal_entries to il_reflections
-5. **Verify Inner Lab** — confirm Journal page shows CWG data, consciousness profile shows, personal history shows
-6. **Chrome verification** — test all 8 new Inner Lab dashboard pages live after Coolify redeploy
-7. Per-app standards improvements
-8. LazyChef SSO migration
+### For next session (Session 17) — COMPLETED: architecture review done, items 2-8 deferred to Session 18:
+1. ~~**Re-discuss shared data architecture**~~ — **DONE** (14 architecture decisions confirmed)
+2. **CWG refactor** — finish remaining 11 files (deferred to Session 18)
+3. **CWG consciousness profile + personal history migration** — deferred to Session 18
+4. **Run CWG journal migration script** — deferred to Session 18
+5. **Verify Inner Lab** — deferred to Session 18
+6. **Chrome verification** — deferred to Session 18
+7. Per-app standards improvements — deferred
+8. LazyChef SSO migration — deferred
 
-### Key architecture decisions to confirm at start of Session 17:
-- **il_reflections is the ONLY journal store** — no module-local journal collections
-- **Module-specific fields are first-class schema fields** on il_reflections (mood, symbols, emotions, etc.), NOT metadata
-- **Same data, different views** — CWG shows entries with mood words + guide context; Inner Lab shows them plain. Both read from il_reflections.
-- **Data lives at Inner Lab level, UI can exist in multiple places** — Inner Lab, CWG, DreamLens all can show My Story / Consciousness Profile / Journal. First write wins. All read from the same il_* collections.
-- **Mobile-ready** — standalone apps collect data locally if no Inner Lab, sync to il_* when connected. Not built yet but architecture supports it.
-- **CWG keeps its frontend** for My Story and Consciousness Profile — just rewires backend to read/write from il_* instead of cwg_user_profiles
+### Key architecture decisions confirmed in Session 17:
+- **il_reflections is the ONLY journal store** — no module-local journal collections (CONFIRMED)
+- **Module-specific fields are first-class schema fields** on il_reflections (mood, symbols, emotions, etc.), NOT metadata (CONFIRMED)
+- **Same data, different views** — CWG shows entries with mood words + guide context; Inner Lab shows them plain. Both read from il_reflections. (CONFIRMED)
+- **Data lives at Inner Lab level, UI can exist in multiple places** — Inner Lab, CWG, DreamLens all can show My Story / Consciousness Profile / Journal. First write wins. All read from the same il_* collections. (CONFIRMED)
+- **Mobile-ready** — standalone apps collect data locally if no Inner Lab, sync to il_* when connected. Not built yet but architecture supports it. (CONFIRMED)
+- **CWG keeps its frontend** for My Story and Consciousness Profile — just rewires backend to read/write from il_* instead of cwg_user_profiles (CONFIRMED)
+- **NEW: Identity data always shared** — consciousness profile + personal history have no per-module toggle
+- **NEW: Module activity data has sharing toggle** — default ON, retroactive Option B
+- **NEW: GDPR app-level filters by source_module** — don't delete singleton identity docs
+- **NEW: Dashboard access = any IL module subscription** — not a separate product
+- **NEW: Nexus = marketplace** for spiritual practitioners
+- **NEW: il_reflections visibility default = "shared"** — code says "private", fix needed
 
 ---
 
@@ -458,9 +521,9 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 3. **Create Stripe products** — 6 products, 12 prices (see FUTURE_WORK_TODO.md for table)
 4. **Regenerate BTCPay API key** — current returns 403
 
-### Next Session (Session 16)
-5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13)
-6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13)
+### Next Session (Session 18)
+5. ~~CWG GDPR endpoint~~ — **Already implemented** (found Session 13) — **Session 17: bugs found** (missing il_reflections, no source_module filter)
+6. ~~FlowState GDPR endpoint~~ — **Already implemented** (found Session 13) — **Session 17: bugs found** (inconsistent user_id fields)
 7. ~~#21 Test coverage expansion (billing + entitlements)~~ — **DONE Session 13** (40 new tests)
 8. ~~Commit + push MBS test files and MBSPlatform doc updates~~ — **DONE Session 13**
 9. ~~LazyChef Sonner migration~~ — **Already done** (commit `21881ba`)
@@ -471,11 +534,15 @@ Upgraded JWT signing from HS256 (symmetric shared secret) to RS256 (asymmetric) 
 14. ~~TaskTracker Chrome verification~~ — **DONE Session 15** (8/8 standards PASS)
 15. ~~Brand doc gap analysis + FlowState brief~~ — **DONE Session 15**
 16. ~~Documentation consolidation (Marketing = single source of truth)~~ — **DONE Session 15**
-17. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
-18. CWG: merge `test` → `main` when ready
-19. Per-app standards improvements (response helpers, input validation, rate limiting)
-20. BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
-21. Consciousness DNS completion
+17. ~~Architecture review + shared data decisions~~ — **DONE Session 17** (14 decisions confirmed, bugs found, docs updated)
+18. **Fix CWG GDPR endpoint** — add il_reflections + il_activity_feed, add source_module filtering
+19. **Fix il_reflections visibility default** — change from "private" to "shared"
+20. **CWG refactor continuation** — finish remaining 11 files referencing cwg_journal_entries
+21. CWG: merge `test` → `main` when ready (after refactor + GDPR fix)
+22. More MBS Platform tests — admin, friends, promos, referrals (routes already analyzed, ready to write)
+23. Per-app standards improvements (response helpers, input validation, rate limiting)
+24. BrokenChain/MindHacker/FakeArtist SSO activation in Coolify
+25. Consciousness DNS completion
 
 ### Future (Requires Migration Work)
 15. LazyChef SSO migration — frontend must redirect to MBS Platform before `create_jwt_token` removal

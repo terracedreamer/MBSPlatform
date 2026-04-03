@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 2, 2026 (Session 15 — end of session)
+**Last Updated**: April 3, 2026 (Session 17 — end of session)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -116,15 +116,26 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] BreathArc provisionally removed (FlowState keeps yoga+breathwork+meditation)
 - [x] CWG partial refactor — journal_routes.py, journal_insights_routes.py, chat_routes.py refactored to il_reflections
 
-### Session 17 Items
+### Session 17 Completed (Architecture Review — No Code Changes)
+- [x] Full architecture review across CWG, Inner Lab, FlowState, MBS Platform codebases
+- [x] 14 architecture decisions confirmed (shared data, GDPR scoping, sharing toggle, dashboard access)
+- [x] Critical bugs documented: CWG GDPR missing collections + no source_module filter, FlowState zero il_* writes, FlowState GDPR user_id inconsistency, il_reflections visibility default wrong
+- [x] 10+ documentation files updated across Marketing/Architecture Docs, Innerlab, global rules, Incubator doc 28
+- [x] Created `Inner_Lab_GDPR_Deletion_Scoping.md` architecture doc
+
+### Session 18 Items
 - [ ] CWG refactor: finish remaining 11 files that reference cwg_journal_entries
+- [ ] Fix CWG GDPR endpoint: add il_reflections + il_activity_feed to deletion scope
+- [ ] Fix CWG GDPR endpoint: add source_module filtering on all il_* collection deletes
+- [x] Fix il_reflections Mongoose model: change visibility default from "private" to "shared" — **DONE Session 17**
+- [x] Add `visibility: "shared"` filter to Inner Lab dashboard Journal page queries — **DONE Session 17** (smart filtering: unified view shows shared only, module view shows all)
 - [ ] CWG: migrate consciousness profile + personal history ("My Story") to il_* collections
 - [ ] CWG: run migration script (cwg_journal_entries → il_reflections)
 - [ ] CWG: verify journal, consciousness, personal history all work from il_* collections
 - [ ] Inner Lab: verify Journal page shows CWG data after migration
 - [ ] Inner Lab: verify Consciousness page shows CWG data after migration
-- [ ] Chrome verification: test all new Inner Lab pages live after Coolify redeploy
-- [ ] CWG: merge `test` → `main` (after refactor is complete, requires passphrase)
+- [ ] Chrome verification: test all changes live after Coolify redeploy
+- [ ] CWG: merge `test` → `main` (after refactor + GDPR fix complete, requires passphrase)
 - [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
 - [ ] Consciousness DNS completion
 
@@ -138,6 +149,8 @@ Subscribe gating, product picker, CWG entitlements, friends consolidation, admin
 AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push notifications, real-time admin. See CHANGELOG.md Session 8.
 
 ### Future Work (Decided but Deferred)
+- [ ] FlowState il_* integration — FlowState currently writes zero data to il_* shared collections. Needs: check-ins, memories, reflections written to il_* with source_module "flowstate". (Found Session 17)
+- [ ] FlowState GDPR user_id fix — GDPR endpoint has inconsistent user_id fields (mix of userId vs user_id). Needs standardization. (Found Session 17)
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
 - [ ] Win-back offers — needs email + promo system working together

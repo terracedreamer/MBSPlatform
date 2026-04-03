@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 2, 2026 (Session 16 — end of session)
+**Last Updated**: April 3, 2026 (Session 17 — end of session)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -41,9 +41,14 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
-| CWG on `test` branch | Running on test, not main — intentional. Session 16: partial il_reflections refactor in progress (3/14 files done, 11 remaining). | Owner decision: finish refactor, then merge when ready |
+| CWG on `test` branch | Running on test, not main — intentional. Session 16: partial il_reflections refactor in progress (3/14 files done, 11 remaining). Session 17: architecture review confirmed approach, GDPR bugs found. | Owner decision: finish refactor + fix GDPR in Session 18, then merge when ready |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, mitigated with ErrorBoundary (root cause unknown) |
-| CWG → Inner Lab data migration | Journals, consciousness profile, personal history moving to il_* collections. Migration script written, not yet run. | Complete CWG refactor in Session 17, then run migration |
+| CWG → Inner Lab data migration | Journals, consciousness profile, personal history moving to il_* collections. Migration script written, not yet run. | Complete CWG refactor in Session 18, then run migration |
+| CWG GDPR missing collections | `DELETE /api/user-data` does not delete il_reflections or il_activity_feed entries | Add il_reflections + il_activity_feed to GDPR deletion scope (Session 18) |
+| CWG GDPR no source_module filter | il_* deletes do not filter by `source_module: "cwg"` — would delete other modules' shared data | Add source_module filtering on all il_* collection deletes (Session 18) |
+| FlowState zero il_* writes | FlowState writes no data to any il_* shared collections (no check-ins, memories, reflections) | FlowState il_* integration deferred — not blocking CWG work |
+| FlowState GDPR user_id inconsistency | FlowState GDPR endpoint has mix of `userId` and `user_id` field references | Fix user_id field consistency (deferred) |
+| il_reflections visibility default wrong | ✅ RESOLVED — Mongoose model default changed to "shared", route create fallback changed to "shared", GET route now defaults to visibility: "shared" for unified dashboard view (Session 17) | Fixed in Reflection.js + reflections.js |
 | TaskTracker VITE_PRODUCT_DOMAIN | ✅ RESOLVED — had `https://` prefix causing double protocol in redirect URL | Fixed Session 15 — removed prefix from Coolify build arg |
 
 ## What Exists (Live Products)
@@ -80,7 +85,10 @@ Both fixes confirmed working across all affected apps.
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
 - [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)
-- [ ] CWG journal migration to il_reflections — 11 files remaining (Session 17)
-- [ ] CWG consciousness profile + personal history migration to il_* — not started (Session 17)
+- [x] Session 17 architecture review — 14 decisions confirmed, critical bugs documented, 10+ docs updated (Session 17)
+- [ ] CWG GDPR fix — add il_reflections + il_activity_feed, add source_module filtering (Session 18)
+- [ ] il_reflections visibility default fix — change "private" to "shared" (Session 18)
+- [ ] CWG journal migration to il_reflections — 11 files remaining (Session 18)
+- [ ] CWG consciousness profile + personal history migration to il_* — not started (Session 18)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
