@@ -1,10 +1,46 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 3, 2026 (Session 17 — end of session)
+**Last Updated**: April 3, 2026 (Session 18)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 18 SUMMARY (April 3, 2026) — CWG il_reflections Migration + GDPR Fix
+
+### What was done this session:
+
+**CWG GDPR Endpoint Fixed** (commit `88b4e11` on CWG `test`)
+- Added `il_reflections` + `il_activity_feed` to deletion scope
+- Added `source_module: "cwg"` filter on all il_* deletes
+- Removed identity singletons from app-level deletion
+
+**CWG Journal Refactor Complete** (17 files, commit `88b4e11`)
+- All references to `cwg_journal_entries` replaced with `il_reflections` + `source_module: "cwg"` filter
+- `mood` and `include_in_profile` moved from `metadata.*` to first-class fields
+- Fixed 3 bugs: `metadata.mood` in journal_insights, `moods` typo in insights, `metadata.include_in_profile` in chat
+
+**Identity Data Sync** (commit `88b4e11`)
+- Personal history saves now sync to `il_personal_histories`
+- Created migration script for existing data (`migrate_identity_to_il.py`)
+
+### Pending — Owner Action:
+1. **Run migration scripts** — inside CWG Docker container on test backend
+2. **Chrome verify CWG test site** — after Coolify redeploy
+3. **Create Stripe products** — still pending from Session 9
+4. **Regenerate BTCPay API key** — still pending
+5. **CWG merge test → main** — after verification (requires passphrase)
+
+### For next session (Session 19):
+1. Run CWG migration scripts (journals + identity) — must verify data appears in il_reflections
+2. Chrome verify CWG test site — journal CRUD, insights, search, progress, wisdom book
+3. Chrome verify Inner Lab dashboard — journal entries, consciousness profile (needs IL entitlement)
+4. CWG merge test → main (with passphrase)
+5. Sharing toggle implementation
+6. Per-app standards improvements
+7. LazyChef SSO migration
 
 ---
 

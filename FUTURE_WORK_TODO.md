@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 3, 2026 (Session 17 — end of session)
+**Last Updated**: April 3, 2026 (Session 18)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -127,19 +127,23 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Fixed 14 stale architecture doc path references across all project CLAUDE.md files
 - [x] Cleaned up 26 OneDrive Nitro/MSI sync conflict files (all compared and verified safe to delete)
 
-### Session 18 Items
-- [ ] CWG refactor: finish remaining 11 files that reference cwg_journal_entries
-- [ ] Fix CWG GDPR endpoint: add il_reflections + il_activity_feed to deletion scope
-- [ ] Fix CWG GDPR endpoint: add source_module filtering on all il_* collection deletes
+### Session 18 Completed
+- [x] CWG refactor: all 17 backend files migrated from cwg_journal_entries to il_reflections — **DONE** (commit `88b4e11`)
+- [x] Fix CWG GDPR endpoint: il_reflections + il_activity_feed added, source_module filtering, singletons removed — **DONE**
 - [x] Fix il_reflections Mongoose model: change visibility default from "private" to "shared" — **DONE Session 17**
-- [x] Add `visibility: "shared"` filter to Inner Lab dashboard Journal page queries — **DONE Session 17** (smart filtering: unified view shows shared only, module view shows all)
-- [ ] CWG: migrate consciousness profile + personal history ("My Story") to il_* collections
-- [ ] CWG: run migration script (cwg_journal_entries → il_reflections)
+- [x] Add `visibility: "shared"` filter to Inner Lab dashboard Journal page queries — **DONE Session 17**
+- [x] CWG: mood/include_in_profile moved to first-class fields (not under metadata) — **DONE**
+- [x] CWG: personal history sync to il_personal_histories (dual-write) — **DONE**
+- [x] CWG: identity data migration script created (`scripts/migrate_identity_to_il.py`) — **DONE**
+- [x] Fixed journal_insights_routes.py metadata.mood bug, insights_routes.py moods typo, chat_routes.py metadata.include_in_profile — **DONE**
+
+### Session 18 Remaining / Session 19 Items
+- [ ] CWG: run migration scripts inside Docker container (`migrate_journals_to_il_reflections.py` + `migrate_identity_to_il.py`)
 - [ ] CWG: verify journal, consciousness, personal history all work from il_* collections
 - [ ] Inner Lab: verify Journal page shows CWG data after migration
 - [ ] Inner Lab: verify Consciousness page shows CWG data after migration
 - [ ] Chrome verification: test all changes live after Coolify redeploy
-- [ ] CWG: merge `test` → `main` (after refactor + GDPR fix complete, requires passphrase)
+- [ ] CWG: merge `test` → `main` (after verification complete, requires passphrase)
 - [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
 - [ ] Consciousness DNS completion
 
