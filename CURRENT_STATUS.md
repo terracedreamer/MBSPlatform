@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 4, 2026 (Session 19)
+**Last Updated**: April 4, 2026 (Session 20)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -39,10 +39,10 @@ This repo contains architecture decisions, migration plans, reference files, aud
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
-| RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
+| RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. Session 20: LazyChef SSO blocker resolved. | Dual-mode is the safe steady state. Phase 2 can proceed — LazyChef SSO migration done. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
 | CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. | Merge test → development when ready (requires passphrase + env var audit) |
-| CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, mitigated with ErrorBoundary (root cause unknown) |
+| ~~CWG Settings page crash~~ | ✅ RESOLVED Session 20 — Root cause: missing `Lock` icon import from lucide-react. React tried `new undefined()`. Fixed in commit `46113e4` on `test`. | Fixed |
 | ~~CWG → Inner Lab data migration~~ | ✅ RESOLVED Session 19 — Migration scripts run. Journals: 11 entries in il_reflections. Identity: 0 to migrate (dual-write handles future). | Done |
 | ~~CWG GDPR missing collections~~ | ✅ RESOLVED Session 18 — il_reflections + il_activity_feed added to deletion scope | Fixed in commit `88b4e11` |
 | ~~CWG GDPR no source_module filter~~ | ✅ RESOLVED Session 18 — all il_* deletes now filter by `source_module: "cwg"`, identity singletons removed from app-level deletion | Fixed in commit `88b4e11` |
@@ -56,7 +56,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Component | Status | Where |
 |-----------|--------|-------|
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
-| Inner Lab website + Middleware + Auth | **Deployed — Session 19: 11 dashboard pages (added birth-profile, sharing, dashboard nav), 14 il_* collections (added il_sharing_preferences), 15 route files (added sharing), 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
+| Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages (added consciousness assessment wizard, personal history questionnaire, my-story nav), OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
@@ -79,9 +79,9 @@ Both fixes confirmed working across all affected apps.
 - [x] RS256 JWT upgrade — all 15 services configured with keys, verified working (Session 11)
 - [x] CWG GDPR endpoint — implemented + fixed Session 18 (commit `88b4e11`). Now filters 6 il_* activity collections by `source_module: "cwg"`, excludes identity singletons.
 - [x] FlowState GDPR endpoint — already implemented in `index.js` (7 yoga_* collections). Docs were stale.
-- [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
-- [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
-- [x] Inner Lab platform interface — 11 dashboard pages, 15 route files, 14 il_* collections (Session 19: birth-profile page, sharing toggle, dashboard nav, response helpers, 33 tests)
+- [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. LazyChef SSO blocker resolved Session 20 — can proceed.
+- [x] LazyChef SSO migration — **DONE Session 20** (commit `2505f1b`). Dead local auth removed, SSO redirect verified via Chrome.
+- [x] Inner Lab platform interface — 13 dashboard pages, 15 route files, 14 il_* collections (Session 20: consciousness assessment wizard, personal history questionnaire, OG image, my-story nav)
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
 - [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)

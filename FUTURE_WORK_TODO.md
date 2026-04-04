@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 4, 2026 (Session 19)
+**Last Updated**: April 4, 2026 (Session 20)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -87,8 +87,8 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] RS256 Phase 2 attempted — HS256 fallback removed from all 15 apps
 - [x] Chrome verification found issues — Coolify hadn't redeployed some apps, LazyChef frontend needs SSO migration first
 - [x] **Reverted** — all 15 repos back to dual-mode (RS256 first, HS256 fallback)
-- [ ] RS256 Phase 2 (future) — requires: verify all Coolify services have redeployed, migrate LazyChef frontend to MBS SSO, Chrome-verify each app
-- [ ] LazyChef SSO migration — frontend still uses local auth routes; must redirect to MBS Platform before removing `create_jwt_token`
+- [ ] RS256 Phase 2 (future) — requires: verify all Coolify services have redeployed, Chrome-verify each app. LazyChef SSO blocker RESOLVED (Session 20).
+- [x] LazyChef SSO migration — **DONE Session 20** (commit `2505f1b`). Dead local auth removed, SSO redirect verified via Chrome.
 
 ### Session 13 — Completed
 - [x] #21 Test coverage expansion — billing.test.js (19 tests) + entitlements.test.js (21 tests) = 40 new tests. Total: 61.
@@ -155,12 +155,20 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] CWG: merge `test` → `development` (requires passphrase + env var audit, deferred)
 - [ ] Consciousness DNS completion
 
-### Session 20 Items
-- [ ] LazyChef SSO frontend migration — replace local login/signup with MBS Platform SSO redirect
-- [ ] Rich Consciousness Profile UI in Inner Lab — full 7-dimension assessment wizard
-- [ ] Rich Personal History (My Story) UI in Inner Lab — full guided questionnaire
-- [ ] Inner Lab OG image — 1200x630px via Canva
-- [ ] Per-app standards improvements (remaining projects)
+### Session 20 Completed (April 4, 2026)
+- [x] LazyChef SSO frontend migration — dead LoginPage/SignupPage deleted, backend local auth removed (~1,187 lines), create_jwt_token removed. Chrome verified SSO redirect. (commit `2505f1b`)
+- [x] Rich Consciousness Profile UI in Inner Lab — 12 archetypes, 16 questions, 7 dimensions, Quick/Full assessment wizard with type reveal (commit `0fd0420`)
+- [x] Rich Personal History (My Story) UI in Inner Lab — 8-section guided questionnaire, Quick (5) / Full (8) modes, section editor + view (commits `808c792`, `45ed8c0`)
+- [x] Inner Lab OG image — 1200x630 PNG via Canva MCP, dark theme with teal accents (commit `35b7b5f`)
+- [x] CWG Settings page crash fix — root cause: missing `Lock` icon import (commit `46113e4`)
+- [x] YogaGhost FUTURE_WORK_TODO.md — marked Session 19 il_activity_feed + GDPR items done (commit `ce6f4f2`)
+- [ ] Per-app standards improvements (remaining projects) — deferred to Session 21
+
+### Session 21 Items
+- [ ] RS256 Phase 2 — remove HS256 fallback from all 15 apps (LazyChef SSO blocker resolved)
+- [ ] Chrome-verify CWG Settings fix + Inner Lab consciousness/personal-history pages
+- [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
+- [ ] New Inner Lab modules (DreamLens or StarMap)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.

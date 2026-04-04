@@ -1,10 +1,80 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 4, 2026 (Session 19)
+**Last Updated**: April 4, 2026 (Session 20)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 20 SUMMARY (April 4, 2026) — LazyChef SSO, Consciousness Assessment, Personal History, OG Image, CWG Settings Fix
+
+### What was done this session:
+
+**LazyChef SSO Frontend Migration** (LazyChef commit `2505f1b` on `main`)
+- Deleted dead `LoginPage.jsx` and `SignupPage.jsx` (never imported — App.jsx already redirected to MBS Platform SSO)
+- Rewrote `auth_routes.py`: removed `/signup`, `/login`, `/google/*`, `/forgot-password`, `/reset-password` endpoints (~1,187 lines of dead code)
+- Removed `create_jwt_token` from `auth_service.py` (kept `verify_jwt_token` for RS256/HS256 dual-mode)
+- Kept: subscription endpoints, feature access, Stripe webhook
+- Updated `CLAUDE.md` to reflect SSO-only auth
+- Chrome-verified: `/login` correctly redirects to `magicbusstudios.com/auth/login?redirect=...`
+- **This unblocks RS256 Phase 2** — LazyChef was the last app with local auth
+
+**Rich Consciousness Profile UI** (Innerlab commits `0fd0420` on `main`)
+- Created `src/data/consciousnessAssessment.js` — 12 archetypes (4 seekings x 3 paths), 16 questions across 7 dimensions, full type profiles with strengths/growth edges/practices/journal prompts
+- Created `src/utils/consciousnessCalculator.js` — dimension scoring, composite score, consciousness level (1-7), multi-signal seeking/path inference (ported from CWG Python)
+- Rewrote `ConsciousnessPage.jsx` — 3-mode wizard: Quick (8q, ~3min) / Full (16q, ~10min) assessment with animated question cards, progress bar, type reveal with dimension bars
+- Assessment data saved to `il_consciousness_profiles.assessment_data`
+
+**Rich Personal History (My Story) UI** (Innerlab commits `808c792`, `45ed8c0` on `main`)
+- Created `PersonalHistoryPage.jsx` — guided questionnaire with Quick (5 sections, ~5min) and Full (8 sections, ~15min) modes
+- 8 sections: Family & Background, Major Life Events, Challenges & Growth, Spiritual Journey, Relationships, Current Situation, Values & Beliefs, Dreams & Aspirations
+- Section-by-section editor with progress tracking, completion indicators, view mode
+- Added route `/my-story` in `App.jsx` + "My Story" card in dashboard nav grid
+
+**Inner Lab OG Image** (Innerlab commit `35b7b5f` on `main`)
+- Generated via Canva MCP: dark background, "Inner Lab" in white, "Platform for Inner Growth" in teal, subtle abstract motif
+- Exported as 1200x630 PNG to `public/og-image.png` (64KB)
+- Phase 2 Definition of Done OG image item is now complete
+
+**CWG Settings Page Crash — ROOT CAUSE FOUND AND FIXED** (CWG commit `46113e4` on `test`)
+- Root cause: Missing `Lock` import from lucide-react in `SettingsNew.jsx`
+- Line 507 renders `<Lock />` but `Lock` was never imported — React tried `new undefined()` → "Illegal constructor" TypeError
+- Fix: Added `Lock` to the lucide-react import list (1 line change)
+- Confirmed via Chrome console: error no longer occurs after redeploy
+
+**YogaGhost FUTURE_WORK_TODO.md** (YogaGhost commit `ce6f4f2` on `dev`)
+- Marked 3 Session 19 items as done: il_activity_feed write, yoga_activity user_id verification, GDPR il_activity_feed deletion
+- Updated summary: 59/98 done (was 56/98)
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| LazyChef | main | `2505f1b` | SSO migration — remove dead local auth code |
+| Innerlab | main | `0fd0420` | Consciousness assessment wizard (12 archetypes) |
+| Innerlab | main | `808c792` | Personal History guided questionnaire |
+| Innerlab | main | `45ed8c0` | Dashboard nav: My Story card |
+| Innerlab | main | `35b7b5f` | OG image (1200x630 PNG) |
+| YogaGhost | dev | `ce6f4f2` | Mark Session 19 TODO items done |
+| CWG | test | `46113e4` | Fix Settings crash (missing Lock import) |
+
+### Pending — Owner Action:
+1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
+2. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
+3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
+4. **CWG merge test → development** — requires passphrase + env var audit
+5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
+6. **RS256 Phase 2** — LazyChef SSO blocker now resolved. Can proceed when ready.
+
+### For next session (Session 21):
+1. **RS256 Phase 2** — remove HS256 fallback from all 15 apps (LazyChef blocker resolved)
+2. **Chrome-verify CWG Settings fix** after Coolify redeploys test branch
+3. **Chrome-verify Inner Lab consciousness + personal history pages** after Coolify redeploys
+4. **Per-app standards improvements** — response helpers, input validation, rate limiting across remaining projects
+5. **Inner Lab dashboard data insights** — when enough data, cross-module insights page
+6. **New Inner Lab modules** — DreamLens or StarMap using `platform-instructions-for-new-modules/`
 
 ---
 
