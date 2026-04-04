@@ -215,4 +215,4 @@ Full audit reports in `audits/`:
 - [x] GDPR endpoints — all 15 apps confirmed implemented (Session 8 + Session 13 doc fix)
 - [x] RS256 JWT upgrade — dual-mode deployed to all 15 apps (Session 11)
 - [ ] RS256 Phase 2 — attempted and **reverted** (Session 12). All 15 apps back to dual-mode.
-- [ ] LazyChef self-issued auth — attempted and **reverted** (Session 12). Frontend needs SSO migration first.
+- [x] LazyChef self-issued auth — **RESOLVED Session 20.** SSO migration complete, `create_jwt_token` removed (commit `2505f1b`).
