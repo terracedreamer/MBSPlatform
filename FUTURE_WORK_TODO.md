@@ -162,13 +162,20 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Inner Lab OG image — 1200x630 PNG via Canva MCP, dark theme with teal accents (commit `35b7b5f`)
 - [x] CWG Settings page crash fix — root cause: missing `Lock` icon import (commit `46113e4`)
 - [x] YogaGhost FUTURE_WORK_TODO.md — marked Session 19 il_activity_feed + GDPR items done (commit `ce6f4f2`)
-- [ ] Per-app standards improvements (remaining projects) — deferred to Session 21
+- [x] CWG entitlement enforcement — Chrome-verified (admin access, 21 guides, profile API 200)
+- [x] Inner Lab RS256 auth — Chrome-verified (`GET /api/consciousness` returns 200 with JWT)
+- [x] Response helpers audit — all 15 apps compliant (11 Express + 4 FastAPI)
+- [x] Inner Lab OG/Twitter meta tags — added to index.html
+- [x] Inner Lab CLAUDE.md — updated with 13 dashboard pages, /consciousness + /my-story
+- [x] YogaGhost friends/invites — verified NOT orphaned (active social feature)
+- [x] Cleaned up 32 Nitro conflict files from Movie/ and Shopping/
 
 ### Session 21 Items
-- [ ] RS256 Phase 2 — remove HS256 fallback from all 15 apps (LazyChef SSO blocker resolved)
-- [ ] Chrome-verify CWG Settings fix + Inner Lab consciousness/personal-history pages
-- [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
-- [ ] New Inner Lab modules (DreamLens or StarMap)
+- [ ] Per-app test suites — most projects still missing (LazyChef + Tutor are gold standards)
+- [ ] Per-app input validation + rate limiting — check remaining projects
+- [ ] Review Codex-built Inner Lab modules (DreamLens, StarMap) when ready
+- [ ] FlowState full il_* integration — reflections, memories, check-ins (currently only activity feed)
+- [ ] RS256 Phase 2 — deferred by user decision, keep HS256 fallback for now
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -206,7 +213,8 @@ Full audit reports in `audits/`:
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
 - [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
 - [ ] Test suites — most projects still missing (LazyChef + Tutor are gold standards)
-- [ ] Per-app response helpers, input validation, rate limiting — see individual project TODOs
+- [x] Per-app response helpers — **ALL 15 APPS COMPLIANT** (Session 20 audit: 11 Express with extracted `responseHelpers.js`, 4 FastAPI with inline `{"success": True}` pattern)
+- [ ] Per-app input validation + rate limiting — see individual project TODOs
 
 ### Resolved Since Audit (Sessions 8-12)
 - [x] MBS P0 logger crash — Winston logger + gdprCascade fix (Session 8)

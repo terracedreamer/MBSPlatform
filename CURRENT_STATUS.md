@@ -40,7 +40,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. Session 20: LazyChef SSO blocker resolved. | Dual-mode is the safe steady state. Phase 2 can proceed — LazyChef SSO migration done. |
-| CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
+| CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). Session 20: Chrome-verified admin access works (21 guides, profile API 200). | Full enforcement testing needs non-admin test account |
 | CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. | Merge test → development when ready (requires passphrase + env var audit) |
 | ~~CWG Settings page crash~~ | ✅ RESOLVED Session 20 — Root cause: missing `Lock` icon import from lucide-react. React tried `new undefined()`. Fixed in commit `46113e4` on `test`. | Fixed |
 | ~~CWG → Inner Lab data migration~~ | ✅ RESOLVED Session 19 — Migration scripts run. Journals: 11 entries in il_reflections. Identity: 0 to migrate (dual-write handles future). | Done |

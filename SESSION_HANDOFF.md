@@ -44,9 +44,18 @@
 - Fix: Added `Lock` to the lucide-react import list (1 line change)
 - Confirmed via Chrome console: error no longer occurs after redeploy
 
-**YogaGhost FUTURE_WORK_TODO.md** (YogaGhost commit `ce6f4f2` on `dev`)
+**YogaGhost FUTURE_WORK_TODO.md** (YogaGhost commits `ce6f4f2`, `9ddccf5` on `dev`)
 - Marked 3 Session 19 items as done: il_activity_feed write, yoga_activity user_id verification, GDPR il_activity_feed deletion
-- Updated summary: 59/98 done (was 56/98)
+- Verified friends/invites collections are NOT orphaned — active in social feature (social.js + SocialPage.tsx)
+- Updated summary: 60/98 done (was 56/98)
+
+**Additional Quick Wins (end of session)**
+- Chrome-verified CWG entitlement enforcement (admin access, 21 guides, profile API 200)
+- Chrome-verified Inner Lab RS256 auth end-to-end (`GET /api/consciousness` returns 200 with JWT)
+- Response helpers audit: all 15 apps verified compliant (11 Express with extracted helpers, 4 FastAPI with inline pattern)
+- OG/Twitter meta tags added to Inner Lab `index.html` (og:title, og:description, og:image, twitter:card)
+- Inner Lab CLAUDE.md updated: 13 dashboard pages, /consciousness + /my-story descriptions, OG image done
+- Cleaned up 32 OneDrive Nitro conflict files from Movie/ and Shopping/ (all untracked)
 
 ### Per-repo commits this session:
 
@@ -57,8 +66,13 @@
 | Innerlab | main | `808c792` | Personal History guided questionnaire |
 | Innerlab | main | `45ed8c0` | Dashboard nav: My Story card |
 | Innerlab | main | `35b7b5f` | OG image (1200x630 PNG) |
+| Innerlab | main | `8f8fbf4` | Mark Session 20 items done in FUTURE_WORK_TODO |
+| Innerlab | main | `3bcbc6d` | OG/Twitter meta tags + docs update |
 | YogaGhost | dev | `ce6f4f2` | Mark Session 19 TODO items done |
+| YogaGhost | dev | `9ddccf5` | friends/invites verified not orphaned |
 | CWG | test | `46113e4` | Fix Settings crash (missing Lock import) |
+| MBSPlatform | main | `2df8465` | Session 20 doc updates |
+| MBSPlatform | main | `d78bd7c` | Mark LazyChef self-issued auth resolved |
 
 ### Pending — Owner Action:
 1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
@@ -66,15 +80,13 @@
 3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
 4. **CWG merge test → development** — requires passphrase + env var audit
 5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
-6. **RS256 Phase 2** — LazyChef SSO blocker now resolved. Can proceed when ready.
 
 ### For next session (Session 21):
-1. **RS256 Phase 2** — remove HS256 fallback from all 15 apps (LazyChef blocker resolved)
-2. **Chrome-verify CWG Settings fix** after Coolify redeploys test branch
-3. **Chrome-verify Inner Lab consciousness + personal history pages** after Coolify redeploys
-4. **Per-app standards improvements** — response helpers, input validation, rate limiting across remaining projects
-5. **Inner Lab dashboard data insights** — when enough data, cross-module insights page
-6. **New Inner Lab modules** — DreamLens or StarMap using `platform-instructions-for-new-modules/`
+1. **Per-app test suites** — most projects still missing (LazyChef + Tutor are gold standards)
+2. **Per-app input validation + rate limiting** — check remaining projects
+3. **Review Codex-built Inner Lab modules** — DreamLens, StarMap when ready
+4. **FlowState full il_* integration** — reflections, memories, check-ins (currently only activity feed)
+5. **RS256 Phase 2** — deferred by user decision, keep HS256 fallback for now
 
 ---
 
