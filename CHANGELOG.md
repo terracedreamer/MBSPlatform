@@ -1,5 +1,38 @@
 # CHANGELOG — MBS Platform
 
+## April 4, 2026 — Session 19: Migration Scripts, Birth Profile, Sharing Toggle, Bidirectional Sync, Standards
+
+### CWG Migration Scripts Run
+- Journal migration: 10 entries, all idempotent (already in il_reflections). Total: 11.
+- Identity migration: 0 profiles/histories (no structured data exists yet).
+
+### Inner Lab — New Features (6 commits on main)
+- **Birth Profile dashboard UI** (`08ab184`) — `/birth-profile` page with Nominatim geocoding
+- **Sharing toggle** (`2a4f20f`) — `il_sharing_preferences`, `/api/sharing`, `/sharing` page, GDPR updated to 14 collections
+- **Dashboard nav** (`c31ebce`) — Birth Profile + Sharing Settings cards
+- **Response helpers migration** (`295a962`) — all 14 route files use sendSuccess/sendError/sendNotFound/sendBadRequest
+- **Test suites** (`0f3f896`) — 29 new tests (33 total). Auth, validation, response format, token edge cases.
+- **FUTURE_WORK_TODO** (`6eb8f08`) — Session 19 items + rich Consciousness/My Story UI TODOs
+
+### CWG — Bidirectional Sync (1 commit on test)
+- **Read from il_* first** (`49803ba`) — profile GET, consciousness-type GET, and chat AI context now read identity data from il_* collections first, fall back to cwg_user_profiles
+
+### FlowState — il_activity_feed Integration (1 commit on dev)
+- **Activity feed writes** (`cc65a40`) — writes to il_activity_feed on session completion (yoga/breathwork/meditation). GDPR updated to delete il_activity_feed by source_module.
+- **GDPR user_id verified** — NOT a bug. yoga_activity uses `userId` consistently in both writes and deletes.
+
+### Codex Review
+- Doc 28 Round 4: DreamLens DB architecture confirmed (DB_NAME=inner_lab correct for all IL modules)
+- Architecture Summary for Codex added to doc 28
+- CODEX_REVIEW_GUIDE.md created in MBSPlatform with ready-to-use prompt
+
+### Documentation Updates
+- `env-standards.md` — DB naming table restructured (IL modules vs standalone products)
+- `innerlab-data.md` — il_* count updated to 14
+- CWG Prod B DB_NAME discrepancy flagged: still has `conversations_with_god` (will fix during test→dev merge)
+
+---
+
 ## April 2, 2026 — Session 15: Brand Docs + TaskTracker SSO Fix + Documentation Consolidation
 
 ### Brand Documentation Gap Analysis

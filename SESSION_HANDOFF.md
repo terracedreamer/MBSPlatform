@@ -1,10 +1,99 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 3, 2026 (Session 18)
+**Last Updated**: April 4, 2026 (Session 19)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 19 SUMMARY (April 4, 2026) — Migration Scripts, Birth Profile UI, Sharing Toggle, Bidirectional Sync, Standards
+
+### What was done this session:
+
+**CWG Migration Scripts Run** (Coolify terminal)
+- Journal migration: 10 entries in cwg_journal_entries, all 10 already in il_reflections (idempotent). Total: 11 CWG entries in il_reflections.
+- Identity migration: 0 consciousness profiles, 0 personal histories to migrate (no structured data exists yet). Dual-write handles future entries.
+
+**Chrome Verification — CWG + Inner Lab**
+- CWG (cwg.magicbusstudios.com): Reflections page loads, "Session 18 Test Entry" visible, all 3 API calls return 200
+- Inner Lab (innerlab.ai): Journal page shows CWG data with tags `Conversation`, `cwg`, `shared`
+- CWG Consciousness Map + My Story pages: all API calls return 200
+
+**Birth Profile Dashboard UI** (Innerlab commit `08ab184`)
+- `/birth-profile` page with date, time (precision selector), place (Nominatim geocoding for city/region/country/lat/lng/timezone), notes
+- API functions added to dashboardApi.js, route added to App.jsx
+- Chrome verified live at innerlab.ai/birth-profile
+
+**Sharing Toggle Implementation** (Innerlab commit `2a4f20f`)
+- `SharingPreference` model (`il_sharing_preferences` collection)
+- `GET/PUT /api/sharing` routes with bulk visibility update
+- `SharingSettingsPage` at `/sharing` with toggle UI for CWG + FlowState
+- GDPR cascade updated to 14 collections
+- Chrome verified live at innerlab.ai/sharing
+
+**CWG Bidirectional Sync** (CWG commit `49803ba` on `test`)
+- CWG now reads identity data from il_* collections first, falls back to cwg_user_profiles
+- Updated: GET /api/user/profile, GET /api/user/consciousness-type, chat AI context
+- Write paths unchanged (dual-write to both cwg_user_profiles and il_*)
+
+**Dashboard Nav Update** (Innerlab commit `c31ebce`)
+- Birth Profile (Star icon) + Sharing Settings (Shield icon) cards added to dashboard quick nav grid
+
+**Inner Lab Response Helpers Migration** (Innerlab commit `295a962`)
+- All 14 route files migrated to use sendSuccess, sendError, sendNotFound, sendBadRequest from server/utils/responseHelpers.js
+
+**Inner Lab Test Suites Expansion** (Innerlab commit `0f3f896`)
+- New routes.test.js with 29 tests (33 total with existing auth tests)
+- Covers: protected route auth, response format, input validation (check-ins, consciousness, personal history, birth profile, sharing, reflections, memories), token edge cases, public form routes
+
+**FlowState il_activity_feed Integration** (YogaGhost commit `cc65a40` on `dev`)
+- FlowState now writes to il_activity_feed on session completion (yoga, breathwork, meditation) with source_module "flowstate"
+- GDPR endpoint updated to delete il_activity_feed entries filtered by source_module
+
+**FlowState GDPR user_id Verified** — NOT a bug
+- yoga_activity uses `userId` (camelCase) in both writes and deletes — field names match. Style inconsistency only.
+
+**Codex Review — Doc 28 Round 4** (Innerlab Incubator)
+- DreamLens DB architecture: confirmed DB_NAME=inner_lab is correct for all IL modules
+- All DREAM-DB-PRIORITY-01 through 04 answered + full DreamLens question set
+- Added "Architecture Summary for Codex" section with consolidated data architecture reference
+- CWG DB_NAME discrepancy flagged: Dev B has `inner_lab`, Prod B has `conversations_with_god` (will be fixed during test→dev merge)
+
+**Documentation Updates**
+- `env-standards.md` — DB naming table restructured: IL modules (shared inner_lab) vs standalone products (own DBs)
+- `innerlab-data.md` — il_* count updated to 14 (added il_sharing_preferences)
+- `Innerlab/FUTURE_WORK_TODO.md` — Session 19 items, rich UI TODOs for consciousness + personal history
+- `MBSPlatform/CODEX_REVIEW_GUIDE.md` — new guide for running Codex architecture reviews
+- `Innerlab Incubator/docs/28-claude-response-log.md` — Round 4 + architecture summary for Codex
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| Innerlab | main | `08ab184` | Birth Profile dashboard page |
+| Innerlab | main | `2a4f20f` | Sharing toggle (model, routes, page, GDPR) |
+| Innerlab | main | `c31ebce` | Dashboard nav (birth + sharing cards) |
+| Innerlab | main | `6eb8f08` | FUTURE_WORK_TODO Session 19 + rich UI TODOs |
+| Innerlab | main | `295a962` | Response helpers migration (14 routes) |
+| Innerlab | main | `0f3f896` | Test suites expansion (33 tests) |
+| CWG | test | `49803ba` | Bidirectional sync (read identity from il_*) |
+| YogaGhost | dev | `cc65a40` | il_activity_feed integration + GDPR update |
+
+### Pending — Owner Action:
+1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
+2. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
+3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
+4. **CWG merge test → development** — requires passphrase + env var audit
+5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
+
+### For next session (Session 20):
+1. **LazyChef SSO frontend migration** — replace local login/signup with MBS Platform SSO redirect
+2. **Rich Consciousness Profile UI in Inner Lab** — full 7-dimension assessment wizard
+3. **Rich Personal History (My Story) UI in Inner Lab** — full guided questionnaire
+4. **Inner Lab OG image** — 1200x630px via Canva
+5. Per-app standards improvements (remaining projects)
 
 ---
 

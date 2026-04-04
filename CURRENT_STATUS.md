@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 3, 2026 (Session 18)
+**Last Updated**: April 4, 2026 (Session 19)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -41,13 +41,13 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. | Dual-mode is the safe steady state. Phase 2 needs LazyChef SSO migration first. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). | Verify on CWG test site |
-| CWG on `test` branch | Running on test, not main — intentional. Session 18: il_reflections refactor COMPLETE (all 17 files), GDPR endpoint FIXED, identity data sync added. Migration scripts still need to run. | Run migration scripts, verify, then merge test → main |
+| CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. | Merge test → development when ready (requires passphrase + env var audit) |
 | CWG Settings page crash | "Illegal constructor" TypeError on /settings | Pre-existing, mitigated with ErrorBoundary (root cause unknown) |
-| CWG → Inner Lab data migration | Journals, consciousness profile, personal history migration CODE complete. Migration scripts written but NOT YET RUN. | Run `migrate_journals_to_il_reflections.py` + `migrate_identity_to_il.py` inside Docker |
+| ~~CWG → Inner Lab data migration~~ | ✅ RESOLVED Session 19 — Migration scripts run. Journals: 11 entries in il_reflections. Identity: 0 to migrate (dual-write handles future). | Done |
 | ~~CWG GDPR missing collections~~ | ✅ RESOLVED Session 18 — il_reflections + il_activity_feed added to deletion scope | Fixed in commit `88b4e11` |
 | ~~CWG GDPR no source_module filter~~ | ✅ RESOLVED Session 18 — all il_* deletes now filter by `source_module: "cwg"`, identity singletons removed from app-level deletion | Fixed in commit `88b4e11` |
-| FlowState zero il_* writes | FlowState writes no data to any il_* shared collections (no check-ins, memories, reflections) | FlowState il_* integration deferred — not blocking CWG work |
-| FlowState GDPR user_id inconsistency | FlowState GDPR endpoint has mix of `userId` and `user_id` field references | Fix user_id field consistency (deferred) |
+| ~~FlowState zero il_* writes~~ | ✅ RESOLVED Session 19 — FlowState now writes to il_activity_feed on session completion (commit `cc65a40` on dev) | Done |
+| ~~FlowState GDPR user_id inconsistency~~ | ✅ RESOLVED Session 19 — Verified NOT a bug. yoga_activity uses `userId` in both writes and deletes (field names match). Style inconsistency only. GDPR also updated to delete il_activity_feed entries. | Done |
 | il_reflections visibility default wrong | ✅ RESOLVED — Mongoose model default changed to "shared", route create fallback changed to "shared", GET route now defaults to visibility: "shared" for unified dashboard view (Session 17) | Fixed in Reflection.js + reflections.js |
 | TaskTracker VITE_PRODUCT_DOMAIN | ✅ RESOLVED — had `https://` prefix causing double protocol in redirect URL | Fixed Session 15 — removed prefix from Coolify build arg |
 
@@ -56,7 +56,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Component | Status | Where |
 |-----------|--------|-------|
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
-| Inner Lab website + Middleware + Auth | **Deployed — Session 18: 8 dashboard pages, 13 il_* collections (added il_birth_profiles), 13 route files, full Journal + notifications + wellness** | innerlab.ai / api.innerlab.ai |
+| Inner Lab website + Middleware + Auth | **Deployed — Session 19: 11 dashboard pages (added birth-profile, sharing, dashboard nav), 14 il_* collections (added il_sharing_preferences), 15 route files (added sharing), 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
@@ -81,7 +81,7 @@ Both fixes confirmed working across all affected apps.
 - [x] FlowState GDPR endpoint — already implemented in `index.js` (7 yoga_* collections). Docs were stale.
 - [ ] RS256 Phase 2 — attempted Session 12, **reverted**. All 15 apps back to dual-mode. Needs LazyChef SSO migration first.
 - [ ] LazyChef SSO migration — frontend still uses local auth routes. Must migrate before removing `create_jwt_token`.
-- [x] Inner Lab platform interface — 8 dashboard pages, 13 route files, 13 il_* collections (Session 16 + Session 18 il_birth_profiles)
+- [x] Inner Lab platform interface — 11 dashboard pages, 15 route files, 14 il_* collections (Session 19: birth-profile page, sharing toggle, dashboard nav, response helpers, 33 tests)
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
 - [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)
@@ -90,6 +90,10 @@ Both fixes confirmed working across all affected apps.
 - [x] il_reflections visibility default fix — changed to "shared" + smart GET filtering (Session 17, commit `117d99b`)
 - [x] CWG journal migration to il_reflections — all 17 files refactored (Session 18, commit `88b4e11`)
 - [x] CWG consciousness profile + personal history sync to il_* — dual-write added (Session 18, commit `88b4e11`)
-- [ ] CWG migration scripts — `migrate_journals_to_il_reflections.py` + `migrate_identity_to_il.py` not yet run
+- [x] CWG migration scripts — run Session 19. Journals: 11 in il_reflections. Identity: 0 to migrate (dual-write handles future).
+- [x] CWG bidirectional sync — CWG reads identity from il_* first, falls back to cwg_user_profiles (Session 19, commit `49803ba`)
+- [x] FlowState il_activity_feed — writes on session completion with source_module "flowstate" (Session 19, commit `cc65a40`)
+- [x] Inner Lab response helpers — all 14 routes migrated (Session 19, commit `295a962`)
+- [x] Inner Lab tests — 33 tests across 2 suites (Session 19, commit `0f3f896`)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

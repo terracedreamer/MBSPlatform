@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 3, 2026 (Session 18)
+**Last Updated**: April 4, 2026 (Session 19)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -137,15 +137,30 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] CWG: identity data migration script created (`scripts/migrate_identity_to_il.py`) — **DONE**
 - [x] Fixed journal_insights_routes.py metadata.mood bug, insights_routes.py moods typo, chat_routes.py metadata.include_in_profile — **DONE**
 
-### Session 18 Remaining / Session 19 Items
-- [ ] CWG: run migration scripts inside Docker container (`migrate_journals_to_il_reflections.py` + `migrate_identity_to_il.py`)
-- [ ] CWG: verify journal, consciousness, personal history all work from il_* collections
-- [ ] Inner Lab: verify Journal page shows CWG data after migration
-- [ ] Inner Lab: verify Consciousness page shows CWG data after migration
-- [ ] Chrome verification: test all changes live after Coolify redeploy
-- [ ] CWG: merge `test` → `main` (after verification complete, requires passphrase)
-- [ ] Per-app standards improvements (response helpers, input validation, rate limiting)
+### Session 19 Completed (April 4, 2026)
+- [x] CWG: run migration scripts — journals (11 in il_reflections), identity (0 to migrate)
+- [x] CWG: verify journal, consciousness, personal history — all API calls 200
+- [x] Inner Lab: verify Journal page shows CWG data — confirmed via Chrome
+- [x] Inner Lab: Birth Profile dashboard UI — live at innerlab.ai/birth-profile
+- [x] Inner Lab: Sharing toggle — model, routes, page, GDPR (14 collections)
+- [x] Inner Lab: Dashboard nav — Birth Profile + Sharing cards
+- [x] Inner Lab: Response helpers migration — all 14 route files
+- [x] Inner Lab: Test suites — 33 tests across 2 suites
+- [x] CWG: Bidirectional sync — reads identity from il_* first
+- [x] FlowState: il_activity_feed integration — writes on session completion
+- [x] FlowState: GDPR user_id verified — NOT a bug
+- [x] Codex review — DreamLens DB confirmed, architecture summary for Codex
+- [x] env-standards.md — DB naming table restructured
+- [x] Codex Review Guide — created CODEX_REVIEW_GUIDE.md
+- [ ] CWG: merge `test` → `development` (requires passphrase + env var audit, deferred)
 - [ ] Consciousness DNS completion
+
+### Session 20 Items
+- [ ] LazyChef SSO frontend migration — replace local login/signup with MBS Platform SSO redirect
+- [ ] Rich Consciousness Profile UI in Inner Lab — full 7-dimension assessment wizard
+- [ ] Rich Personal History (My Story) UI in Inner Lab — full guided questionnaire
+- [ ] Inner Lab OG image — 1200x630px via Canva
+- [ ] Per-app standards improvements (remaining projects)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -157,8 +172,8 @@ Subscribe gating, product picker, CWG entitlements, friends consolidation, admin
 AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push notifications, real-time admin. See CHANGELOG.md Session 8.
 
 ### Future Work (Decided but Deferred)
-- [ ] FlowState il_* integration — FlowState currently writes zero data to il_* shared collections. Needs: check-ins, memories, reflections written to il_* with source_module "flowstate". (Found Session 17)
-- [ ] FlowState GDPR user_id fix — GDPR endpoint has inconsistent user_id fields (mix of userId vs user_id). Needs standardization. (Found Session 17)
+- [x] FlowState il_* integration — **DONE Session 19.** FlowState now writes to il_activity_feed on session completion (commit `cc65a40` on dev). Full il_* integration (reflections, memories, check-ins) still deferred.
+- [x] FlowState GDPR user_id fix — **RESOLVED Session 19.** Verified NOT a bug — yoga_activity uses `userId` consistently in writes and deletes. GDPR also updated to delete il_activity_feed by source_module.
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
 - [ ] Win-back offers — needs email + promo system working together
