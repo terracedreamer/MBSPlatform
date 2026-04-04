@@ -1,10 +1,76 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 4, 2026 (Session 20)
+**Last Updated**: April 4, 2026 (Session 21)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 21 SUMMARY (April 4, 2026) — Test Suites, DreamLens Review, Architecture Evolution, FlowState il_* Integration
+
+### What was done this session:
+
+**Per-App Test Suites — 3 Projects** (Priority 1)
+- MoviePicker: 78 tests across 2 files (new) — auth, watchlist CRUD, movie routes, GDPR, validation (commit `0d0f0fc` on `main`)
+- SmartCart: 29 tests (expanded from 3) — auth, list CRUD, items, AI, user profile, GDPR, validation (commit `37bdb7e` on `main`)
+- BrokenChain: 33 tests (expanded from 3) — auth, rooms, games, users, GDPR, upload, legacy redirects, rate limiter (commit `aa066d9` on `main`)
+
+**Input Validation + Rate Limiting Audit** (Priority 2)
+- All 3 projects already have express-validator and express-rate-limit. No changes needed.
+
+**DreamLens Codex Review** (Priority 3)
+- Full architecture review against Inner Lab module standards (15 checkpoints)
+- 12 things DreamLens got right (createApp factory, Zod env, TypeScript, asyncHandler, correct il_* integration)
+- 5 violations found: pino instead of Winston, rate limiting not wired, no express-validator, dream_preferences missing from GDPR, no test suite
+- 1 informational: native MongoDB driver instead of Mongoose (valid choice, not a violation)
+- Created `CODEX_FEEDBACK_DREAMLENS.md` with full report
+- Appended Round 5 to Incubator doc 28 (`28-claude-response-log.md`)
+
+**Architecture Evolution Standards** (from DreamLens learnings)
+- Created `~/.claude/rules/architecture-evolution.md` — two-tier standard (Current for existing apps, Next-Gen for new builds)
+- Updated all 3 bootstrap skills (innerlab, arcade, studioworks) with next-gen patterns
+- Updated global CLAUDE.md with explicit rules: new apps MUST use next-gen patterns, existing apps exempt from audit
+- Updated `CODEX_REVIEW_GUIDE.md` with Codex Feedback Documents section
+
+**FlowState il_* Integration** (Priority 4)
+- Added `il_check_ins` write on session completion — auto-generated with type, duration, score, pose/technique name (commit `e8a3c79` on `dev`)
+- Added `il_user_wellness_profiles` write on profile push — syncs health conditions, injuries, goals (commit `e8a3c79` on `dev`)
+- Updated GDPR endpoint: 10 collections total (7 yoga_* + 3 il_*)
+- Updated CLAUDE.md + FUTURE_WORK_TODO.md (commit `3aec5e5` on `dev`)
+- FlowState now writes to 3 il_* collections (up from 1)
+
+**Documentation Updates**
+- Updated `~/.claude/rules/innerlab-data.md` with FlowState + DreamLens current module status
+- Cleaned BrokenChain Nitro conflict file (`auth.test-Nitro.js`)
+- Removed stale MoviePicker `tests/auth.test.js` (superseded by `__tests__/`)
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| SmartCart (Shopping) | main | `37bdb7e` | Test suite: 3 → 29 tests |
+| MoviePicker (Movie) | main | `0d0f0fc` | Test suite: 0 → 78 tests (2 files) |
+| BrokenChain | main | `aa066d9` | Test suite: 3 → 33 tests |
+| YogaGhost | dev | `e8a3c79` | il_check_ins + il_user_wellness_profiles + GDPR |
+| YogaGhost | dev | `3aec5e5` | Docs update for il_* integration |
+| MBSPlatform | main | (this commit) | Session 21 docs + CODEX_FEEDBACK_DREAMLENS.md |
+| Innerlab Incubator | main | (doc 28 edit) | Round 5: DreamLens code review |
+
+### Pending — Owner Action:
+1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
+2. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
+3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
+4. **CWG merge test → development** — requires passphrase + env var audit
+5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
+6. **Share CODEX_FEEDBACK_DREAMLENS.md with Codex** — DreamLens violations + systemic standards for future modules
+
+### For next session (Session 22):
+1. **End-to-end test of Inner Lab consciousness assessment** — Chrome test on innerlab.ai/consciousness
+2. **DreamLens fixes by Codex** — Review after Codex addresses V1-V5 from feedback doc
+3. **Redeploy FlowState dev** — Coolify redeploy for il_check_ins + il_user_wellness_profiles to go live
+4. **RS256 Phase 2** — deferred by user decision, keep HS256 fallback for now
 
 ---
 

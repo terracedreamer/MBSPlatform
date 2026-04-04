@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 4, 2026 (Session 20)
+**Last Updated**: April 4, 2026 (Session 21)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -170,12 +170,19 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] YogaGhost friends/invites — verified NOT orphaned (active social feature)
 - [x] Cleaned up 32 Nitro conflict files from Movie/ and Shopping/
 
-### Session 21 Items
-- [ ] Per-app test suites — most projects still missing (LazyChef + Tutor are gold standards)
-- [ ] Per-app input validation + rate limiting — check remaining projects
-- [ ] Review Codex-built Inner Lab modules (DreamLens, StarMap) when ready
-- [ ] FlowState full il_* integration — reflections, memories, check-ins (currently only activity feed)
+### Session 21 Completed (April 4, 2026)
+- [x] Per-app test suites — MoviePicker (78 tests), SmartCart (29 tests), BrokenChain (33 tests). All passing.
+- [x] Per-app input validation + rate limiting audit — all 3 projects already compliant (express-validator + express-rate-limit)
+- [x] DreamLens Codex review — 5 violations found, feedback in doc 28 Round 5 + `CODEX_FEEDBACK_DREAMLENS.md`
+- [x] Architecture evolution standards — `architecture-evolution.md` rules file, 3 bootstrap skills updated, global CLAUDE.md updated
+- [x] FlowState il_* integration — il_check_ins + il_user_wellness_profiles added (commit `e8a3c79`). GDPR updated to 10 collections. FlowState now writes 3 il_* collections.
 - [ ] RS256 Phase 2 — deferred by user decision, keep HS256 fallback for now
+
+### Session 22 Items
+- [ ] End-to-end test of Inner Lab consciousness assessment via Chrome
+- [ ] DreamLens Codex fixes — review after Codex addresses V1-V5
+- [ ] Redeploy FlowState dev — for il_check_ins + il_user_wellness_profiles to go live
+- [ ] More test suites — FlowState, CWG, and remaining apps still need tests
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -187,7 +194,7 @@ Subscribe gating, product picker, CWG entitlements, friends consolidation, admin
 AuthContext, ProtectedRoute, profile editing, notifications, feature flags, activity feed, analytics, onboarding, push notifications, real-time admin. See CHANGELOG.md Session 8.
 
 ### Future Work (Decided but Deferred)
-- [x] FlowState il_* integration — **DONE Session 19.** FlowState now writes to il_activity_feed on session completion (commit `cc65a40` on dev). Full il_* integration (reflections, memories, check-ins) still deferred.
+- [x] FlowState il_* integration — **DONE Sessions 19+21.** FlowState now writes to 3 il_* collections: il_activity_feed (S19 `cc65a40`), il_check_ins + il_user_wellness_profiles (S21 `e8a3c79`). Remaining: il_reflections (no journaling feature), il_user_memories (no AI insight extraction).
 - [x] FlowState GDPR user_id fix — **RESOLVED Session 19.** Verified NOT a bug — yoga_activity uses `userId` consistently in writes and deletes. GDPR also updated to delete il_activity_feed by source_module.
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
@@ -212,7 +219,7 @@ Full audit reports in `audits/`:
 - [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
 - [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
-- [ ] Test suites — most projects still missing (LazyChef + Tutor are gold standards)
+- [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: FlowState, CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker.
 - [x] Per-app response helpers — **ALL 15 APPS COMPLIANT** (Session 20 audit: 11 Express with extracted `responseHelpers.js`, 4 FastAPI with inline `{"success": True}` pattern)
 - [ ] Per-app input validation + rate limiting — see individual project TODOs
 

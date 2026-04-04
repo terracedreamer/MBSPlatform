@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 4, 2026 (Session 20)
+**Last Updated**: April 4, 2026 (Session 21)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -46,7 +46,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | ~~CWG → Inner Lab data migration~~ | ✅ RESOLVED Session 19 — Migration scripts run. Journals: 11 entries in il_reflections. Identity: 0 to migrate (dual-write handles future). | Done |
 | ~~CWG GDPR missing collections~~ | ✅ RESOLVED Session 18 — il_reflections + il_activity_feed added to deletion scope | Fixed in commit `88b4e11` |
 | ~~CWG GDPR no source_module filter~~ | ✅ RESOLVED Session 18 — all il_* deletes now filter by `source_module: "cwg"`, identity singletons removed from app-level deletion | Fixed in commit `88b4e11` |
-| ~~FlowState zero il_* writes~~ | ✅ RESOLVED Session 19 — FlowState now writes to il_activity_feed on session completion (commit `cc65a40` on dev) | Done |
+| ~~FlowState zero il_* writes~~ | ✅ RESOLVED Session 19+21 — FlowState now writes to 3 il_* collections: il_activity_feed (S19), il_check_ins + il_user_wellness_profiles (S21, commit `e8a3c79`) | Done |
 | ~~FlowState GDPR user_id inconsistency~~ | ✅ RESOLVED Session 19 — Verified NOT a bug. yoga_activity uses `userId` in both writes and deletes (field names match). Style inconsistency only. GDPR also updated to delete il_activity_feed entries. | Done |
 | il_reflections visibility default wrong | ✅ RESOLVED — Mongoose model default changed to "shared", route create fallback changed to "shared", GET route now defaults to visibility: "shared" for unified dashboard view (Session 17) | Fixed in Reflection.js + reflections.js |
 | TaskTracker VITE_PRODUCT_DOMAIN | ✅ RESOLVED — had `https://` prefix causing double protocol in redirect URL | Fixed Session 15 — removed prefix from Coolify build arg |
@@ -56,7 +56,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Component | Status | Where |
 |-----------|--------|-------|
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
-| Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages (added consciousness assessment wizard, personal history questionnaire, my-story nav), OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
+| Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
@@ -93,6 +93,10 @@ Both fixes confirmed working across all affected apps.
 - [x] CWG migration scripts — run Session 19. Journals: 11 in il_reflections. Identity: 0 to migrate (dual-write handles future).
 - [x] CWG bidirectional sync — CWG reads identity from il_* first, falls back to cwg_user_profiles (Session 19, commit `49803ba`)
 - [x] FlowState il_activity_feed — writes on session completion with source_module "flowstate" (Session 19, commit `cc65a40`)
+- [x] FlowState il_check_ins + il_user_wellness_profiles — auto check-in on session save, wellness sync on profile push (Session 21, commit `e8a3c79`)
+- [x] Per-app test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) all passing (Session 21)
+- [x] DreamLens Codex review — 5 violations documented, feedback in doc 28 Round 5, `CODEX_FEEDBACK_DREAMLENS.md` created (Session 21)
+- [x] Architecture evolution standards — `architecture-evolution.md` rules file, bootstrap skills updated, global CLAUDE.md updated (Session 21)
 - [x] Inner Lab response helpers — all 14 routes migrated (Session 19, commit `295a962`)
 - [x] Inner Lab tests — 33 tests across 2 suites (Session 19, commit `0f3f896`)
 - [ ] Stripe bundle price IDs created in Dashboard
