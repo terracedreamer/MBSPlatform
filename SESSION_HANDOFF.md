@@ -1,10 +1,69 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 4, 2026 (Session 21)
+**Last Updated**: April 5, 2026 (Session 22)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 22 SUMMARY (April 5, 2026) — Consciousness E2E, FlowState Redeploy, DreamLens Review, FlowState Tests
+
+### What was done this session:
+
+**Priority 1: Inner Lab Consciousness Assessment E2E Test — PASS**
+- Completed Quick Assessment (8 questions) via Chrome on innerlab.ai/consciousness
+- Archetype result: "The Quiet Sage" (Seeking: Wisdom, Path: Mind)
+- 7 dimension scores rendered: Awareness Depth 80, Values Complexity 70, Emotional Mastery 35, Spiritual Practice 30, Relational Wisdom 65, Purpose Alignment 50, Integration Level 50
+- Composite Score: 55.3/100
+- Verified data saved to `il_consciousness_profiles.assessment_data` via API call
+- Results page showed: strengths, growth edges, recommended practices, journal prompts, retake button, history count
+- Toast notification "Assessment complete!" confirmed
+
+**Priority 2: FlowState Dev Redeploy — DONE**
+- Redeployed Yoga D (yogadev.magicbusstudios.com) on Coolify from `dev` branch
+- Deployment succeeded: container healthy, DB connected, healthcheck passed
+- Commit `e8a3c79` (il_check_ins + il_user_wellness_profiles) now live on dev
+
+**Priority 3: DreamLens Codex Review — 4 of 5 Violations Fixed**
+- V1 (pino→Winston): **FIXED** — Winston in dependencies, `config/logger.ts` uses Winston
+- V2 (Rate limiting): **FIXED** — `express-rate-limit` wired in `app.ts` (apiLimiter) and `routes/api.ts` (aiLimiter)
+- V3 (express-validator): **NOT FIXED** — still not in dependencies, manual validation only
+- V4 (dream_preferences GDPR): **FIXED** — `dream-service.ts:384` deletes, `review-service.ts:168` exports
+- V5 (No tests): **FIXED** — `backend/test/app.test.ts` exists with vitest + supertest + mongodb-memory-server
+
+**Priority 4: dream-service.ts — EXISTS, no restoration needed**
+- File at `backend/src/services/dreams/dream-service.ts` confirmed present
+- OneDrive rehydrated or Codex restored it
+
+**Priority 5: FlowState Test Suite — 29 Tests, All Passing**
+- Created `server/tests/routes.test.js` — 26 tests covering health, auth guard, user sync push/pull, sessions, GDPR deletion, legacy device sync, rate limiting, response format
+- Fixed existing `auth.test.js` — accept 503 from requireDB in no-DB test environments
+- Added `export default app` to `server/index.js` for supertest import
+- Fixed Jest config: removed deprecated `extensionsToTreatAsEsm`, updated test command for Windows
+- Commit `795b322` on `dev`, pushed
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| YogaGhost | dev | `795b322` | Test suite: 3 → 29 tests + app export + jest config fix |
+| MBSPlatform | main | (this commit) | Session 22 docs |
+
+### Pending — Owner Action:
+1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
+2. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
+3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
+4. **CWG merge test → development** — requires passphrase + env var audit
+5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
+6. **Share CODEX_FEEDBACK_DREAMLENS.md with Codex** — V3 (express-validator) still open
+
+### For next session (Session 23):
+1. **More test suites** — CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker
+2. **DreamLens V3 follow-up** — express-validator still missing, notify Codex
+3. **FlowState merge dev → main** — when ready, redeploy Yoga P (production)
+4. **Consciousness assessment Full mode** — test 16-question flow end-to-end
 
 ---
 

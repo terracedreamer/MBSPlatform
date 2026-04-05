@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 4, 2026 (Session 21)
+**Last Updated**: April 5, 2026 (Session 22)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -178,11 +178,18 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] FlowState il_* integration — il_check_ins + il_user_wellness_profiles added (commit `e8a3c79`). GDPR updated to 10 collections. FlowState now writes 3 il_* collections.
 - [ ] RS256 Phase 2 — deferred by user decision, keep HS256 fallback for now
 
-### Session 22 Items
-- [ ] End-to-end test of Inner Lab consciousness assessment via Chrome
-- [ ] DreamLens Codex fixes — review after Codex addresses V1-V5
-- [ ] Redeploy FlowState dev — for il_check_ins + il_user_wellness_profiles to go live
-- [ ] More test suites — FlowState, CWG, and remaining apps still need tests
+### Session 22 Completed (April 5, 2026)
+- [x] End-to-end test of Inner Lab consciousness assessment via Chrome — PASS (Quick Assessment, "The Quiet Sage", data saved to il_consciousness_profiles.assessment_data)
+- [x] FlowState dev redeploy — Yoga D redeployed on Coolify, commit e8a3c79 live, container healthy
+- [x] DreamLens Codex review — 4/5 violations fixed (V1 Winston, V2 rate limiting, V4 GDPR, V5 tests). V3 express-validator still open.
+- [x] dream-service.ts — exists, no restoration needed
+- [x] FlowState test suite — 29 tests (3→29), commit `795b322` on `dev`
+
+### Session 23 Items
+- [ ] More test suites — CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker
+- [ ] DreamLens V3 follow-up — express-validator still missing
+- [ ] FlowState merge dev → main when ready
+- [ ] Consciousness assessment Full mode (16 questions) E2E test
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -219,7 +226,7 @@ Full audit reports in `audits/`:
 - [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
 - [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
-- [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: FlowState, CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker.
+- [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. FlowState (29) added Session 22. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker.
 - [x] Per-app response helpers — **ALL 15 APPS COMPLIANT** (Session 20 audit: 11 Express with extracted `responseHelpers.js`, 4 FastAPI with inline `{"success": True}` pattern)
 - [ ] Per-app input validation + rate limiting — see individual project TODOs
 

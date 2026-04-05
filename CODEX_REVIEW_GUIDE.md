@@ -174,24 +174,6 @@ Key architecture context (Session 19 updates):
 
 ---
 
-## Codex Feedback Documents
-
-When Claude Code reviews a Codex-built module, the findings go into a dedicated feedback document (not doc 28). These are actionable fix lists, not Q&A.
-
-| Module | Feedback Doc | Date |
-|--------|-------------|------|
-| DreamLens | `CODEX_FEEDBACK_DREAMLENS.md` | April 4, 2026 (Session 21) |
-
-Each feedback doc contains:
-- What the module got right (patterns to keep)
-- Violations with severity (systemic vs module-specific)
-- A checklist for future modules
-- Action items for Codex
-
-**Architecture evolution standards**: `~/.claude/rules/architecture-evolution.md` documents which patterns are "current standard" (existing apps) vs "next-gen standard" (new builds). Audits of existing apps should NOT flag absence of next-gen patterns.
-
----
-
 ## Tips for Running Reviews
 
 1. **Start from Desktop level** — the session needs access to multiple repo folders under `Codes/`

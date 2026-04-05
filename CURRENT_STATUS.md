@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 4, 2026 (Session 21)
+**Last Updated**: April 5, 2026 (Session 22)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -94,8 +94,8 @@ Both fixes confirmed working across all affected apps.
 - [x] CWG bidirectional sync — CWG reads identity from il_* first, falls back to cwg_user_profiles (Session 19, commit `49803ba`)
 - [x] FlowState il_activity_feed — writes on session completion with source_module "flowstate" (Session 19, commit `cc65a40`)
 - [x] FlowState il_check_ins + il_user_wellness_profiles — auto check-in on session save, wellness sync on profile push (Session 21, commit `e8a3c79`)
-- [x] Per-app test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) all passing (Session 21)
-- [x] DreamLens Codex review — 5 violations documented, feedback in doc 28 Round 5, `CODEX_FEEDBACK_DREAMLENS.md` created (Session 21)
+- [x] Per-app test suites — MoviePicker (78), SmartCart (29), BrokenChain (33), FlowState (29) all passing (Sessions 21-22)
+- [x] DreamLens Codex review — 5 violations documented (Session 21), 4 of 5 fixed by Codex (Session 22: V1 Winston, V2 rate limiting, V4 GDPR, V5 tests). V3 express-validator still open.
 - [x] Architecture evolution standards — `architecture-evolution.md` rules file, bootstrap skills updated, global CLAUDE.md updated (Session 21)
 - [x] Inner Lab response helpers — all 14 routes migrated (Session 19, commit `295a962`)
 - [x] Inner Lab tests — 33 tests across 2 suites (Session 19, commit `0f3f896`)
