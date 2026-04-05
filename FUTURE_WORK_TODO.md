@@ -179,17 +179,27 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] RS256 Phase 2 — deferred by user decision, keep HS256 fallback for now
 
 ### Session 22 Completed (April 5, 2026)
-- [x] End-to-end test of Inner Lab consciousness assessment via Chrome — PASS (Quick Assessment, "The Quiet Sage", data saved to il_consciousness_profiles.assessment_data)
-- [x] FlowState dev redeploy — Yoga D redeployed on Coolify, commit e8a3c79 live, container healthy
-- [x] DreamLens Codex review — 4/5 violations fixed (V1 Winston, V2 rate limiting, V4 GDPR, V5 tests). V3 express-validator still open.
+- [x] Inner Lab consciousness assessment E2E — PASS ("The Quiet Sage", data saved to il_consciousness_profiles.assessment_data)
+- [x] FlowState dev redeploy — Yoga D redeployed, container healthy
+- [x] FlowState dev → main merge — 5 commits fast-forward, pushed to origin
+- [x] FlowState production redeploy — Yoga P redeployed, il_* integration live on yoga.magicbusstudios.com
+- [x] DreamLens Codex review — 4/5 violations fixed (V1 Winston, V2 rate limiting, V4 GDPR, V5 tests). V3 express-validator open (uses Zod instead).
 - [x] dream-service.ts — exists, no restoration needed
-- [x] FlowState test suite — 29 tests (3→29), commit `795b322` on `dev`
+- [x] FlowState test suite — 29 tests (3→29), commit `795b322`
+- [x] MindHacker test suite — 32 tests, commit `9f1b0ae`
+- [x] Trivia Roast test suite — 41 tests
+- [x] TaskTracker test suite — 38 tests (mocked DB/Redis)
+- [x] CWG tests verified — 66 pre-existing (pytest + httpx), no work needed
+- [x] Inner Lab vision roadmap — 12 features (3 tiers) appended to Innerlab/FUTURE_WORK_TODO.md
+- [x] Inner Lab marketing brief — updated InnerLab_Product_Brief.md in Marketing/Brand Overview/
+- [x] Skipped test suites for Fake Artist, Whispering House, WildLens (user decision — low usage)
 
 ### Session 23 Items
-- [ ] More test suites — CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker
-- [ ] DreamLens V3 follow-up — express-validator still missing
-- [ ] FlowState merge dev → main when ready
+- [ ] Inner Lab Daily Briefing page (innerlab.ai/daily) — Tier 1 from vision roadmap
+- [ ] Cross-module "Continue with..." suggestions — post-action cards
+- [ ] Weekly Consciousness Review page (innerlab.ai/weekly)
 - [ ] Consciousness assessment Full mode (16 questions) E2E test
+- [ ] DreamLens V3 decision — accept Zod validation or require express-validator
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.

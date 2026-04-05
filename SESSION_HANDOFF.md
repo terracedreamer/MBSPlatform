@@ -8,11 +8,11 @@
 
 ---
 
-## SESSION 22 SUMMARY (April 5, 2026) — Consciousness E2E, FlowState Redeploy, DreamLens Review, FlowState Tests
+## SESSION 22 SUMMARY (April 5, 2026) — Consciousness E2E, FlowState Full Deploy, DreamLens Review, 4 Test Suites, Inner Lab Vision, Marketing Brief
 
 ### What was done this session:
 
-**Priority 1: Inner Lab Consciousness Assessment E2E Test — PASS**
+**1. Inner Lab Consciousness Assessment E2E Test — PASS**
 - Completed Quick Assessment (8 questions) via Chrome on innerlab.ai/consciousness
 - Archetype result: "The Quiet Sage" (Seeking: Wisdom, Path: Mind)
 - 7 dimension scores rendered: Awareness Depth 80, Values Complexity 70, Emotional Mastery 35, Spiritual Practice 30, Relational Wisdom 65, Purpose Alignment 50, Integration Level 50
@@ -21,39 +21,52 @@
 - Results page showed: strengths, growth edges, recommended practices, journal prompts, retake button, history count
 - Toast notification "Assessment complete!" confirmed
 
-**Priority 2: FlowState Dev Redeploy — DONE**
-- Redeployed Yoga D (yogadev.magicbusstudios.com) on Coolify from `dev` branch
-- Deployment succeeded: container healthy, DB connected, healthcheck passed
-- Commit `e8a3c79` (il_check_ins + il_user_wellness_profiles) now live on dev
+**2. FlowState Full Deploy (Dev + Production)**
+- Redeployed Yoga D (yogadev.magicbusstudios.com) on Coolify from `dev` branch — healthy
+- Merged FlowState `dev` → `main` (5 commits, fast-forward) — pushed to origin
+- Redeployed Yoga P (yoga.magicbusstudios.com) on Coolify from `main` branch — healthy
+- il_check_ins + il_user_wellness_profiles + il_activity_feed now live on PRODUCTION
 
-**Priority 3: DreamLens Codex Review — 4 of 5 Violations Fixed**
+**3. DreamLens Codex Review — 4 of 5 Violations Fixed**
 - V1 (pino→Winston): **FIXED** — Winston in dependencies, `config/logger.ts` uses Winston
 - V2 (Rate limiting): **FIXED** — `express-rate-limit` wired in `app.ts` (apiLimiter) and `routes/api.ts` (aiLimiter)
-- V3 (express-validator): **NOT FIXED** — still not in dependencies, manual validation only
+- V3 (express-validator): **NOT FIXED** — uses Zod-based custom validation (arguably equivalent for next-gen builds). Decision needed: accept as valid or require express-validator.
 - V4 (dream_preferences GDPR): **FIXED** — `dream-service.ts:384` deletes, `review-service.ts:168` exports
-- V5 (No tests): **FIXED** — `backend/test/app.test.ts` exists with vitest + supertest + mongodb-memory-server
+- V5 (No tests): **FIXED** — `backend/test/app.test.ts` (17KB) with vitest + supertest + mongodb-memory-server
 
-**Priority 4: dream-service.ts — EXISTS, no restoration needed**
-- File at `backend/src/services/dreams/dream-service.ts` confirmed present
-- OneDrive rehydrated or Codex restored it
+**4. dream-service.ts — EXISTS, no restoration needed**
 
-**Priority 5: Test Suites — 4 Apps, 140 New Tests**
-- FlowState: 29 tests (commit `795b322` on `dev`) — health, auth, sync, sessions, GDPR, legacy device, rate limiting
-- MindHacker: 32 tests (commit `9f1b0ae` on `main`) — health, auth, players, rooms, games, entitlements, GDPR, security headers
-- Trivia Roast: 41 tests (on `main`) — health, auth, chat, leaderboard, games, GDPR, 404 handling, response format
-- TaskTracker: 38 tests (on `main`) — health, auth (12 protected routes), GDPR, admin role protection, rate limiting, CORS, security headers
-- CWG: 66 tests already existed (pytest + httpx) — no work needed
+**5. Test Suites — 4 New Apps, 140 New Tests**
+- FlowState: 29 tests (commit `795b322`) — health, auth, sync, sessions, GDPR, legacy device, rate limiting
+- MindHacker: 32 tests (commit `9f1b0ae`) — health, auth, players, rooms, games, entitlements, GDPR, security headers
+- Trivia Roast: 41 tests — health, auth, chat, leaderboard, games, GDPR, 404, response format
+- TaskTracker: 38 tests — health, auth (12 protected routes), GDPR, admin role protection, rate limiting, CORS, security
+- CWG: 66 tests already existed (pytest + httpx) — verified, no work needed
 - **Ecosystem total: 12 of 15 apps now have test suites (548+ tests)**
+- Skipped: Fake Artist, Whispering House, WildLens — user decision (low usage apps)
+
+**6. Inner Lab Vision Roadmap — 12 Features Documented**
+- Appended full 3-tier roadmap to `Innerlab/FUTURE_WORK_TODO.md`
+- Tier 1 (4 items): Daily Briefing, cross-module journal prompts, Weekly Review, "Continue with..." suggestions
+- Tier 2 (4 items): Thread detection, consciousness evolution graph, practice recommendations, time-adaptive UI
+- Tier 3 (4 items): AI companion, community wisdom, Ritual Builder, growth milestones
+- North Star UX: Daily Rhythm (morning/midday/evening/night adaptive flow)
+
+**7. Inner Lab Marketing Brief — Updated**
+- Updated `Marketing/Brand Overview/InnerLab_Product_Brief.md` with positioning, differentiators, pricing, target audience, brand voice
+- Key message: "Your practices finally talk to each other"
 
 ### Per-repo commits this session:
 
 | Repo | Branch | Commits | Description |
 |------|--------|---------|-------------|
-| YogaGhost | dev | `795b322` | Test suite: 3 → 29 tests + app export + jest config fix |
+| YogaGhost | main (merged from dev) | `795b322` | Test suite (29), il_* integration, GDPR, docs |
 | MindHacker | main | `9f1b0ae` | Test suite: 32 tests + jest config fix |
 | TriviaRoast (Trivia) | main | (agent commit) | Test suite: 41 tests + package.json fix |
 | TaskTracker | main | (agent commit) | Test suite: 38 tests (mocked DB/Redis) |
-| MBSPlatform | main | (this commit) | Session 22 docs |
+| Innerlab | main | (agent commit) | FUTURE_WORK_TODO: 12-feature vision roadmap |
+| Marketing | (not git) | — | InnerLab_Product_Brief.md updated |
+| MBSPlatform | main | (this commit) | Session 22 final docs |
 
 ### Pending — Owner Action:
 1. **CWG Prod B DB_NAME** — change from `conversations_with_god` to `inner_lab` when merging test → development
@@ -61,13 +74,14 @@
 3. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
 4. **CWG merge test → development** — requires passphrase + env var audit
 5. **Confirm BreathArc removal** — pending since Session 16 (~mid-April 2026)
-6. **Share CODEX_FEEDBACK_DREAMLENS.md with Codex** — V3 (express-validator) still open
+6. **Share CODEX_FEEDBACK_DREAMLENS.md with Codex** — V3 decision needed (Zod vs express-validator)
 
 ### For next session (Session 23):
-1. **More test suites** — CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker
-2. **DreamLens V3 follow-up** — express-validator still missing, notify Codex
-3. **FlowState merge dev → main** — when ready, redeploy Yoga P (production)
+1. **Inner Lab Daily Briefing** — build innerlab.ai/daily page (Tier 1 from vision roadmap)
+2. **Cross-module "Continue with..." suggestions** — post-action cards in dashboard
+3. **Weekly Consciousness Review page** — innerlab.ai/weekly
 4. **Consciousness assessment Full mode** — test 16-question flow end-to-end
+5. **DreamLens V3 decision** — accept Zod validation or require express-validator
 
 ---
 

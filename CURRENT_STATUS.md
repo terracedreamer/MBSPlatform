@@ -58,7 +58,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
-| FlowState | **Migrated** — live on production | yoga.magicbusstudios.com |
+| FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
 | Studio Works tools (6) | **All 6 SSO migrated and deployed** | *.magicbusstudios.com |
 
