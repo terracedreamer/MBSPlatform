@@ -37,18 +37,22 @@
 - File at `backend/src/services/dreams/dream-service.ts` confirmed present
 - OneDrive rehydrated or Codex restored it
 
-**Priority 5: FlowState Test Suite — 29 Tests, All Passing**
-- Created `server/tests/routes.test.js` — 26 tests covering health, auth guard, user sync push/pull, sessions, GDPR deletion, legacy device sync, rate limiting, response format
-- Fixed existing `auth.test.js` — accept 503 from requireDB in no-DB test environments
-- Added `export default app` to `server/index.js` for supertest import
-- Fixed Jest config: removed deprecated `extensionsToTreatAsEsm`, updated test command for Windows
-- Commit `795b322` on `dev`, pushed
+**Priority 5: Test Suites — 4 Apps, 140 New Tests**
+- FlowState: 29 tests (commit `795b322` on `dev`) — health, auth, sync, sessions, GDPR, legacy device, rate limiting
+- MindHacker: 32 tests (commit `9f1b0ae` on `main`) — health, auth, players, rooms, games, entitlements, GDPR, security headers
+- Trivia Roast: 41 tests (on `main`) — health, auth, chat, leaderboard, games, GDPR, 404 handling, response format
+- TaskTracker: 38 tests (on `main`) — health, auth (12 protected routes), GDPR, admin role protection, rate limiting, CORS, security headers
+- CWG: 66 tests already existed (pytest + httpx) — no work needed
+- **Ecosystem total: 12 of 15 apps now have test suites (548+ tests)**
 
 ### Per-repo commits this session:
 
 | Repo | Branch | Commits | Description |
 |------|--------|---------|-------------|
 | YogaGhost | dev | `795b322` | Test suite: 3 → 29 tests + app export + jest config fix |
+| MindHacker | main | `9f1b0ae` | Test suite: 32 tests + jest config fix |
+| TriviaRoast (Trivia) | main | (agent commit) | Test suite: 41 tests + package.json fix |
+| TaskTracker | main | (agent commit) | Test suite: 38 tests (mocked DB/Redis) |
 | MBSPlatform | main | (this commit) | Session 22 docs |
 
 ### Pending — Owner Action:

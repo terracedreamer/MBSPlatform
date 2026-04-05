@@ -226,7 +226,7 @@ Full audit reports in `audits/`:
 - [x] LazyChef — react-hot-toast → Sonner migration (already completed, commit `21881ba`)
 - [x] WildLens — ToastContext → Sonner migration (orphaned files deleted Session 13, commit `dfcb726`)
 - [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
-- [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. FlowState (29) added Session 22. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: CWG, MindHacker, Trivia Roast, Fake Artist, Whispering House, WildLens, TaskTracker.
+- [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. FlowState (29), MindHacker (32), Trivia Roast (41), TaskTracker (38) added Session 22. CWG (66) already had tests. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: Fake Artist, Whispering House, WildLens (3 of 15).
 - [x] Per-app response helpers — **ALL 15 APPS COMPLIANT** (Session 20 audit: 11 Express with extracted `responseHelpers.js`, 4 FastAPI with inline `{"success": True}` pattern)
 - [ ] Per-app input validation + rate limiting — see individual project TODOs
 
