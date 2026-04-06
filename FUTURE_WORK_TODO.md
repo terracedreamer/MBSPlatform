@@ -51,6 +51,9 @@
 
 These items don't belong to any specific phase and can be done anytime:
 
+### Email — Centralized Digest System
+- [ ] **Centralize email digests at MBS Platform level** — Inner Lab currently runs its own weekly digest cron (node-cron, Mondays 9am UTC, SendGrid). Long-term, MBS Platform should orchestrate cross-product email digests from one place: Inner Lab weekly summary, Arcade activity, Studio Works usage, etc. Unified unsubscribe, email preference management, and SendGrid sender identity. Currently each product would need its own cron — centralizing avoids duplication and gives users one place to manage all email preferences.
+
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
 
