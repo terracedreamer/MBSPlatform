@@ -6,7 +6,7 @@
 
 ## You Are Building an Inner Lab Module
 
-You are building a module within the **Inner Lab** ecosystem — a unified system for inner growth by Magic Bus Studios. Your module is one of up to 11 modules that share a database and user context.
+You are building a module within the **Inner Lab** ecosystem — a unified system for inner growth by Magic Bus Studios. Your module is one of up to 12 modules that share a database and user context.
 
 **Your module does NOT handle:**
 - Login/authentication — the Inner Lab login page at innerlab.ai/auth/login handles this (which calls MBS Platform auth APIs)
@@ -59,14 +59,14 @@ You are building a module within the **Inner Lab** ecosystem — a unified syste
 ### Your Collections (you own these)
 Name all your collections with your module's prefix. Examples:
 ```
-breath_sessions          — BreathArc session data
-breath_tracks            — BreathArc saved tracks
-breath_preferences       — BreathArc user preferences
+bonds_connections        — Bonds relationship data
+bonds_reflections        — Bonds relationship reflections
+lifemap_chapters         — LifeMap life chapters
 astro_charts             — StarMap chart data
 astro_transits           — StarMap transit calculations
 ```
 
-**Choose a short prefix** (e.g., `breath_`, `astro_`, `tarot_`, `dream_`, `ritual_`, `quest_`, `nexus_`). Never use `cwg_`, `yoga_`, or `il_` — those are taken.
+**Choose a short prefix** (e.g., `bonds_`, `lifemap_`, `astro_`, `tarot_`, `dream_`, `ritual_`, `quest_`, `nexus_`). Never use `cwg_`, `yoga_`, or `il_` — those are taken.
 
 ### Shared Collections (owned by Inner Lab Middleware — you can read and contribute)
 ```
@@ -245,7 +245,8 @@ your-module/
 |--------|------|--------|--------|-------|
 | Conversations With God | `cwg` | `cwg_*` | Active | 56 collections, ~10 users, FastAPI (Python) |
 | FlowState | `flowstate` | `yoga_*` | Active | 7 collections, Express (Node.js) |
-| BreathArc | `breatharc` | `breath_*` | Coming Soon | |
+| Bonds | `bonds` | `bonds_*` | Coming Soon | Relationship mapping |
+| LifeMap | `lifemap` | `lifemap_*` | Coming Soon | Life timeline & chapters |
 | StarMap | `starmap` | `astro_*` | Coming Soon | |
 | AstroCompass | `astrocompass` | `astrocart_*` | Coming Soon | |
 | Arcana | `arcana` | `tarot_*` | Coming Soon | |

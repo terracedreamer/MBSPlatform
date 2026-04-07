@@ -228,8 +228,8 @@ The product's OWN backend enforces free tier limits (message caps, time caps) ba
 ## Product Catalog
 Store in config, NOT hardcoded:
 
-### Inner Lab (11 modules)
-`cwg`, `flowstate`, `breatharc`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus`
+### Inner Lab (12 modules)
+`cwg`, `flowstate`, `bonds`, `lifemap`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus`
 
 ### The Arcade (5 games)
 `brokenchain`, `mindhacker`, `triviaroast`, `whisperinghouse`, `fakeartist`

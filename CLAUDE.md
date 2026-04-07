@@ -110,8 +110,8 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 - `mbs_all_access` — access to everything
 
 ## Product Catalog
-### Inner Lab (11 modules)
-`cwg` (Active), `flowstate` (Active), `breatharc`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus` (all Coming Soon)
+### Inner Lab (12 modules)
+`cwg` (Active), `flowstate` (Active), `bonds`, `lifemap`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus` (all Coming Soon)
 
 ### The Arcade (5 games)
 `brokenchain`, `mindhacker`, `triviaroast`, `whisperinghouse`, `fakeartist`
