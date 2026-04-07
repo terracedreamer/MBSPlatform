@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 5, 2026 (Session 22)
+**Last Updated**: April 7, 2026 (Session 25)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -81,7 +81,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 
 ### Deferred to Future Session
 - [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, all Coolify env vars configured, verified working.
-- [x] #21 Test coverage expansion — billing + entitlements done (Session 13, 40 new tests). Frontend tests still pending.
+- [x] #21 Test coverage expansion — billing + entitlements done (Session 13, 40 new tests). Frontend tests: 19 tests added Session 25 (AuthContext, AuthButton, ProtectedRoute).
 
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
@@ -197,12 +197,24 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Inner Lab marketing brief — updated InnerLab_Product_Brief.md in Marketing/Brand Overview/
 - [x] Skipped test suites for Fake Artist, Whispering House, WildLens (user decision — low usage)
 
-### Session 23 Items
-- [ ] Inner Lab Daily Briefing page (innerlab.ai/daily) — Tier 1 from vision roadmap
-- [ ] Cross-module "Continue with..." suggestions — post-action cards
-- [ ] Weekly Consciousness Review page (innerlab.ai/weekly)
-- [ ] Consciousness assessment Full mode (16 questions) E2E test
-- [ ] DreamLens V3 decision — accept Zod validation or require express-validator
+### Session 23 Items (delegated to per-project agents)
+- [ ] Inner Lab Daily Briefing page (innerlab.ai/daily) — delegated to Inner Lab agent
+- [ ] Cross-module "Continue with..." suggestions — delegated to Inner Lab agent
+- [ ] Weekly Consciousness Review page (innerlab.ai/weekly) — delegated to Inner Lab agent
+- [ ] Consciousness assessment Full mode (16 questions) E2E test — delegated to Inner Lab agent
+- [ ] DreamLens V3 decision — delegated to DreamLens agent (Zod vs express-validator)
+
+### Session 25 Completed (April 7, 2026)
+- [x] MBS git corruption fix — index reset + nginx.conf restored (OneDrive dehydration)
+- [x] MBS_PLATFORM_URL verified — CWG prod correct, dev fixed by owner in Coolify
+- [x] Product catalog (products.js) — Bonds + LifeMap added, BreathArc removed (12 IL modules). Commit `ba72201`.
+- [x] SSO redirect improvements — auto-allow product catalog URLs, subdomain trust, unified performRedirect. Commit `ba72201`.
+- [x] Account dropdown with Sign Out — "My Account" + "Sign Out" in nav header. Chrome-verified live. Commit `95c4ab6`.
+- [x] GDPR cascade test — full account deletion verified end-to-end. `DELETE /api/auth/account` → 200. JWT invalidated.
+- [x] MBS frontend test suite — 19 tests (Vitest + React Testing Library): AuthContext (8), AuthButton (5), ProtectedRoute (6). Commit `12a260f`.
+- [x] BreathArc removal — cleaned from products.js + all 6 CLAUDE.md files + platform-instructions
+- [x] MSI conflict cleanup — 6 OneDrive conflict files + billing-Nitro.js deleted
+- [x] Doc updates — all CLAUDE.md files updated to 12 IL modules (global, desktop, MBSPlatform, innerlab instructions, mbs instructions, new-modules template)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.

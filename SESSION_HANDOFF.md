@@ -1,10 +1,90 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 5, 2026 (Session 22)
+**Last Updated**: April 7, 2026 (Session 25)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 25 SUMMARY (April 7, 2026) — Product Catalog Update, GDPR Cascade Test, Account Dropdown, Frontend Tests, BreathArc Removal
+
+### What was done this session:
+
+**1. MBS Git Corruption Fix**
+- OneDrive dehydrated git index — all 205 files appeared staged for deletion
+- Fixed with `git reset HEAD` + restored missing `nginx.conf`
+- Second index corruption during commit — rebuilt with `rm .git/index && git reset HEAD`
+
+**2. MBS_PLATFORM_URL Env Var Verification**
+- CWG Production (api.conversationswithgod.ai): already correct (`https://api.magicbusstudios.com`)
+- CWG Development (devcwg.magicbusstudios.com): was wrong (`https://magicbusstudios.com`) — owner fixed to `https://api.magicbusstudios.com`
+- CWG code default in `config.py:28` is correct regardless
+
+**3. Product Catalog Update (products.js)**
+- Added Bonds (`bonds.magicbusstudios.com` / `api.bonds.magicbusstudios.com`)
+- Added LifeMap (URLs null until deployed)
+- Removed BreathArc — confirmed by owner (was provisional since Session 16)
+- Inner Lab now 12 modules (was 11)
+
+**4. SSO Redirect Improvements (Session 24 uncommitted work)**
+- `auth.js`: auto-allow product catalog URLs + `*.magicbusstudios.com` subdomains for SSO redirects
+- `App.jsx`: prevent onboarding modal during SSO redirect flow
+- `AuthLoginPage.jsx` + `AuthSignupPage.jsx`: unified `performRedirect()` for internal + external redirects
+
+**5. Account Dropdown with Sign Out**
+- "Account" nav button now shows dropdown: "My Account" + "Sign Out"
+- No more scrolling to bottom of Account page to sign out
+- Animated with Framer Motion, glass card styling
+- Chrome-verified live on magicbusstudios.com (Coolify deploy `95c4ab6`)
+
+**6. GDPR Cascade Test — PASS**
+- Created test account (`test@gmail.com`) on magicbusstudios.com
+- Called `DELETE /api/auth/account` → 200 `{ success: true }`
+- `cascadeDeleteAll()` called all deployed apps' `DELETE /api/user-data` endpoints
+- JWT invalidated — `/account` redirected to login page
+- Full end-to-end cascade verified working
+
+**7. Frontend Test Suite — 19 Tests**
+- Vitest + React Testing Library + jsdom
+- AuthContext: 8 tests (hydration, login, logout, 401 handling, getAuthHeaders, provider)
+- AuthButton dropdown: 5 tests (login/signup display, dropdown open, close on click outside, sign out)
+- ProtectedRoute: 6 tests (redirect to login, render children, admin-only, redirect path)
+- All 19 passing
+
+**8. BreathArc Removal — Complete**
+- Removed from products.js, all CLAUDE.md files, platform-instructions-for-innerlab, platform-instructions-for-mbs, platform-instructions-for-new-modules
+- Replaced with Bonds + LifeMap in module tables and collection prefix examples
+
+**9. MSI Conflict Cleanup**
+- Deleted 6 OneDrive MSI conflict files from MBS repo
+- Deleted `billing-Nitro.js` (OneDrive conflict duplicate)
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| MBS | main | `ba72201` | Products.js + SSO redirect improvements + MSI cleanup |
+| MBS | main | `95c4ab6` | Account dropdown with Sign Out |
+| MBS | main | `12a260f` | Frontend test suite (19 tests) |
+| MBSPlatform | main | `528daec` | Module catalog docs (12 modules) |
+| MBSPlatform | main | `0137cf0` | BreathArc cleanup from innerlab instructions |
+| MBSPlatform | main | (this commit) | Session 25 final docs |
+
+### Pending — Owner Action:
+1. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
+2. **Regenerate BTCPay API key** — current returns 403 (pending since Session 9)
+3. **CWG promote test → dev** — requires passphrase + env var audit
+4. **Share DreamLens V3 prompt with DreamLens agent** — Zod vs express-validator decision
+5. **Share Inner Lab Daily Briefing prompt with Inner Lab agent** — Tier 1 from vision roadmap
+
+### For next session (Session 26):
+1. **Verify CWG Dev B redeploy** — confirm `MBS_PLATFORM_URL` fix is live on devcwg.magicbusstudios.com
+2. **RS256 Phase 2** — remove HS256 fallback from all 15 apps (deferred, low priority)
+3. **Stripe subscription portal testing** — once Stripe products are created
+4. **BTCPay expiry reminders** — once BTCPay API key is regenerated
+5. **MBS frontend test expansion** — add tests for BillingPage, AdminPage, OnboardingModal
 
 ---
 

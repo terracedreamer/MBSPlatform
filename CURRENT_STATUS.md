@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 5, 2026 (Session 22)
+**Last Updated**: April 7, 2026 (Session 25)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -13,7 +13,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Phase 1: MBS Platform | **ALL DONE — Addendum #1-15 complete** (deployed at magicbusstudios.com) | Nothing |
 | Phase 2: IL Middleware + Auth | **FULLY COMPLETE** (api.innerlab.ai + innerlab.ai/auth/*) | Nothing |
 | Phase 3A: CWG Migration Script | **DONE** — 20 users migrated, 14 collections copied | Nothing |
-| Phase 3B: CWG Refactor | **COMPLETE** — running on `test` branch, needs promotion to `main` | Merge test → main when ready |
+| Phase 3B: CWG Refactor | **COMPLETE** — running on `test` branch, needs promotion to `dev` | Promote test → dev when ready |
 | Phase 4: FlowState Migration | **COMPLETE** — live on production | Nothing |
 | Phase 5: Standalone Products | **ALL 11 COMPLETE — deployed and verified live** | Dead code cleanup (optional) |
 
@@ -41,7 +41,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. Session 20: LazyChef SSO blocker resolved. | Dual-mode is the safe steady state. Phase 2 can proceed — LazyChef SSO migration done. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). Session 20: Chrome-verified admin access works (21 guides, profile API 200). | Full enforcement testing needs non-admin test account |
-| CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. | Merge test → development when ready (requires passphrase + env var audit) |
+| CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. Session 25: MBS_PLATFORM_URL fixed on dev. | Promote test → dev when ready (requires passphrase + env var audit) |
 | ~~CWG Settings page crash~~ | ✅ RESOLVED Session 20 — Root cause: missing `Lock` icon import from lucide-react. React tried `new undefined()`. Fixed in commit `46113e4` on `test`. | Fixed |
 | ~~CWG → Inner Lab data migration~~ | ✅ RESOLVED Session 19 — Migration scripts run. Journals: 11 entries in il_reflections. Identity: 0 to migrate (dual-write handles future). | Done |
 | ~~CWG GDPR missing collections~~ | ✅ RESOLVED Session 18 — il_reflections + il_activity_feed added to deletion scope | Fixed in commit `88b4e11` |
@@ -55,7 +55,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website + Platform | **Deployed — Phase 1 complete** | magicbusstudios.com |
+| MBS website + Platform | **Deployed — Phase 1 complete. Session 25: Account dropdown, SSO redirect improvements, 19 frontend tests, products.js updated (12 IL modules)** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
@@ -99,5 +99,11 @@ Both fixes confirmed working across all affected apps.
 - [x] Architecture evolution standards — `architecture-evolution.md` rules file, bootstrap skills updated, global CLAUDE.md updated (Session 21)
 - [x] Inner Lab response helpers — all 14 routes migrated (Session 19, commit `295a962`)
 - [x] Inner Lab tests — 33 tests across 2 suites (Session 19, commit `0f3f896`)
+- [x] BreathArc removal confirmed — removed from products.js + all platform-instructions (Session 25). Replaced with Bonds + LifeMap.
+- [x] GDPR cascade test — full account deletion verified end-to-end (Session 25). `DELETE /api/auth/account` → 200, all child apps called.
+- [x] MBS frontend tests — 19 tests (Vitest + React Testing Library): AuthContext (8), AuthButton (5), ProtectedRoute (6) (Session 25)
+- [x] Account dropdown — "My Account" + "Sign Out" in nav header, Chrome-verified live (Session 25, commit `95c4ab6`)
+- [x] SSO redirect improvements — auto-allow product catalog URLs + subdomain trust + unified performRedirect (Session 25, commit `ba72201`)
+- [x] MBS_PLATFORM_URL verified — CWG prod correct, CWG dev fixed (Session 25)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

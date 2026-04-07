@@ -1,5 +1,28 @@
 # CHANGELOG — MBS Platform
 
+## April 7, 2026 — Session 25: Product Catalog Update, GDPR Cascade Test, Account Dropdown, Frontend Tests
+
+### MBS Platform (3 commits on main)
+- **Product catalog + SSO redirect improvements** (`ba72201`) — Bonds + LifeMap added to products.js, BreathArc removed (12 IL modules). Auth redirect auto-allows product catalog URLs + `*.magicbusstudios.com` subdomains. Onboarding modal suppressed during SSO redirect. Unified `performRedirect()`. MSI conflict files + billing-Nitro.js cleaned up.
+- **Account dropdown** (`95c4ab6`) — "Account" nav button now shows dropdown with "My Account" + "Sign Out". No more scrolling to bottom of Account page.
+- **Frontend test suite** (`12a260f`) — 19 tests (Vitest + React Testing Library + jsdom). AuthContext (8), AuthButton dropdown (5), ProtectedRoute (6). Setup with framer-motion mock, IntersectionObserver mock.
+
+### MBSPlatform Architecture Repo (2 commits on main)
+- **Module catalog docs** (`528daec`) — Updated CLAUDE.md, platform-instructions-for-mbs, platform-instructions-for-new-modules to 12 IL modules
+- **BreathArc cleanup** (`0137cf0`) — Removed all BreathArc references from platform-instructions-for-innerlab (architecture diagram, collection prefixes, source_module examples, product table)
+
+### Verified
+- **GDPR cascade** — `DELETE /api/auth/account` → 200. `cascadeDeleteAll()` called all deployed apps. User deleted, JWT invalidated.
+- **Account dropdown** — Chrome-verified live on magicbusstudios.com
+- **MBS_PLATFORM_URL** — CWG prod correct (`api.magicbusstudios.com`), CWG dev fixed by owner
+
+### Decisions
+- **BreathArc removal confirmed** — owner decision, was provisional since Session 16
+- **Duplicate user cleanup skipped** — `27chestnustst@gmail.com` left as-is per owner decision
+- **Win-back offers, User dashboard, Email campaigns** — skipped, blocked on Stripe products + BTCPay key
+
+---
+
 ## April 4, 2026 — Session 19: Migration Scripts, Birth Profile, Sharing Toggle, Bidirectional Sync, Standards
 
 ### CWG Migration Scripts Run
