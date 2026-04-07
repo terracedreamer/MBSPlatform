@@ -14,7 +14,7 @@ This project is `Innerlab/` — the innerlab.ai website. It currently has a **fr
 The MBS Platform (magicbusstudios.com) knows WHO the user is and WHAT they've paid for.
 This project knows the user's **consciousness, state, memories, and cross-module insights**.
 
-Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate container with its own backend. They all connect to the same `inner_lab` database. This middleware owns the shared `il_*` collections and provides cross-module intelligence.
+Each Inner Lab module (CWG, FlowState, Bonds, StarMap, etc.) is a separate container with its own backend. They all connect to the same `inner_lab` database. This middleware owns the shared `il_*` collections and provides cross-module intelligence.
 
 ## What This Project Does NOT Do
 - Does NOT handle auth backend — MBS Platform (magicbusstudios.com) has all auth API routes. This project has login/signup PAGES that call MBS Platform APIs.
@@ -58,7 +58,7 @@ Each Inner Lab module (CWG, FlowState, BreathArc, StarMap, etc.) is a separate c
 │  Other containers also connect to inner_lab DB:          │
 │  ├── CWG Backend      → reads/writes cwg_* + reads il_* │
 │  ├── FlowState Backend → reads/writes yoga_* + reads il_*│
-│  ├── BreathArc Backend → reads/writes breath_* + reads il│
+│  ├── Bonds Backend    → reads/writes bonds_* + reads il_* │
 │  └── ...future modules                                   │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -77,7 +77,7 @@ il_consciousness_snapshots  — Historical profile changes over time
 il_personal_histories       — User's life story for AI personalization
 il_check_ins                — Daily mood/energy/stress/intention (any module can write)
 il_user_memories            — Cross-session AI memory with opt-in sharing (shared: false = private to source module, shared: true = visible to all IL modules)
-il_user_wellness_profiles   — Health conditions, injuries, goals (shared by FlowState + BreathArc)
+il_user_wellness_profiles   — Health conditions, injuries, goals (shared by FlowState + other modules)
 il_activity_feed            — Cross-module activity events
 il_blockchain_anchors       — OpenTimestamps data integrity proofs
 il_sync_backups             — Local-first storage sync infrastructure
@@ -96,7 +96,8 @@ Each module backend owns its own prefixed collections. This middleware does NOT 
 ```
 CWG:       cwg_chat_sessions, cwg_messages, cwg_journal_entries, cwg_practices, ...
 FlowState: yoga_sessions, yoga_achievements, yoga_user_profiles, yoga_community_flows, ...
-BreathArc: breath_sessions, breath_tracks, breath_preferences, ... (future)
+Bonds:     bonds_connections, bonds_reflections, ... (future)
+LifeMap:   lifemap_chapters, lifemap_events, ... (future)
 StarMap:   astro_charts, astro_transits, ... (future)
 ```
 
@@ -114,7 +115,7 @@ Every module writing to shared il_* collections MUST validate documents against 
 {
   _id: ObjectId,
   user_id: String,           // MBS Platform user ID (from JWT userId)
-  source_module: String,     // "cwg", "yoga", "breatharc", etc.
+  source_module: String,     // "cwg", "yoga", "bonds", etc.
   mood: Number,              // 1-10 scale
   energy: Number,            // 1-10 scale
   stress: Number,            // 1-10 scale
@@ -169,7 +170,7 @@ Every module writing to shared il_* collections MUST validate documents against 
 {
   _id: ObjectId,
   user_id: String,
-  source_module: String,     // "cwg", "yoga", "breatharc", etc.
+  source_module: String,     // "cwg", "yoga", "bonds", etc.
   action: String,            // "session_complete", "achievement_earned", "journal_entry", etc.
   title: String,             // human-readable title for the feed item
   description: String,       // optional — additional detail
@@ -209,7 +210,7 @@ Every module MUST validate documents before writing to any il_* collection. Use 
 {
   _id: ObjectId,
   user_id: String,           // MBS Platform user ID
-  source_module: String,     // "cwg", "yoga", "breatharc", etc.
+  source_module: String,     // "cwg", "yoga", "bonds", etc.
   memory_type: String,       // "fact", "preference", "emotional_state", "insight"
   content: String,           // "User is processing grief over loss of parent"
   confidence: Number,        // 0-1, how certain the AI is about this memory
@@ -411,7 +412,7 @@ async function requireAuth(req, res, next) {
 | **Inner Lab Middleware** (this) | Shared consciousness, memories, insights, encryption | `inner_lab` (il_* collections) |
 | **CWG Backend** | Spiritual guidance, chat, journaling | `inner_lab` (cwg_* collections) |
 | **FlowState Backend** | Yoga, breathwork, meditation | `inner_lab` (yoga_* collections) |
-| **BreathArc Backend** (future) | Guided breathwork | `inner_lab` (breath_* collections) |
+| **Bonds Backend** (future) | Relationship mapping | `inner_lab` (bonds_* collections) |
 | **Inner Lab Frontend** (this project) | Dashboard + marketing at innerlab.ai | No own DB (calls middleware APIs) |
 
 ## Product Catalog (Inner Lab Modules)
@@ -422,7 +423,8 @@ Do NOT hardcode these. Store in config so new modules can be added.
 |------|------|--------|--------|
 | cwg | Conversations With God | Active | conversationswithgod.ai |
 | flowstate | FlowState | Active | yoga.magicbusstudios.com |
-| breatharc | BreathArc | Coming Soon | TBD |
+| bonds | Bonds | Coming Soon | bonds.magicbusstudios.com |
+| lifemap | LifeMap | Coming Soon | TBD |
 | starmap | StarMap | Coming Soon | TBD |
 | astrocompass | AstroCompass | Coming Soon | TBD |
 | arcana | Arcana | Coming Soon | TBD |
