@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 7, 2026 (Session 25)
+**Last Updated**: April 7, 2026 (Session 29)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -81,7 +81,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 
 ### Deferred to Future Session
 - [x] #16 JWT upgrade to RS256 — **COMPLETED Session 11**. All 15 repos upgraded, all Coolify env vars configured, verified working.
-- [x] #21 Test coverage expansion — billing + entitlements done (Session 13, 40 new tests). Frontend tests: 19 tests added Session 25 (AuthContext, AuthButton, ProtectedRoute).
+- [x] #21 Test coverage expansion — billing + entitlements done (Session 13, 40 new tests). Frontend tests: 19 tests added Session 29 (AuthContext, AuthButton, ProtectedRoute).
 
 ### Completed — Session 11 (RS256 JWT Upgrade)
 - [x] **#16 RS256 JWT upgrade** — All 15 repos upgraded + all Coolify env vars configured. MBS Platform signs RS256, all child apps verify RS256→HS256 dual-mode. Fully deployed and verified.
@@ -204,7 +204,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] Consciousness assessment Full mode (16 questions) E2E test — delegated to Inner Lab agent
 - [ ] DreamLens V3 decision — delegated to DreamLens agent (Zod vs express-validator)
 
-### Session 25 Completed (April 7, 2026)
+### Session 29 Completed (April 7, 2026)
 - [x] MBS git corruption fix — index reset + nginx.conf restored (OneDrive dehydration)
 - [x] MBS_PLATFORM_URL verified — CWG prod correct, dev fixed by owner in Coolify
 - [x] Product catalog (products.js) — Bonds + LifeMap added, BreathArc removed (12 IL modules). Commit `ba72201`.

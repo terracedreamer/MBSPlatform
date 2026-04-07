@@ -1,6 +1,6 @@
 # CHANGELOG — MBS Platform
 
-## April 7, 2026 — Session 25: Product Catalog Update, GDPR Cascade Test, Account Dropdown, Frontend Tests
+## April 7, 2026 — Session 29: Product Catalog Update, GDPR Cascade Test, Account Dropdown, Frontend Tests
 
 ### MBS Platform (3 commits on main)
 - **Product catalog + SSO redirect improvements** (`ba72201`) — Bonds + LifeMap added to products.js, BreathArc removed (12 IL modules). Auth redirect auto-allows product catalog URLs + `*.magicbusstudios.com` subdomains. Onboarding modal suppressed during SSO redirect. Unified `performRedirect()`. MSI conflict files + billing-Nitro.js cleaned up.

@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 7, 2026 (Session 25)
+**Last Updated**: April 7, 2026 (Session 29)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -70,7 +70,7 @@
 | MBS | main | `12a260f` | Frontend test suite (19 tests) |
 | MBSPlatform | main | `528daec` | Module catalog docs (12 modules) |
 | MBSPlatform | main | `0137cf0` | BreathArc cleanup from innerlab instructions |
-| MBSPlatform | main | (this commit) | Session 25 final docs |
+| MBSPlatform | main | (this commit) | Session 29 final docs |
 
 ### Pending — Owner Action:
 1. **Create Stripe products** — 6 products, 12 prices (pending since Session 9)
@@ -79,7 +79,7 @@
 4. **Share DreamLens V3 prompt with DreamLens agent** — Zod vs express-validator decision
 5. **Share Inner Lab Daily Briefing prompt with Inner Lab agent** — Tier 1 from vision roadmap
 
-### For next session (Session 26):
+### For next session (Session 30):
 1. **Verify CWG Dev B redeploy** — confirm `MBS_PLATFORM_URL` fix is live on devcwg.magicbusstudios.com
 2. **RS256 Phase 2** — remove HS256 fallback from all 15 apps (deferred, low priority)
 3. **Stripe subscription portal testing** — once Stripe products are created
