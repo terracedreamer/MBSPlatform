@@ -253,7 +253,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Daily Briefing — verified complete (DailyBriefingPage.jsx + dailyBriefing.js, time-of-day awareness, archetype intentions)
 - [x] Weekly Consciousness Review — verified complete (378-line page, sparklines, week-over-week, dimension changes, tested)
 - [x] Consciousness Full Assessment — verified complete (655-line page, Quick 8Q + Full 16Q, 12 archetypes, 7 dimensions)
-- [ ] CWG Dev B redeploy verification — Chrome check pending
+- [x] CWG Dev B redeploy verification — **PASS**. Backend healthy (`mbs_platform` mode), 21 guides load, MBS Platform API reachable, SSO flow correct (→ innerlab.ai/auth/login → api.magicbusstudios.com)
 - [x] Per-app validation + rate limiting audit — **14/14 rate limited, 12/14 validated**. Gaps: Trivia Roast (3 POST routes), Tutor (2 raw JSON routes), Fake Artist (low risk)
 
 ### Post-Phase 5 Cleanup — All Complete
