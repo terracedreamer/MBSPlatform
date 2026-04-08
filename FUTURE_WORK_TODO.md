@@ -82,6 +82,60 @@ Each product provides:
 **Dependencies:** None — can be built anytime. Inner Lab digest keeps working as-is until migration.
 **Effort:** Medium (2-3 sessions). Inner Lab's existing code is 80% of the work done.
 
+### GDPR — Email Confirmation Before Data Deletion (ALL APPS)
+
+- [ ] **Every "Delete My Data" action must send a confirmation email before deleting anything**
+
+**Principle:** No data is deleted immediately. User clicks "Delete My Data" → receives email with confirmation link → clicks link → data is deleted. This protects against accidental deletion, unauthorized access, and provides an audit trail.
+
+**Three Levels (same as existing deletion architecture):**
+
+| Level | Where Triggered | What Happens |
+|-------|----------------|--------------|
+| **App-level** | Settings within each app (e.g., WildLens → "Delete my data") | App calls its own backend → backend sends confirmation email → user clicks link → app deletes its own data only |
+| **Category-level** | magicbusstudios.com/settings | MBS Platform sends confirmation email → user clicks link → MBS calls each app's DELETE endpoint in that category |
+| **Full account** | magicbusstudios.com/settings | MBS Platform sends confirmation email → user clicks link → MBS calls ALL apps' DELETE endpoints → deletes MBS user record |
+
+**Implementation — MBS Platform (Layer 1):**
+1. New model: `DataDeletionRequest` — `{ user_id, level ("app"/"category"/"full"), target (product slug or category name), confirmation_token, status ("pending"/"confirmed"/"expired"/"completed"), created_at, expires_at (24h), confirmed_at, completed_at }`
+2. `DELETE /api/auth/account` — instead of deleting immediately, creates a DataDeletionRequest + sends confirmation email. Returns `{ success: true, message: "Confirmation email sent. Please check your inbox." }`
+3. `DELETE /api/user-data/category/:category` — same pattern: creates request + sends email
+4. `GET /api/user-data/confirm-delete/:token` — validates token, checks expiry, executes the actual deletion cascade, marks request as completed
+5. Email template: "You requested to delete your [app/category/account] data. Click to confirm. This action is irreversible. Link expires in 24 hours."
+6. If user doesn't confirm within 24 hours, request expires silently (no data deleted)
+
+**Implementation — Each Child App (Layer 3):**
+1. `DELETE /api/user-data` — instead of deleting immediately, calls MBS Platform to create a deletion request: `POST {PLATFORM_URL}/api/user-data/request-delete { product: MY_SLUG }`
+2. MBS Platform sends the confirmation email (centralized — apps don't send their own)
+3. When user confirms, MBS Platform calls the app's `DELETE /api/user-data/confirmed` (new endpoint) which actually deletes the data
+4. Alternative simpler approach: app calls MBS Platform, MBS sends email, confirmation link goes to `magicbusstudios.com/confirm-delete/:token`, MBS calls app's existing `DELETE /api/user-data` after confirmation
+
+**Implementation — Inner Lab (Layer 2):**
+1. Same pattern as child apps — IL's delete endpoint creates a request via MBS Platform
+2. IL module-level deletion: if user deletes just one IL module's data, that goes through MBS Platform confirmation too
+3. IL sharing data (il_* collections): respects source_module filtering on confirmed deletion
+
+**Frontend Changes (ALL apps):**
+- "Delete My Data" button → shows modal: "We'll send a confirmation email to your registered address. You must click the link to complete deletion."
+- After clicking: button changes to "Confirmation Sent ✓" (disabled state)
+- No immediate deletion, no instant feedback that data was deleted
+
+**Agent Prompts Needed:**
+- MBS Platform agent: build DataDeletionRequest model, modify DELETE endpoints, add confirmation route, email template
+- Each child app agent: modify DELETE /api/user-data to go through MBS confirmation flow
+- Inner Lab agent: same as child apps, plus module-level deletion confirmation
+
+**Dependencies:** SendGrid (already configured). MBS Platform email sending (already works for password reset, verification).
+**Effort:** Medium (2-3 sessions). Pattern is identical to password reset flow (token → email → confirm → execute).
+
+**Build Order:**
+1. MBS Platform — DataDeletionRequest model + confirmation flow + email template
+2. MBS Platform frontend — update Account settings page deletion UI
+3. Inner Lab — update GDPR endpoint to use confirmation flow
+4. CWG — update GDPR endpoint
+5. FlowState — update GDPR endpoint
+6. All 11 standalone apps — update GDPR endpoints (can be parallelized with agent prompts)
+
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
 
@@ -268,6 +322,7 @@ AuthContext, ProtectedRoute, profile editing, notifications, feature flags, acti
 ### Future Work (Decided but Deferred)
 - [x] FlowState il_* integration — **DONE Sessions 19+21.** FlowState now writes to 3 il_* collections: il_activity_feed (S19 `cc65a40`), il_check_ins + il_user_wellness_profiles (S21 `e8a3c79`). Remaining: il_reflections (no journaling feature), il_user_memories (no AI insight extraction).
 - [x] FlowState GDPR user_id fix — **RESOLVED Session 19.** Verified NOT a bug — yoga_activity uses `userId` consistently in writes and deletes. GDPR also updated to delete il_activity_feed by source_module.
+- [ ] **Rename "Billing" → "Subscription" across MBS frontend** — BillingPage.jsx → SubscriptionPage.jsx, /billing → /subscription, nav links, page titles, button labels. Keep API routes as `/api/billing/*` (backend unchanged). Update IndividualPlansPage references too.
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
 - [ ] Win-back offers — needs centralized email digest + promo system working together. See architecture below.
