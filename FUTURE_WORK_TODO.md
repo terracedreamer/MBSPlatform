@@ -254,7 +254,7 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Weekly Consciousness Review — verified complete (378-line page, sparklines, week-over-week, dimension changes, tested)
 - [x] Consciousness Full Assessment — verified complete (655-line page, Quick 8Q + Full 16Q, 12 archetypes, 7 dimensions)
 - [ ] CWG Dev B redeploy verification — Chrome check pending
-- [ ] Per-app validation + rate limiting audit — agent running
+- [x] Per-app validation + rate limiting audit — **14/14 rate limited, 12/14 validated**. Gaps: Trivia Roast (3 POST routes), Tutor (2 raw JSON routes), Fake Artist (low risk)
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -372,7 +372,13 @@ Full audit reports in `audits/`:
 - [x] TaskTracker — CRA → Vite migration (Session 14) + Chrome verified (Session 15)
 - [x] Test suites — MoviePicker (78), SmartCart (29), BrokenChain (33) added Session 21. FlowState (29), MindHacker (32), Trivia Roast (41), TaskTracker (38) added Session 22. CWG (66) already had tests. LazyChef, AI Tutor, Inner Lab (33), MBS Platform (107) already had tests. Remaining: Fake Artist, Whispering House, WildLens (3 of 15).
 - [x] Per-app response helpers — **ALL 15 APPS COMPLIANT** (Session 20 audit: 11 Express with extracted `responseHelpers.js`, 4 FastAPI with inline `{"success": True}` pattern)
-- [ ] Per-app input validation + rate limiting — see individual project TODOs
+- [ ] Per-app input validation + rate limiting — **Session 30 audit complete**:
+  - Rate limiting: **14/14 compliant** (all apps have it installed AND wired)
+  - Input validation: **12/14 compliant**. Gaps:
+    - **Trivia Roast**: Missing express-validator on 3 POST routes (`/api/chat`, `/games`, `/leaderboard`)
+    - **Tutor**: 2 routes use raw `request.json()` instead of Pydantic (`toggle-day`, `chat/summarize`)
+    - **Fake Artist**: No express-validator but low risk (Socket.io game, minimal REST)
+  - SmartCart (Shopping/) has 29 tests, was missed by agent due to folder name
 
 ### Resolved Since Audit (Sessions 8-12)
 - [x] MBS P0 logger crash — Winston logger + gdprCascade fix (Session 8)
