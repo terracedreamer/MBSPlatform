@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 7, 2026 (Session 29)
+**Last Updated**: April 8, 2026 (Session 30)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -55,7 +55,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website + Platform | **Deployed — Phase 1 complete. Session 29: Account dropdown, SSO redirect improvements, 19 frontend tests, products.js updated (12 IL modules)** | magicbusstudios.com |
+| MBS website + Platform | **Deployed — Phase 1 complete. Session 30: 52 frontend tests (was 19), Nitro cleanup. Session 29: Account dropdown, SSO redirects, products.js (12 IL modules)** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
@@ -83,7 +83,7 @@ Both fixes confirmed working across all affected apps.
 - [x] LazyChef SSO migration — **DONE Session 20** (commit `2505f1b`). Dead local auth removed, SSO redirect verified via Chrome.
 - [x] Inner Lab platform interface — 13 dashboard pages, 15 route files, 14 il_* collections (Session 20: consciousness assessment wizard, personal history questionnaire, OG image, my-story nav)
 - [x] il_reflections — shared journal store with first-class module fields (Session 16)
-- [x] MBS Platform tests — 107 tests across 7 suites (Session 16 verified)
+- [x] MBS Platform tests — 107 backend tests across 7 suites (Session 16). 52 frontend tests across 6 suites (Session 30, commit `8aa813c`)
 - [x] Arcade SSO — BrokenChain, MindHacker, FakeArtist all verified via Chrome (Session 16)
 - [x] Session 17 architecture review — 14 decisions confirmed, critical bugs documented, 20+ docs updated, 26 OneDrive conflicts cleaned (Session 17)
 - [x] CWG GDPR fix — il_reflections + il_activity_feed added, source_module filtering, singletons removed (Session 18, commit `88b4e11`)
@@ -101,9 +101,12 @@ Both fixes confirmed working across all affected apps.
 - [x] Inner Lab tests — 33 tests across 2 suites (Session 19, commit `0f3f896`)
 - [x] BreathArc removal confirmed — removed from products.js + all platform-instructions (Session 29). Replaced with Bonds + LifeMap.
 - [x] GDPR cascade test — full account deletion verified end-to-end (Session 29). `DELETE /api/auth/account` → 200, all child apps called.
-- [x] MBS frontend tests — 19 tests (Vitest + React Testing Library): AuthContext (8), AuthButton (5), ProtectedRoute (6) (Session 29)
+- [x] MBS frontend tests — 52 tests across 6 suites (Session 30, commit `8aa813c`). BillingPage (8), AdminPage (8), OnboardingModal (12), AuthContext (9), AuthButton (5), ProtectedRoute (5).
 - [x] Account dropdown — "My Account" + "Sign Out" in nav header, Chrome-verified live (Session 29, commit `95c4ab6`)
 - [x] SSO redirect improvements — auto-allow product catalog URLs + subdomain trust + unified performRedirect (Session 29, commit `ba72201`)
-- [x] MBS_PLATFORM_URL verified — CWG prod correct, CWG dev fixed (Session 29)
+- [x] MBS_PLATFORM_URL verified — CWG prod correct, CWG dev fixed (Session 29). CWG Dev Chrome-verified healthy (Session 30).
+- [x] Per-app validation audit — 14/14 rate limited, 12/14 validated. Gaps: Trivia Roast, Tutor, Fake Artist (Session 30).
+- [x] Inner Lab features verified — Daily Briefing, Weekly Review, Consciousness Full Mode all complete (Session 30).
+- [x] Architecture plans — centralized email digest, user dashboard, win-back/campaigns, family/teams (Session 30).
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated

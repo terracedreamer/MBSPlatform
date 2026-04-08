@@ -1,5 +1,26 @@
 # CHANGELOG — MBS Platform
 
+## April 7-8, 2026 — Session 30: Frontend Tests, Feature Verification, Architecture Planning, Validation Audit
+
+### MBS Platform (1 commit on main)
+- **Frontend test expansion** (`8aa813c`) — 33 new tests: BillingPage (8), AdminPage (8), OnboardingModal (12), plus existing 19. Total: 52 tests across 6 suites. Cleaned up 3 Nitro conflict files.
+
+### MBSPlatform Architecture Repo (3 commits on main)
+- **Architecture plans + feature verification** (`7b42d1d`) — Centralized email digest 6-step plan, user dashboard spec, win-back/campaigns architecture, family/teams specs. Verified Daily Briefing, Weekly Review, Consciousness Full Mode all complete. DreamLens V3 resolved (Zod accepted). Backlog items removed.
+- **Validation audit** (`4d3783e`) — Full 15-app audit: 14/14 rate limited, 12/14 validated. Gaps: Trivia Roast (3 POST routes), Tutor (2 raw JSON routes), Fake Artist (low risk).
+- **CWG Dev verification** (`225c10a`) — devcwg.magicbusstudios.com healthy, SSO flow correct, MBS Platform API reachable.
+
+### Verified
+- **CWG Dev** — backend healthy (`mbs_platform` mode), 21 guides, SSO → innerlab.ai/auth/login → api.magicbusstudios.com
+- **Inner Lab features** — Daily Briefing (complete), Weekly Consciousness Review (complete, tested), Consciousness Full Mode 16Q (complete)
+- **MBS frontend tests** — 52/52 passing
+
+### Decisions
+- **DreamLens V3** — Zod accepted as valid for next-gen TypeScript builds. Express-validator remains standard for existing JS apps.
+- **Validation gaps** — Trivia Roast and Tutor to be fixed in future session. Fake Artist low priority.
+
+---
+
 ## April 7, 2026 — Session 29: Product Catalog Update, GDPR Cascade Test, Account Dropdown, Frontend Tests
 
 ### MBS Platform (3 commits on main)
