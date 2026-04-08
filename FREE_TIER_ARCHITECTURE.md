@@ -166,13 +166,26 @@ Free-tier entitlements:
 - `GET /api/entitlements/category/:cat` — returns `{ hasAccess, isPremium, reason, products: [...] }`
 - Stripe webhook handles premium → free_tier downgrade on cancellation
 
-### Frontend (Subscribe Page — was BillingPage)
-- Rename `/billing` → `/subscribe`, `BillingPage.jsx` → `SubscribePage.jsx`
-- Each category section shows free vs premium options
-- Inner Lab section: module checkboxes for picking individual modules
-- Arcade + Studio Works: simpler (category-level registration, all games/tools included)
-- Deep-link: `?category=innerlab` scrolls to IL section, `?product=cwg` scrolls to CWG card
-- `?register=innerlab` auto-registers for IL category (if modules not specified, register for all)
+### Frontend — Two Subscribe Pages
+
+**Main Subscribe Page** (`/subscribe` — was `/billing`):
+- Rename `BillingPage.jsx` → `SubscribePage.jsx`
+- Shows all 3 categories equally, MBS All Access hero
+- Each category: free vs premium options
+- Arcade + Studio Works: category-level registration (all games/tools included)
+- Inner Lab section: summary + "See all modules →" link to `/subscribe/innerlab`
+- Deep-link: `?product=cwg` scrolls to CWG card
+
+**Dedicated Inner Lab Subscribe Page** (`/subscribe/innerlab` — NEW):
+- `SubscribeInnerLabPage.jsx` — focused entirely on Inner Lab
+- Hero: "Inner Lab — Your Inner Growth System"
+- All 12 modules displayed as selectable cards with checkboxes
+- User picks modules → "Register Free — N modules selected" button
+- Premium option: "$20/mo — All 12 modules, unlimited everything" → Stripe checkout
+- Bottom section: "Want everything? MBS All Access — $30/mo" → link to `/subscribe`
+- This is where `innerlab.ai` redirects unregistered users
+- `?register=innerlab` on main subscribe page redirects here
+- Same backend APIs — just different frontend layout
 
 ## What Each Module Does
 
