@@ -52,7 +52,35 @@
 These items don't belong to any specific phase and can be done anytime:
 
 ### Email — Centralized Digest System
-- [ ] **Centralize email digests at MBS Platform level** — Inner Lab currently runs its own weekly digest cron (node-cron, Mondays 9am UTC, SendGrid). Long-term, MBS Platform should orchestrate cross-product email digests from one place: Inner Lab weekly summary, Arcade activity, Studio Works usage, etc. Unified unsubscribe, email preference management, and SendGrid sender identity. Currently each product would need its own cron — centralizing avoids duplication and gives users one place to manage all email preferences.
+- [ ] **Centralize email digests at MBS Platform level**
+
+**Current State (Session 30 audit):**
+Inner Lab already has a working digest system: `digestCron.js` (node-cron, Mondays 9am UTC), `emailDigest.js` routes (preferences + preview), SendGrid integration, HTML email template with check-in stats, journal themes, archetype info. EmailPreference model stores `digest_enabled`, `frequency` (weekly/biweekly/monthly), and `email`.
+
+**Architecture for Centralization:**
+```
+MBS Platform (Layer 1) owns:
+├── Unified email preferences per user (marketing, digests, billing alerts, per-product)
+├── SendGrid sender identity (noreply@magicbusstudios.com)
+├── Master cron job that orchestrates all digest types
+├── Unsubscribe endpoint (one-click, already exists: GET /api/auth/unsubscribe/:token)
+└── Email preference UI at magicbusstudios.com/settings
+
+Each product provides:
+├── GET /api/digest-data — returns structured weekly summary (no HTML)
+└── Product-specific aggregation logic stays in the product
+```
+
+**Implementation Steps:**
+1. Add `GET /api/digest-data` to Inner Lab (extract `aggregateWeeklyData()` from existing digestCron.js)
+2. Add `GET /api/digest-data` to Arcade apps (game stats, achievements) — simple
+3. Add `GET /api/digest-data` to Studio Works apps (usage stats) — simple
+4. Build MBS Platform cron job: iterates users with digest_enabled, calls each product's `/api/digest-data`, composes unified email
+5. Migrate Inner Lab's EmailPreference to MBS Platform's existing EmailPreference model
+6. Remove Inner Lab's standalone digestCron.js (keep routes for preview)
+
+**Dependencies:** None — can be built anytime. Inner Lab digest keeps working as-is until migration.
+**Effort:** Medium (2-3 sessions). Inner Lab's existing code is 80% of the work done.
 
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
@@ -198,11 +226,11 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] Skipped test suites for Fake Artist, Whispering House, WildLens (user decision — low usage)
 
 ### Session 23 Items (delegated to per-project agents)
-- [ ] Inner Lab Daily Briefing page (innerlab.ai/daily) — delegated to Inner Lab agent
+- [x] Inner Lab Daily Briefing page (innerlab.ai/daily) — **COMPLETE**. DailyBriefingPage.jsx + dailyBriefing.js (archetype-based intentions, time-of-day awareness). Wired at `/daily`. Verified Session 30.
 - [ ] Cross-module "Continue with..." suggestions — delegated to Inner Lab agent
-- [ ] Weekly Consciousness Review page (innerlab.ai/weekly) — delegated to Inner Lab agent
-- [ ] Consciousness assessment Full mode (16 questions) E2E test — delegated to Inner Lab agent
-- [ ] DreamLens V3 decision — delegated to DreamLens agent (Zod vs express-validator)
+- [x] Weekly Consciousness Review page (innerlab.ai/weekly) — **COMPLETE**. WeeklyConsciousnessPage.jsx (378 lines) + weeklyReview.js. Full aggregation: streak, sparklines, week-over-week stats, dimension changes, module breakdown, journal themes. Tested in session23.test.js. Verified Session 30.
+- [x] Consciousness assessment Full mode (16 questions) — **COMPLETE**. ConsciousnessPage.jsx (655 lines) + consciousnessAssessment.js (1136 lines). Quick (8Q, ~3 min) and Full (16Q, ~10 min) both implemented. 12 archetypes, 7 dimensions, results view with evolution chart. Verified Session 30.
+- [x] DreamLens V3 decision — **RESOLVED**: Zod accepted as valid for next-gen TypeScript builds. Express-validator remains standard for existing JS apps. Removed from backlog Session 30.
 
 ### Session 29 Completed (April 7, 2026)
 - [x] MBS git corruption fix — index reset + nginx.conf restored (OneDrive dehydration)
@@ -215,6 +243,18 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [x] BreathArc removal — cleaned from products.js + all 6 CLAUDE.md files + platform-instructions
 - [x] MSI conflict cleanup — 6 OneDrive conflict files + billing-Nitro.js deleted
 - [x] Doc updates — all CLAUDE.md files updated to 12 IL modules (global, desktop, MBSPlatform, innerlab instructions, mbs instructions, new-modules template)
+
+### Session 30 Completed (April 7, 2026)
+- [x] MBS frontend test expansion — 52 tests across 6 suites (was 19). Added BillingPage (8), AdminPage (8), OnboardingModal (12). Fixed vitest config (jsdom env, setupTests with IntersectionObserver/ResizeObserver polyfills, @testing-library/jest-dom).
+- [x] Centralized email digest architecture — detailed implementation plan written (6-step migration from Inner Lab's existing digestCron.js to MBS Platform orchestration)
+- [x] User dashboard architecture — MyProductsPage.jsx spec with entitlement cards, billing section, Stripe portal integration. All APIs already exist.
+- [x] Long-term features architecture — win-back offers, email campaigns, family plan, teams. Detailed specs with dependencies and effort estimates.
+- [x] DreamLens V3 resolved — Zod accepted as valid for next-gen TypeScript builds. Express-validator remains standard for existing JS apps.
+- [x] Daily Briefing — verified complete (DailyBriefingPage.jsx + dailyBriefing.js, time-of-day awareness, archetype intentions)
+- [x] Weekly Consciousness Review — verified complete (378-line page, sparklines, week-over-week, dimension changes, tested)
+- [x] Consciousness Full Assessment — verified complete (655-line page, Quick 8Q + Full 16Q, 12 archetypes, 7 dimensions)
+- [ ] CWG Dev B redeploy verification — Chrome check pending
+- [ ] Per-app validation + rate limiting audit — agent running
 
 ### Post-Phase 5 Cleanup — All Complete
 Dead code cleanup, GDPR endpoints (all 8 apps), MBS deletion UI + cascade, CWG entitlements, TaskTracker transactions. See CHANGELOG.md Session 8.
@@ -230,10 +270,89 @@ AuthContext, ProtectedRoute, profile editing, notifications, feature flags, acti
 - [x] FlowState GDPR user_id fix — **RESOLVED Session 19.** Verified NOT a bug — yoga_activity uses `userId` consistently in writes and deletes. GDPR also updated to delete il_activity_feed by source_module.
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
-- [ ] Win-back offers — needs email + promo system working together
-- [ ] User dashboard (My Products, billing history) — needs pricing + real subscriptions
-- [ ] Email campaigns + announcements + newsletter — post-launch
-- [ ] Multi-currency, family plan, teams — long-term
+- [ ] Win-back offers — needs centralized email digest + promo system working together. See architecture below.
+- [ ] User dashboard (My Products, billing history) — See architecture below.
+- [ ] Email campaigns + announcements + newsletter — See architecture below.
+- [ ] Multi-currency, family plan, teams — long-term, see architecture below.
+
+### User Dashboard Architecture (Session 30 Planning)
+
+**What it is:** A "My Products" page at `magicbusstudios.com/dashboard` (or `/my-products`) showing:
+- All products the user has access to (from entitlements)
+- Active subscriptions with renewal dates
+- Billing history (from transactions collection)
+- Quick-launch links to each product
+- Subscription management (upgrade/downgrade/cancel via Stripe portal)
+
+**Current State:**
+- Entitlements API exists: `GET /api/entitlements` returns all user entitlements
+- Billing history exists: `GET /api/billing/history` returns transactions
+- Stripe portal exists: `POST /api/billing/portal` creates a portal session
+- AccountPage.jsx exists but is profile-focused (name, avatar, email prefs, connected accounts)
+- No dedicated "My Products" or "My Subscriptions" view
+
+**Implementation:**
+```
+Frontend: MyProductsPage.jsx
+├── Product grid — card per entitlement (icon, name, status, expiry)
+│   ├── Active: green badge, "Open" button → product URL
+│   ├── Trial: yellow badge, days remaining, "Upgrade" button
+│   └── Expired: gray badge, "Renew" button
+├── Billing section
+│   ├── Current plan summary (bundle vs individual)
+│   ├── "Manage Subscription" → Stripe portal
+│   └── Transaction history table (date, product, amount, status)
+└── Quick actions: "Explore Products" → /billing, "Get Support" → /contact
+
+Backend: No new routes needed — uses existing entitlements + billing APIs
+```
+
+**Dependencies:** Stripe products must be created first (owner action). Without real price IDs, the subscription data is empty.
+**Effort:** Small (1 session). Pure frontend — all APIs exist.
+
+### Win-Back & Email Campaigns Architecture (Session 30 Planning)
+
+**Win-back offers:**
+- Trigger: user's subscription expires or trial ends without conversion
+- MBS Platform detects via Stripe `customer.subscription.deleted` webhook (already wired)
+- After N days (7? 14?), send win-back email with promo code
+- Promo system already exists: `POST /api/promos`, `POST /api/promos/validate`
+- Implementation: add a scheduled job that queries expired entitlements, generates time-limited promo codes, sends via SendGrid
+
+**Email campaigns + announcements:**
+- Announcement model already exists in mbs_platform DB
+- Admin can create announcements (title, message, type, target, valid_from, valid_until)
+- Missing: email blast capability — send announcement as email to segment
+- Implementation: admin route `POST /api/admin/campaigns/send` that queries users by segment (all, category, product) and sends via SendGrid
+- Unified unsubscribe already works
+
+**Newsletter:**
+- Inner Lab already has a blog system with `blogDraftCron.js` (auto-generates blog drafts Mon/Thu)
+- Newsletter = curated blog posts + product updates → SendGrid campaign
+- Low priority — blog content exists, distribution channel doesn't
+
+### Long-Term Features (Session 30 Planning)
+
+**Multi-currency:**
+- Stripe supports multi-currency natively
+- BTCPay is already in sats
+- Implementation: add `currency` field to checkout, let Stripe handle conversion
+- Low effort but needs pricing strategy decision per currency
+
+**Family plan:**
+- New entitlement type: `family_plan` with `max_members` field
+- New model: FamilyGroup { owner_id, members: [userId], plan_entitlement_id }
+- Owner invites members, members get `mbs_all_access` while plan is active
+- Billing: single subscription billed to owner at family rate
+- Effort: Medium (new model, new routes, invitation flow)
+
+**Teams:**
+- Similar to family but with admin controls: team admin can assign product access per member
+- New models: Team, TeamMember, TeamEntitlement
+- Integration with Stripe: team billing, seat-based pricing
+- Effort: Large (significant new functionality)
+
+Both family and teams are post-revenue features — build only after individual subscriptions prove product-market fit.
 
 ---
 
