@@ -14,7 +14,7 @@ Task: Update billing page to show free vs premium tiers, and update WildLens to 
 
 Context:
 The MBS Platform already has free tier infrastructure:
-- POST /api/entitlements/subscribe-free — creates free entitlement with 7-day trial (per product)
+- POST /api/entitlements/subscribe-free — creates free entitlement (no trial by default; trial days configurable per product via admin)
 - GET /api/entitlements/:product — returns hasAccess, isPremium, reason, limits
 - products.js has freeTier: true and freeTierLimits for 22 of 23 products
 - Trial-to-free downgrade already works
@@ -29,7 +29,7 @@ What needs to change:
 2. BillingPage.jsx — Redesign to show free vs premium per product:
    - Group products by category (Inner Lab, Arcade, Studio Works) — already done
    - For each product, show TWO tiers side by side:
-     - Free: list limits from freeTierLimits (e.g., "5 messages/day"), "Register Free" button, "Includes 7-day premium trial"
+     - Free: list limits from freeTierLimits (e.g., "5 messages/day"), "Register Free" button, "Start using for free"
      - Premium: existing pricing, "Subscribe" button
    - State-aware badges per product:
      - Not registered: "Register Free" + "Subscribe" buttons
@@ -54,8 +54,14 @@ What needs to change:
    - Deep-link ?product= scrolls to correct card
    - State badges render correctly for free/trial/premium users
 
+6. Admin Dashboard — Trial Campaign Config:
+   - Add a section in AdminPage (or admin/AdminEntitlements) where admin can set defaultTrialDays per product
+   - Show a table of all products with current defaultTrialDays value (default 0 = no trial)
+   - Admin clicks "Edit" → sets trial days (e.g., 7) → saves to products config or a new TrialConfig collection
+   - When defaultTrialDays > 0 for a product, the subscribe-free endpoint gives new free registrants a premium trial for that many days
+   - This is a marketing campaign tool — admin turns trials on/off per product as needed
+
 Do NOT change:
-- The subscribe-free backend endpoint (it already works)
 - Stripe or BTCPay integration
 - The entitlement model or middleware
 - Existing premium subscription flow

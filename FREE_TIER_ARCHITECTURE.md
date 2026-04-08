@@ -17,7 +17,7 @@ Every user-product relationship is in one of three states:
 | **Free subscriber** | `type: "product_pass"`, no `stripe_subscription_id` | App allows access with limits from `freeTierLimits` |
 | **Premium subscriber** | `type: "product_pass"` + `stripe_subscription_id`, or `category_access`, or `mbs_all_access` | App allows full access |
 
-Trial users (7-day premium trial on first free registration) are premium until trial expires, then downgrade to free. This already works via lazy downgrade in `entitlements.js`.
+**Trial is NOT automatic.** Free registration creates a free-tier entitlement with no trial by default. Trial days are a per-product marketing campaign configured via `defaultTrialDays` in products.js (default: 0). Admin can set trial days per product to run campaigns (e.g., "7-day premium trial for CWG this month"). The lazy downgrade logic (trial → free tier) already works in `entitlements.js` for when trials are active.
 
 ## Entitlement Flow
 
@@ -31,13 +31,13 @@ User lands on billing page
   → Sees CWG card with "Free" tier (5 messages/day) and "Premium" tier ($15/mo)
   → Clicks "Register Free"
   → POST /api/entitlements/subscribe-free { product: "cwg" }
-  → Entitlement created + 7-day trial
+  → Entitlement created (free tier, no trial by default)
   → Redirect back to conversationswithgod.ai?refresh=true
 
 User returns to CWG
   → CWG calls GET {PLATFORM_URL}/api/entitlements/cwg
-  → Response: { hasAccess: true, isPremium: true, reason: "trial", trialEndsAt: "..." }
-  → (After 7 days: { hasAccess: true, isPremium: false, reason: "free_tier", limits: { messagesPerDay: 5 } })
+  → Response: { hasAccess: true, isPremium: false, reason: "free_tier", limits: { messagesPerDay: 5 } }
+  → (If admin has set defaultTrialDays > 0 for CWG: { hasAccess: true, isPremium: true, reason: "trial", trialEndsAt: "..." } — downgrades to free tier after trial expires)
 ```
 
 ## What MBS Platform Does
