@@ -1,5 +1,50 @@
 # CHANGELOG — MBS Platform
 
+## April 10, 2026 — Session 32: Admin Fixes, Module Alignment Prompts, IL Agent Sync
+
+### MBS Platform (1 commit on main)
+- **Admin link fix + all categories on homepage** (`1b08acf`) — Fixed URL normalization bug (links without `https://` were relative). Homepage "What We're Building" now shows Inner Lab, Arcade, and Studio Works sections. Admin-created products appear on frontend. Per-category "Add to..." buttons in admin.
+
+### MBSPlatform Architecture Repo (2 commits on main)
+- **Module alignment prompts** (`51fb0fb`) — Created 3 alignment docs: INNERLAB_MODULE_ALIGNMENT.md (16-section prompt for 10 new modules), CWG_ALIGNMENT.md (visual + entitlement, feature removal first), FLOWSTATE_ALIGNMENT.md (CSS Modules decision, toast migration, GDPR singleton bug). Added PLATFORM_URL dual-use clarification to all three.
+- **IL agent feedback incorporated** (`6f4161d`) — Fixed dashboardApi.js path, removed motion.js hedge, added CWG feature removal ordering, flagged FlowState il_user_wellness_profiles GDPR singleton bug.
+
+### Global Reference Files
+- `~/.claude/reference/innerlab-module-alignment.md` — new, copied from MBSPlatform
+- `~/.claude/CLAUDE.md` — 11→12 modules, registration includes admin dashboard, added module alignment reference
+- `~/Desktop/CLAUDE.md` — same registration update
+- `platform-instructions-for-new-modules/CLAUDE.md` — fixed entitlement response, redirect URL, PLATFORM_URL, added JWT_PUBLIC_KEY
+
+### Cross-Agent Sync
+- IL agent reviewed all 3 alignment prompts — confirmed in sync
+- PLATFORM_URL dual-use pattern agreed: frontend=magicbusstudios.com (nginx proxy), backend=api.magicbusstudios.com (direct)
+- FlowState GDPR bug identified: il_user_wellness_profiles (identity singleton) may be incorrectly deleted at app-level
+- CWG ordering: feature removal must precede alignment
+
+### Decisions
+- **React Query removed from module prompt** — IL dashboard uses plain fetch via dashboardApi.js, modules should match
+- **Module alignment prompt location** — lives in MBSPlatform repo + ~/.claude/reference/ (agents can access without user pasting)
+- **CWG feature removal ordering** — must happen BEFORE visual alignment (7 features being stripped)
+
+---
+
+## April 8, 2026 — Session 31: Free Tier Architecture, Admin Product Management, Entitlement Instructions
+
+### MBS Platform (1 commit on main)
+- **Admin product management** (`8e4e516`) — Link editing, product creation/deletion, category grouping, unified status source (API overrides hardcoded modules.js)
+
+### MBSPlatform Architecture Repo (1 commit on main)
+- **IL entitlement instructions + architecture** (`4a543be`) — INNERLAB_ENTITLEMENT_INSTRUCTIONS.md, FREE_TIER_ARCHITECTURE.md major rewrite, dedicated /subscribe/innerlab spec, billing→subscribe rename, entitlement-integration.md global reference
+
+### Decisions
+- MBS passes NO limits (only hasAccess + isPremium) — each module defines its own
+- Dedicated /subscribe/innerlab page with module picker (Option A)
+- Premium cancellation → auto-downgrade to free_tier (not removal)
+- GDPR email confirmation before any data deletion (DataDeletionRequest model)
+- Billing → Subscribe rename (deferred)
+
+---
+
 ## April 7-8, 2026 — Session 30: Frontend Tests, Feature Verification, Architecture Planning, Validation Audit
 
 ### MBS Platform (1 commit on main)

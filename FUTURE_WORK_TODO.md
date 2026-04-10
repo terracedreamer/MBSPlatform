@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 8, 2026 (Session 30)
+**Last Updated**: April 10, 2026 (Session 32)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -135,6 +135,24 @@ Each product provides:
 4. CWG — update GDPR endpoint
 5. FlowState — update GDPR endpoint
 6. All 11 standalone apps — update GDPR endpoints (can be parallelized with agent prompts)
+
+### Free Tier + Subscribe Page (Session 31-32 decisions, not yet built)
+
+- [ ] **Add `free_tier` to Entitlement model type enum**
+- [ ] **Build `POST /api/entitlements/subscribe-free`** — creates free_tier entitlement, handles IL category + module selections
+- [ ] **Update `GET /api/entitlements/category/:cat`** to return `products[]` array with `registered: true/false`
+- [ ] **Handle premium→free downgrade in Stripe webhook** — auto-create free_tier when subscription cancelled
+- [ ] **Remove `freeTierLimits` from products.js** — MBS doesn't pass limits
+- [ ] **Rename Billing → Subscribe** — `BillingPage.jsx` → `SubscribePage.jsx`, `/billing` → `/subscribe` (add redirect)
+- [ ] **Build `/subscribe/innerlab` dedicated page** — SubscribeInnerLabPage.jsx with IL module picker
+- [ ] **Redesign main subscribe page** — free vs premium per category
+
+### Module Alignment (Session 32 — prompts ready, not yet executed)
+
+- [ ] **Give INNERLAB_MODULE_ALIGNMENT.md to 10 new module agents** (Bonds through Nexus)
+- [ ] **Give CWG_ALIGNMENT.md to CWG agent** — AFTER feature removal is complete
+- [ ] **Give FLOWSTATE_ALIGNMENT.md to FlowState agent** — includes GDPR singleton bug fix
+- [ ] **Verify FlowState GDPR bug** — does DELETE /api/user-data delete il_user_wellness_profiles? If yes, fix (identity singleton)
 
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
