@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 10, 2026 (Session 32)
+**Last Updated**: April 10, 2026 (Session 30 (continued))
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -55,7 +55,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website + Platform | **Deployed — Phase 1 complete. Session 32: admin link fix, all 3 categories on homepage, admin-created products visible. Session 31: admin product management, free tier architecture. Session 30: 52 frontend tests, Nitro cleanup.** | magicbusstudios.com |
+| MBS website + Platform | **Deployed — Phase 1 complete. Session 30 (continued): admin link fix, all 3 categories on homepage, admin-created products visible. Session 31: admin product management, free tier architecture. Session 30: 52 frontend tests, Nitro cleanup.** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
@@ -108,11 +108,11 @@ Both fixes confirmed working across all affected apps.
 - [x] Per-app validation audit — 14/14 rate limited, 12/14 validated. Gaps: Trivia Roast, Tutor, Fake Artist (Session 30).
 - [x] Inner Lab features verified — Daily Briefing, Weekly Review, Consciousness Full Mode all complete (Session 30).
 - [x] Architecture plans — centralized email digest, user dashboard, win-back/campaigns, family/teams (Session 30).
-- [x] Admin product link fix + all 3 categories on homepage (Session 32, MBS commit `1b08acf`)
-- [x] Module alignment prompts — 3 docs created, IL agent reviewed and confirmed (Session 32)
-- [x] PLATFORM_URL dual-use pattern documented — frontend=magicbusstudios.com, backend=api.magicbusstudios.com (Session 32)
-- [x] Global reference files updated — innerlab-module-alignment.md added, CLAUDE.md module count fixed, registration updated (Session 32)
-- [x] New modules CLAUDE.md fixed — entitlement response (isPremium), redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY (Session 32)
+- [x] Admin product link fix + all 3 categories on homepage (Session 30 (continued), MBS commit `1b08acf`)
+- [x] Module alignment prompts — 3 docs created, IL agent reviewed and confirmed (Session 30 (continued))
+- [x] PLATFORM_URL dual-use pattern documented — frontend=magicbusstudios.com, backend=api.magicbusstudios.com (Session 30 (continued))
+- [x] Global reference files updated — innerlab-module-alignment.md added, CLAUDE.md module count fixed, registration updated (Session 30 (continued))
+- [x] New modules CLAUDE.md fixed — entitlement response (isPremium), redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY (Session 30 (continued))
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [ ] FlowState GDPR — verify il_user_wellness_profiles not deleted at app-level (potential singleton bug)

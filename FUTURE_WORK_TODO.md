@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 10, 2026 (Session 32)
+**Last Updated**: April 10, 2026 (Session 30 (continued))
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -147,7 +147,7 @@ Each product provides:
 - [ ] **Build `/subscribe/innerlab` dedicated page** — SubscribeInnerLabPage.jsx with IL module picker
 - [ ] **Redesign main subscribe page** — free vs premium per category
 
-### Module Alignment (Session 32 — prompts ready, not yet executed)
+### Module Alignment (Session 30 (continued) — prompts ready, not yet executed)
 
 - [ ] **Give INNERLAB_MODULE_ALIGNMENT.md to 10 new module agents** (Bonds through Nexus)
 - [ ] **Give CWG_ALIGNMENT.md to CWG agent** — AFTER feature removal is complete

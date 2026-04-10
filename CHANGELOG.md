@@ -1,6 +1,6 @@
 # CHANGELOG — MBS Platform
 
-## April 10, 2026 — Session 32: Admin Fixes, Module Alignment Prompts, IL Agent Sync
+## April 10, 2026 — Session 30 (continued): Admin Fixes, Module Alignment Prompts, IL Agent Sync
 
 ### MBS Platform (1 commit on main)
 - **Admin link fix + all categories on homepage** (`1b08acf`) — Fixed URL normalization bug (links without `https://` were relative). Homepage "What We're Building" now shows Inner Lab, Arcade, and Studio Works sections. Admin-created products appear on frontend. Per-category "Add to..." buttons in admin.

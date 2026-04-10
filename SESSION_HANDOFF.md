@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 10, 2026 (Session 32)
+**Last Updated**: April 10, 2026 (Session 30 (continued))
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -75,14 +75,14 @@
 
 ## NEXT-SESSION PROMPT
 
-See bottom of this document for the comprehensive prompt to start Session 33.
+See bottom of this document for the comprehensive prompt to start Session 31.
 
 ---
 
-## NEXT-SESSION PROMPT — Session 33: MBS Platform Code Work
+## NEXT-SESSION PROMPT — Session 31: MBS Platform Code Work
 
 ```
-## Session 33 — MBS Platform Code Work
+## Session 31 — MBS Platform Code Work
 
 This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
