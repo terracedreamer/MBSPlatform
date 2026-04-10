@@ -175,9 +175,7 @@ async function requirePremium(req, res, next) {
 
 ### 2.4 Define free vs premium features
 
-**Decision: Wire `isPremium` with `effectivePremium = true` and decide the actual split later.** No specific limits are defined yet for any module. Just get the plumbing in place so features can be gated when limits are decided.
-
-Wire `isPremium` checks in the auth store and create a `requirePremium` backend middleware, but keep `effectivePremium = true` so everything works as full-access until MBS free tier is live.
+**Decision (UPDATED): Propose a real free/premium split now using your best judgment.** Think about what makes a compelling free experience (enough to be useful) while reserving high-value features for premium (AI-powered features, unlimited usage, advanced capabilities). Implement actual gating — check `isPremium` and enforce limits on free users. When a free user hits a limit, show an upgrade prompt linking to `https://magicbusstudios.com/subscribe/innerlab`. Do NOT use `effectivePremium = true`. The owner will review and adjust specific numbers later, but real gating should be in place now.
 
 ### 2.5 Upgrade prompts
 
@@ -253,7 +251,7 @@ Verify `app.set("trust proxy", 1)` is present BEFORE any middleware in `server/i
 1. Read CURRENT_STATUS.md and SESSION_HANDOFF.md for latest context
 2. **Ask owner: CSS Modules (Option A) or Tailwind (Option B)?** Default to A if no answer.
 3. **Visual polish** — align colors, migrate toasts to Sonner, add skeleton/empty/error states
-4. **Entitlement gating** — wire `isPremium`, add effectivePremium flag
+4. **Entitlement gating** — implement real free/premium split with actual gating
 5. **Verify** GDPR, il_* integration, trust proxy
 6. Run tests: `npm run test` — all 29 tests pass
 7. Run `npm run build` to verify production build

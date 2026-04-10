@@ -115,15 +115,10 @@ async def check_premium(user_id: str, token: str) -> bool:
     return entitlement.get("isPremium", False)
 ```
 
-For now, use `effectivePremium = True` pattern — hardcode to bypass until MBS free tier is live:
+Do NOT use `effectivePremium = True`. Implement real gating now:
 
 ```python
-# TODO: remove effectivePremium when MBS free tier is live
-EFFECTIVE_PREMIUM = True
-
 async def is_premium(user_id: str, token: str) -> bool:
-    if EFFECTIVE_PREMIUM:
-        return True
     return await check_premium(user_id, token)
 ```
 
@@ -141,9 +136,9 @@ setIsPremium(entitlement.isPremium ?? true); // fallback to true during developm
 
 ### 2.4 Define free vs premium features
 
-**Decision: Wire `isPremium` with `effectivePremium = True` and decide the actual split later.** No specific limits are defined yet for any module. Just get the plumbing in place.
+**Decision (UPDATED): Propose a real free/premium split now using your best judgment.** Think about what makes a compelling free experience (enough to be useful) while reserving high-value features for premium (AI-powered features, unlimited usage, advanced capabilities). Implement actual gating — check `isPremium` and enforce limits on free users. When a free user hits a limit, show an upgrade prompt linking to `https://magicbusstudios.com/subscribe/innerlab`. Do NOT use `effectivePremium = True`. The owner will review and adjust specific numbers later, but real gating should be in place now.
 
-**Note**: CWG has a feature removal in progress (7 features being stripped). Do NOT add premium gating to features that are being removed. Wire `isPremium` into the entitlement check and create a helper function, but keep `effectivePremium = True` so everything works as full-access until MBS free tier is live and feature removal is complete.
+**Note**: CWG has a feature removal in progress (7 features being stripped). Do NOT add premium gating to features that are being removed. Only gate features that will survive the removal.
 
 ### 2.5 Upgrade prompts
 
@@ -208,7 +203,7 @@ Grep for `source_module` across the backend. Every write to an `il_*` collection
 
 1. Read CURRENT_STATUS.md and SESSION_HANDOFF.md for latest context
 2. **Visual polish first** — align design tokens, add skeleton/empty/error states
-3. **Entitlement gating** — wire `isPremium`, add effectivePremium flag
+3. **Entitlement gating** — implement real free/premium split with actual gating
 4. **Verify** existing GDPR and il_* integration
 5. Run existing tests: `npm run test` (frontend), backend tests if configured
 6. Run `npm run build` to verify production build
