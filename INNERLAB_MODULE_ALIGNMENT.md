@@ -248,10 +248,10 @@ Response (same from either path): `{ hasAccess: true/false, isPremium: true/fals
 
 **Critical rules**:
 - MBS does NOT pass any limit numbers — only `hasAccess` and `isPremium` booleans
-- Each module defines its OWN free vs premium limits (e.g., messages/day, saved items, AI calls/day). Work with the module owner to define these.
+- Each module defines its OWN free vs premium limits (e.g., messages/day, saved items, AI calls/day). **Use your best judgment to propose a reasonable free/premium split for this module.** Think about what makes a compelling free experience (enough to be useful) while reserving high-value features for premium (AI-powered features, unlimited usage, advanced capabilities). The owner will review and adjust later — but implement a real split now, not just effectivePremium = true.
 - Cache entitlement response for 5 minutes. Support `?refresh=true` query param to bust cache (MBS redirects back with this after subscribe/upgrade).
 - Admin users (`isAdmin: true` in JWT) always get full access — skip entitlement checks.
-- Use `effectivePremium = true` pattern during development — hardcode to true until MBS premium enforcement is live, so the module works without gating. Leave a clear `// TODO: remove effectivePremium when MBS free tier is live` comment.
+- **Implement actual free/premium gating** — check `isPremium` and enforce limits on free users. When a free user hits a limit, show an upgrade prompt linking to `https://magicbusstudios.com/subscribe/innerlab`. Do NOT use effectivePremium = true — implement real gating with your proposed limits. The owner will adjust the specific numbers later.
 
 **Downgrade handling**: When a premium user cancels, MBS auto-downgrades them to `free_tier`. The next entitlement check returns `isPremium: false`. Do NOT redirect to subscribe — they still have access. Lock premium features, keep free features working. Optionally show: "Your premium access has ended. You still have free access."
 
