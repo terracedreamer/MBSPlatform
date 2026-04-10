@@ -23,7 +23,7 @@ CWG is a **Python/FastAPI** backend + **React/Vite** frontend. It already has th
 
 ### Reference: Read these first
 
-- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\index.css` — IL dashboard design tokens (target palette)
+- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\index.css` — IL dashboard design tokens (target palette). **Note: the hex values in section 1.1 below are sufficient — no need to read this file.**
 - `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\components\ui\` — PageShell, Card, EmptyState, Skeleton patterns
 - `C:\Users\1984a\OneDrive\Desktop\Codes\CWG\CURRENT_STATUS.md` — current state
 - `C:\Users\1984a\OneDrive\Desktop\Codes\CWG\SESSION_HANDOFF.md` — latest session context
@@ -141,19 +141,9 @@ setIsPremium(entitlement.isPremium ?? true); // fallback to true during developm
 
 ### 2.4 Define free vs premium features
 
-**Work with the owner to decide what's free vs premium in CWG.** Only define splits for features that STILL EXIST after feature removal. Possible split:
+**Decision: Wire `isPremium` with `effectivePremium = True` and decide the actual split later.** No specific limits are defined yet for any module. Just get the plumbing in place.
 
-| Feature | Free | Premium |
-|---------|------|---------|
-| Daily conversations | Limited (e.g., 3/day) | Unlimited |
-| Conversation history | Last 30 days | Full history |
-| AI depth | Standard model | Deep model |
-| Journal/reflections | Limited entries | Unlimited |
-| Export data | JSON only | JSON + PDF |
-
-**Note**: CWG has a feature removal in progress (7 features being stripped). Do NOT add premium gating to features that are being removed. Check current feature list after removal before building this split.
-
-**These are suggestions only** — the owner decides. The code should be wired to check `isPremium` so limits can be toggled later.
+**Note**: CWG has a feature removal in progress (7 features being stripped). Do NOT add premium gating to features that are being removed. Wire `isPremium` into the entitlement check and create a helper function, but keep `effectivePremium = True` so everything works as full-access until MBS free tier is live and feature removal is complete.
 
 ### 2.5 Upgrade prompts
 

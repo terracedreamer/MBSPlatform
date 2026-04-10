@@ -33,20 +33,7 @@ FlowState is an **Express/Node.js** backend + **React/Vite/TypeScript** frontend
 
 FlowState uses **CSS Modules** (`.module.css` per component) with CSS custom properties in `src/index.css`. This is a **documented valid deviation** from the Tailwind standard in the global CLAUDE.md.
 
-**Two options** (ask the owner which to choose):
-
-**Option A: Keep CSS Modules** (less work, preserves existing patterns)
-- Update CSS custom properties in `src/index.css` to match IL dashboard palette
-- Keep all `.module.css` files — just update color values
-- Faster, lower risk
-
-**Option B: Migrate to Tailwind** (full alignment with IL and all other modules)
-- Replace CSS Modules with Tailwind utility classes
-- Install `tailwindcss` + `@tailwindcss/vite`
-- More work, but achieves full consistency with the ecosystem
-- All 10 new modules will use Tailwind, so FlowState would be the odd one out long-term
-
-**If the owner doesn't specify, default to Option A** (keep CSS Modules, align colors only).
+**Decision: Option A — Keep CSS Modules, align colors only.** FlowState's CSS Modules deviation is documented and valid. Update CSS custom properties in `src/index.css` to match IL dashboard palette. Keep all `.module.css` files — just update color values. Do NOT migrate to Tailwind.
 
 ### 1.1 Design token alignment
 
@@ -105,7 +92,7 @@ Ensure these exist (create if missing):
 
 Verify fonts match (or add if missing):
 - Headings: Space Grotesk (600/700)
-- Body: DM Sans (400/500)
+- Body: **Inter** (FlowState's established body font — keep this, do NOT change to DM Sans)
 - Display/accent: Instrument Serif italic
 - Mono: JetBrains Mono
 - Load via Google Fonts with `display=swap`
@@ -188,18 +175,9 @@ async function requirePremium(req, res, next) {
 
 ### 2.4 Define free vs premium features
 
-**Work with the owner to decide what's free vs premium in FlowState.** Possible split:
+**Decision: Wire `isPremium` with `effectivePremium = true` and decide the actual split later.** No specific limits are defined yet for any module. Just get the plumbing in place so features can be gated when limits are decided.
 
-| Feature | Free | Premium |
-|---------|------|---------|
-| Practice sessions | Limited programs | All programs |
-| AI debrief | Basic | Detailed with recommendations |
-| AI practice plans | Not available | Personalized plans |
-| Session history | Last 30 days | Full history |
-| Community flows | Browse only | Create + join |
-| Achievements | Basic set | Full achievement system |
-
-**These are suggestions only** — the owner decides. Wire `isPremium` checks so limits can be toggled later.
+Wire `isPremium` checks in the auth store and create a `requirePremium` backend middleware, but keep `effectivePremium = true` so everything works as full-access until MBS free tier is live.
 
 ### 2.5 Upgrade prompts
 
@@ -279,5 +257,5 @@ Verify `app.set("trust proxy", 1)` is present BEFORE any middleware in `server/i
 5. **Verify** GDPR, il_* integration, trust proxy
 6. Run tests: `npm run test` — all 29 tests pass
 7. Run `npm run build` to verify production build
-8. FlowState deploys from `main` branch. Push to `main`.
+8. FlowState is currently on `dev` branch. Push to `dev`. Owner will merge to `main` when ready.
 9. Commit with: `feat: visual polish + entitlement gating prep`
