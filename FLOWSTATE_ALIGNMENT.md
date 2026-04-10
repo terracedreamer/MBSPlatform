@@ -237,13 +237,15 @@ When `isPremium` changes from `true` to `false`:
 
 Quick checks that existing SSO/GDPR/il_* integration is solid:
 
-### 3.1 GDPR endpoint
+### 3.1 GDPR endpoint (IMPORTANT — potential bug)
 
 Verify `DELETE /api/user-data` in `server/index.js` (line ~674):
-- Deletes all 7 `yoga_*` collections for the user
-- Deletes `il_*` entries WHERE `source_module = "flowstate"` (activity_feed, check_ins, user_wellness_profiles)
-- Does NOT delete identity singletons
+- Deletes all 7 `yoga_*` collections for the user — correct
+- Deletes `il_activity_feed` and `il_check_ins` WHERE `source_module = "flowstate"` — correct
+- **Does NOT delete `il_user_wellness_profiles`** — this is an identity singleton (one per user, shared across body-aware modules). Per data sovereignty rules, identity singletons are only deleted at category-level or higher, NEVER at app-level.
 - Returns `{ success: true }`
+
+**Check if the current code deletes `il_user_wellness_profiles` during app-level deletion. If it does, that's a bug — remove it from the app-level delete.** The wellness profile should survive a FlowState-only data deletion because other modules (or future ones) may depend on it. Only Inner Lab middleware (category-level deletion) should delete it.
 
 ### 3.2 il_* source_module consistency
 

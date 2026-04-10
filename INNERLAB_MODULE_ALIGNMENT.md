@@ -17,8 +17,8 @@ This module needs to be brought up to the same visual and code standards as the 
 - `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\components\ui\` — PageShell, PageHeader, Card, EmptyState, Skeleton
 - `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\components\DashboardLayout.jsx` — layout pattern
 - `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\components\Sidebar.jsx` — nav pattern
-- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\lib\dashboardApi.js` — API client pattern (centralized fetch with auth headers)
-- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\lib\motion.js` — animation presets (if it exists)
+- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\utils\dashboardApi.js` — API client pattern (centralized fetch with auth headers)
+- `C:\Users\1984a\OneDrive\Desktop\Codes\Innerlab\src\lib\motion.js` — animation presets (copy these exact values)
 
 **CWG** (gold standard live module — read for complete working example):
 - `C:\Users\1984a\OneDrive\Desktop\Codes\CWG\frontend\src\` — full module frontend structure

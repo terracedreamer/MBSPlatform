@@ -6,6 +6,10 @@
 
 ---
 
+## IMPORTANT — Feature Removal First
+
+**If CWG has a pending feature removal (7 features being stripped), do that BEFORE running this alignment prompt.** Otherwise you'll polish features that get deleted in the next session. Check with the owner or the CWG agent whether feature removal has been completed. If not, do feature removal first, then come back to this prompt.
+
 ## Scope — What CWG Needs
 
 CWG is a **Python/FastAPI** backend + **React/Vite** frontend. It already has the most functionality of any IL module. This prompt targets two gaps:
@@ -137,7 +141,7 @@ setIsPremium(entitlement.isPremium ?? true); // fallback to true during developm
 
 ### 2.4 Define free vs premium features
 
-**Work with the owner to decide what's free vs premium in CWG.** Possible split:
+**Work with the owner to decide what's free vs premium in CWG.** Only define splits for features that STILL EXIST after feature removal. Possible split:
 
 | Feature | Free | Premium |
 |---------|------|---------|
@@ -145,8 +149,9 @@ setIsPremium(entitlement.isPremium ?? true); // fallback to true during developm
 | Conversation history | Last 30 days | Full history |
 | AI depth | Standard model | Deep model |
 | Journal/reflections | Limited entries | Unlimited |
-| Practices | Basic set | Full library |
 | Export data | JSON only | JSON + PDF |
+
+**Note**: CWG has a feature removal in progress (7 features being stripped). Do NOT add premium gating to features that are being removed. Check current feature list after removal before building this split.
 
 **These are suggestions only** — the owner decides. The code should be wired to check `isPremium` so limits can be toggled later.
 
