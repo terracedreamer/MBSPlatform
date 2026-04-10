@@ -1,13 +1,15 @@
 # CHANGELOG — MBS Platform
 
-## April 10, 2026 — Session 30 (continued): Admin Fixes, Module Alignment Prompts, IL Agent Sync
+## April 10, 2026 — Session 30 (continued): Admin Fixes, Module Alignment Prompts, IL Agent Sync, Owner Decisions
 
 ### MBS Platform (1 commit on main)
 - **Admin link fix + all categories on homepage** (`1b08acf`) — Fixed URL normalization bug (links without `https://` were relative). Homepage "What We're Building" now shows Inner Lab, Arcade, and Studio Works sections. Admin-created products appear on frontend. Per-category "Add to..." buttons in admin.
 
-### MBSPlatform Architecture Repo (2 commits on main)
+### MBSPlatform Architecture Repo (7 commits on main)
 - **Module alignment prompts** (`51fb0fb`) — Created 3 alignment docs: INNERLAB_MODULE_ALIGNMENT.md (16-section prompt for 10 new modules), CWG_ALIGNMENT.md (visual + entitlement, feature removal first), FLOWSTATE_ALIGNMENT.md (CSS Modules decision, toast migration, GDPR singleton bug). Added PLATFORM_URL dual-use clarification to all three.
 - **IL agent feedback incorporated** (`6f4161d`) — Fixed dashboardApi.js path, removed motion.js hedge, added CWG feature removal ordering, flagged FlowState il_user_wellness_profiles GDPR singleton bug.
+- **Owner decisions applied** (`1699ac6`) — FlowState: keep CSS Modules, keep Inter font, push to dev. CWG: IL reference hex values sufficient.
+- **Real free/premium gating** (`0ff58db`, `ea9481c`) — Removed effectivePremium from ALL three prompts. Agents must propose and implement real free/premium split. Owner adjusts later.
 
 ### Global Reference Files
 - `~/.claude/reference/innerlab-module-alignment.md` — new, copied from MBSPlatform

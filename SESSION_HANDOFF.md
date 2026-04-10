@@ -8,7 +8,7 @@
 
 ---
 
-## SESSION 32 SUMMARY (April 10, 2026) — Admin Fixes, Module Alignment Prompts, IL Agent Sync
+## SESSION 30 (continued) SUMMARY (April 10, 2026) — Admin Fixes, Module Alignment Prompts, IL Agent Sync, Owner Decisions
 
 ### What was done this session:
 
@@ -37,6 +37,15 @@
 - `~/Desktop/CLAUDE.md` — same registration update
 - `platform-instructions-for-new-modules/CLAUDE.md` — fixed entitlement response (added `isPremium`), fixed redirect URL (`/subscribe/innerlab` not `/billing`), fixed PLATFORM_URL (`api.magicbusstudios.com`), added `JWT_PUBLIC_KEY`
 
+**5. Owner Decisions on Active Module Sessions**
+- **FlowState**: Keep CSS Modules (Option A), keep Inter body font, push to dev (not main), Sonner migration approved
+- **CWG**: Feature removal before alignment, IL reference hex values in prompt sufficient
+- **ALL modules (including CWG + FlowState)**: effectivePremium removed — agents must propose and implement real free/premium split now. Owner reviews later.
+- **Reference file distribution**: All 5 reference files (`innerlab-module-alignment.md`, `entitlement-integration.md`, `innerlab-data.md`, `data-sovereignty.md`, `env-standards.md`) manually copied to all laptops in `~/.claude/reference/`
+
+**6. Final Module Prompt Created**
+- Single autonomous prompt for any IL module agent — reads 3 reference files, does everything in one pass, proposes real free/premium split
+
 ### Per-repo commits this session:
 
 | Repo | Branch | Commits | Description |
@@ -44,11 +53,15 @@
 | MBS | main | `1b08acf` | Fix link normalization + show all categories on homepage |
 | MBSPlatform | main | `51fb0fb` | Add module alignment prompts with PLATFORM_URL dual-use |
 | MBSPlatform | main | `6f4161d` | Incorporate IL agent review feedback on all three prompts |
+| MBSPlatform | main | `e846b08` | End session docs |
+| MBSPlatform | main | `1699ac6` | Apply owner decisions (FlowState CSS/font/branch, CWG reference) |
+| MBSPlatform | main | `0ff58db` | Module alignment — real free/premium split, no effectivePremium |
+| MBSPlatform | main | `ea9481c` | CWG + FlowState — same real gating update |
 
-### What's next (see next-session prompt below):
+### What's next (Session 31):
 - MBS Platform code work: free_tier entitlement, subscribe page, GDPR email confirmation
-- Module alignment: give prompts to individual module agents
-- FlowState GDPR bug verification
+- Module alignment: give prompts to individual module agents (prompt ready)
+- FlowState GDPR bug verification (il_user_wellness_profiles singleton)
 - CWG feature removal before alignment
 
 ---
@@ -87,13 +100,20 @@ See bottom of this document for the comprehensive prompt to start Session 31.
 This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
 ### Context
-Sessions 31-32 made major architecture decisions about free tier, entitlement gating, and module alignment. Three alignment prompts were created (INNERLAB_MODULE_ALIGNMENT.md, CWG_ALIGNMENT.md, FLOWSTATE_ALIGNMENT.md). IL agent reviewed and confirmed all are accurate. Now it's time to build the MBS Platform side.
+Session 30 made major architecture decisions and created three module alignment prompts (INNERLAB_MODULE_ALIGNMENT.md, CWG_ALIGNMENT.md, FLOWSTATE_ALIGNMENT.md). IL agent reviewed and confirmed all are accurate. CWG and FlowState agents received their prompts with owner decisions: FlowState keeps CSS Modules + Inter font + pushes to dev; CWG does feature removal before alignment. Key decision change: ALL modules now implement real free/premium gating (no effectivePremium = true anywhere). Reference files synced to ~/.claude/reference/ on all laptops.
 
 ### Read first
-- MBSPlatform/SESSION_HANDOFF.md (this file)
-- MBSPlatform/FUTURE_WORK_TODO.md (full backlog)
+- MBSPlatform/SESSION_HANDOFF.md
+- MBSPlatform/FUTURE_WORK_TODO.md
 - ~/.claude/reference/entitlement-integration.md (what we promised apps would get)
 - MBSPlatform/FREE_TIER_ARCHITECTURE.md (free tier design decisions)
+
+### What was built in Session 30 (already committed + pushed):
+- MBS commit 1b08acf: admin link URL normalization fix, homepage shows all 3 categories, admin-created products appear on frontend
+- 3 module alignment prompts created, IL agent reviewed, owner decisions applied
+- Global CLAUDE.md updated (12 modules, admin dashboard registration, module alignment reference)
+- platform-instructions-for-new-modules/CLAUDE.md fixed (isPremium, redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY)
+- All reference files synced to ~/.claude/reference/ on all laptops
 
 ### MBS Platform Code Work Items (prioritized)
 
@@ -120,11 +140,11 @@ Sessions 31-32 made major architecture decisions about free tier, entitlement ga
 14. Toggle 5 apps to Coming Soon in admin: brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker
 
 **Verify before starting:**
-- FlowState GDPR bug: does `DELETE /api/user-data` in YogaGhost/server/index.js delete `il_user_wellness_profiles`? If yes, that's a bug — it's an identity singleton that should NOT be deleted at app-level. Flag but don't fix (FlowState agent will fix).
+- FlowState GDPR bug: does `DELETE /api/user-data` in YogaGhost/server/index.js delete `il_user_wellness_profiles`? If yes, flag it — identity singleton, should NOT be deleted at app-level. Don't fix here (FlowState agent handles it).
 
 ### Owner actions still pending (not code):
 - Docker prune on current VPS (97% disk)
-- Redeploy MBS frontend + backend on Coolify
+- Redeploy MBS frontend + backend on Coolify (Session 30 commits need deploying)
 - Create 6 Stripe products / 12 prices in Stripe Dashboard
 - BTCPay API key regeneration
 - CWG promote test → dev (requires passphrase)
