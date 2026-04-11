@@ -143,13 +143,32 @@ async function requireAuth(req, res, next) {
 }
 ```
 
+### Module Domain Convention
+
+**All new Inner Lab modules deploy to `{slug}.innerlab.ai`** with backend at `api.{slug}.innerlab.ai`.
+
+Examples: `rituals.innerlab.ai`, `bonds.innerlab.ai`, `starmap.innerlab.ai`
+
+Historical exceptions (pre-convention):
+- CWG: `conversationswithgod.ai` (own domain)
+- FlowState: `yoga.magicbusstudios.com`
+
+Standalone products (Arcade, Studio Works) still use `*.magicbusstudios.com`.
+
+**⚠️ IMPORTANT — don't confuse module domain with platform domain:**
+- Your module's own domain → `{slug}.innerlab.ai` / `api.{slug}.innerlab.ai`
+- `VITE_PLATFORM_URL` → `https://magicbusstudios.com` (subscribe/billing pages — this is MBS Platform, NOT your module)
+- `PLATFORM_URL` → `https://api.magicbusstudios.com` (backend entitlement API — this is MBS Platform, NOT your module)
+
+The `*.innerlab.ai` convention is about where YOUR MODULE lives. MBS Platform still lives at `magicbusstudios.com`. Do NOT change `VITE_PLATFORM_URL` or `PLATFORM_URL` to `innerlab.ai`.
+
 ### Login Flow
 ```
-User visits your-module.innerlab.ai (Inner Lab modules live under innerlab.ai)
+User visits {slug}.innerlab.ai
   → Clicks "Login"
-  → Redirect to: innerlab.ai/auth/login?redirect={your_domain}
+  → Redirect to: innerlab.ai/auth/login?redirect=https://{slug}.innerlab.ai
   → User authenticates (Google SSO / Email+Password / Nostr / LNURL)
-  → MBS Platform redirects back: {your_domain}?token={JWT}
+  → MBS Platform redirects back: https://{slug}.innerlab.ai?token={JWT}
   → Your frontend stores JWT, sends in Authorization header
   → Your backend validates JWT on every request
 ```
@@ -185,15 +204,17 @@ Three states to handle:
 |----------|-------|-------|
 | MONGO_URL | (same as all MBS apps) | Shared MongoDB on Coolify |
 | DB_NAME | `inner_lab` | Same DB as all Inner Lab modules |
-| JWT_SECRET | (same as MBS Platform) | Must match for JWT validation |
+| JWT_PUBLIC_KEY | PEM format (same as all services) | RS256 primary verification. Coolify: check "Is Multiline?" |
+| JWT_SECRET | (same as MBS Platform) | HS256 fallback (dual-mode still active). Both keys required. |
 | PORT | (unique per module) | Don't conflict with other modules |
-| CORS_ORIGINS | Your frontend domain(s) | |
-| PLATFORM_URL | `https://api.magicbusstudios.com` | For entitlement checks (backend API, not frontend) |
-| JWT_PUBLIC_KEY | (MBS Platform public key) | RS256 verification. PEM format. |
-| PRODUCT_SLUG | Your module's slug | e.g., `breatharc`, `starmap` |
+| CORS_ORIGINS | `https://{slug}.innerlab.ai,https://www.{slug}.innerlab.ai` | Must include both www and non-www |
+| PLATFORM_URL | `https://api.magicbusstudios.com` | For entitlement checks (backend-to-backend) |
+| PRODUCT_SLUG | Your module's slug | e.g., `rituals`, `starmap` |
+| SERVICE_NAME | `{slug}-api` | Used by Winston logger |
 
 Optional (if your module uses AI):
 | OPENAI_API_KEY | (shared MBS key) | Behind a service layer, never in frontend |
+| OPENAI_MODEL | `gpt-4o-mini` | Default model |
 
 ---
 

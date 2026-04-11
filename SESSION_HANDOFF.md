@@ -1,10 +1,76 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 10, 2026 (Session 31)
+**Last Updated**: April 11, 2026 (Session 32)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 32 SUMMARY (April 10-11, 2026) — IL Module Domain Convention, Module Coolify Instruction Reviews
+
+### What was done this session:
+
+**1. Domain Convention Decision — All IL Modules → `*.innerlab.ai`**
+- Owner decision: all new Inner Lab modules deploy to `{slug}.innerlab.ai` (frontend) and `api.{slug}.innerlab.ai` (backend)
+- Standalone products (Arcade, Studio Works) stay on `*.magicbusstudios.com`
+- Historical exceptions: CWG (`conversationswithgod.ai`), FlowState (`yoga.magicbusstudios.com`) — keep as-is
+- Critical distinction documented: `VITE_PLATFORM_URL` and `PLATFORM_URL` stay at `magicbusstudios.com` (they point to MBS Platform, not to the module itself). Agents repeatedly confuse this.
+
+**2. Five Docs Updated for Domain Convention**
+- `~/.claude/CLAUDE.md` (global) — added IL domain convention to Architecture section
+- `~/Desktop/CLAUDE.md` — same update
+- `MBSPlatform/CLAUDE.md` (root) — new "Module Domain Convention" section with date
+- `platform-instructions-for-new-modules/CLAUDE.md` — explicit convention + warning box about PLATFORM_URL vs module domain + fixed env vars (JWT_PUBLIC_KEY, CORS www+non-www, SERVICE_NAME, OPENAI_MODEL)
+- `platform-instructions-for-innerlab/CLAUDE.md` — catalog table: all 10 TBD modules assigned `{slug}.innerlab.ai` domains
+
+**3. Module Coolify Instruction Reviews — 5 Modules Reviewed**
+Reviewed compile/deploy instructions from 5 module agents. Found recurring patterns of mistakes:
+
+| Module | Issues Found | Status |
+|--------|-------------|--------|
+| Rituals | 5 (domain, JWT, CORS, invented env var, no GDPR) | ✅ Corrected — v2 approved |
+| StarMap | 5 (domain, hallucinated gpt-5.4-mini, VITE_PLATFORM_URL wrong, JWT note, no GDPR) | ⏳ Correction sent twice (agent ignored first round) |
+| InnerQuest | 4 (domain, JWT either/or, CORS, JWT_PUBLIC_KEY escaping) | ⏳ Correction sent |
+| LifeMap | 7 (domain, JWT, JWT escaping, gpt-4o model, no VITE_PRODUCT_SLUG, GDPR scope, MBS CORS line) | ⏳ Correction sent |
+| Archetypes | 5 (domain, JWT, JWT escaping, CORS, no GDPR + MBS CORS line) | ⏳ Correction sent |
+
+**4. MODULE_REVIEW_CHECKLIST.md Created**
+Comprehensive checklist for reviewing all future module Coolify instructions. Covers: domain convention, JWT dual-mode, GDPR, env vars, frontend build args, common mistakes, correction prompt template. Includes tracking table of reviewed vs not-yet-reviewed modules.
+
+**5. Recurring Agent Mistakes Identified & Documented**
+- Domain: agents default to `*.magicbusstudios.com` for IL modules
+- JWT: agents present both keys as "either/or" instead of "both required"
+- JWT_PUBLIC_KEY: agents say escape `\n` instead of using Coolify "Is Multiline?" checkbox
+- CORS: agents list single origin, miss www variant
+- GDPR: often omitted entirely, or scope too narrow (misses `il_*` entries)
+- OPENAI_MODEL: hallucinated model names (gpt-5.4-mini)
+- VITE_PLATFORM_URL: agents change to innerlab.ai (should stay magicbusstudios.com)
+- Invented env vars: ALLOW_TRANSPORT_ONLY_ACCESS (not a standard)
+- "Add module to MBS CORS": not needed, server-to-server calls
+
+**6. Correction Prompt Convention Established**
+- All correction prompts end with: "Apply corrections and regenerate, OR respond with questions. Questions will be routed to the MBS Platform architecture agent."
+- Added explicit "Do NOT change PLATFORM_URL or VITE_PLATFORM_URL" warning to all domain corrections
+
+### Files changed this session:
+
+| File | Change |
+|------|--------|
+| `~/.claude/CLAUDE.md` | Added IL domain convention |
+| `~/Desktop/CLAUDE.md` | Added IL domain convention |
+| `CLAUDE.md` (root) | New "Module Domain Convention" section |
+| `platform-instructions-for-new-modules/CLAUDE.md` | Domain convention, warning box, env var fixes |
+| `platform-instructions-for-innerlab/CLAUDE.md` | Catalog table — 10 TBD → assigned domains |
+| `MODULE_REVIEW_CHECKLIST.md` | **NEW** — review checklist + tracking |
+
+### What's next (Session 33):
+- Continue reviewing remaining 5 module Coolify instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus)
+- Follow up on StarMap, InnerQuest, LifeMap, Archetypes — check if corrected instructions came back
+- MBS Platform code work (free tier entitlement, subscribe page) — deferred from Session 31
+- FlowState GDPR singleton bug verification (il_user_wellness_profiles) — ✅ verified NOT a bug (Session 31)
+- CWG feature removal before alignment
 
 ---
 
@@ -153,41 +219,57 @@
 
 ---
 
-## NEXT-SESSION PROMPT — Session 32
+## NEXT-SESSION PROMPT
+
+See bottom of this document for the comprehensive prompt to start Session 33.
+
+---
+
+## NEXT-SESSION PROMPT — Session 33: Continue Module Reviews + Platform Code Work
 
 ```
-## Session 32 — Post-Deploy Verification + GDPR Rollout
+## Session 33 — Continue Module Reviews + Platform Code Work
 
-This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
+This is the MBS Platform architecture think tank (MBSPlatform repo — no code here).
 
 ### Context
-Session 31 built all 4 priorities: free_tier entitlements, subscribe pages, GDPR email confirmation, coming soon seed. Code committed and pushed to both main and development (MBS commit 0fc98c4). Site needs redeployment on Coolify before anything is live.
+Session 31 built free_tier entitlements, subscribe pages, GDPR email confirmation, coming soon seed (MBS commit 0fc98c4, pushed to main + development, awaiting Coolify redeploy).
+Session 32 established the domain convention (all new IL modules → *.innerlab.ai) and reviewed Coolify deployment instructions from 5 module agents (Rituals, StarMap, InnerQuest, LifeMap, Archetypes). Rituals v2 was approved. The others had corrections sent back. A MODULE_REVIEW_CHECKLIST.md was created as a comprehensive reference for reviewing all module instructions.
 
 ### Read first
-- MBSPlatform/SESSION_HANDOFF.md
+- MBSPlatform/SESSION_HANDOFF.md (Session 32 summary)
+- MBSPlatform/MODULE_REVIEW_CHECKLIST.md (the review checklist + tracking table)
 - MBSPlatform/FUTURE_WORK_TODO.md
 
-### Owner actions still pending (must be done before verification):
-- [ ] Redeploy MBS frontend + backend on Coolify
-- [ ] Run seed script: `node server/seeds/setComingSoon.js` against production DB
-- [ ] Docker prune on VPS (97% disk)
-- [ ] Create 6 Stripe products / 12 prices in Stripe Dashboard
-- [ ] BTCPay API key regeneration
-- [ ] CWG promote test → dev (requires passphrase)
+### Session 32 decisions (already applied to docs):
+- All new IL modules deploy to {slug}.innerlab.ai / api.{slug}.innerlab.ai
+- CWG (conversationswithgod.ai) and FlowState (yoga.magicbusstudios.com) are historical exceptions
+- PLATFORM_URL and VITE_PLATFORM_URL always stay at magicbusstudios.com (MBS Platform, not module)
+- All correction prompts end with "ask questions or regenerate" pattern — questions route to this agent
 
-### Priority 1 — Chrome verification (after redeployment):
+### Immediate work:
+1. **Check for returned corrections** from StarMap, InnerQuest, LifeMap, Archetypes agents
+2. **Review remaining 5 modules** when owner pastes their instructions: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+3. Use MODULE_REVIEW_CHECKLIST.md for every review — update the tracking table as modules are reviewed
+
+### Owner actions still pending (not code):
+- Redeploy MBS frontend + backend on Coolify (Session 31 changes)
+- Run seed script: `node server/seeds/setComingSoon.js` against production DB
+- Docker prune on VPS (97% disk)
+- Create 6 Stripe products / 12 prices in Stripe Dashboard
+- BTCPay API key regeneration
+- CWG promote test → dev (requires passphrase)
+
+### After redeployment — Chrome verification:
 1. /subscribe loads (renamed from /billing)
 2. /billing redirects to /subscribe
 3. /subscribe/innerlab shows IL module picker with 12 modules
 4. Account settings shows email confirmation deletion flow
-5. Health check returns success
 
-### Priority 2 — GDPR email confirmation rollout to child apps:
-Each child app's DELETE /api/user-data should go through MBS confirmation flow instead of deleting immediately.
-Build order: Inner Lab → CWG → FlowState → 11 standalone apps (can parallelize with agent prompts)
-
-### Priority 3 — Module alignment:
-Give alignment prompts to individual module agents (prompts ready from Session 30)
+### Deferred work:
+- GDPR email confirmation rollout to child apps (IL → CWG → FlowState → 11 standalone)
+- Module alignment prompts to individual module agents
+- CWG feature removal before alignment
 
 ### Do NOT start building immediately. List all work items, confirm the plan, then I'll tell you which to start on.
 ```

@@ -1,5 +1,35 @@
 # CHANGELOG — MBS Platform
 
+## April 10-11, 2026 — Session 32: IL Module Domain Convention, Module Coolify Instruction Reviews
+
+### Domain Convention Decision
+- **All new IL modules → `{slug}.innerlab.ai`** (frontend) / `api.{slug}.innerlab.ai` (backend)
+- Standalone products stay on `*.magicbusstudios.com`
+- Historical exceptions: CWG (`conversationswithgod.ai`), FlowState (`yoga.magicbusstudios.com`)
+- Critical clarification: `VITE_PLATFORM_URL` and `PLATFORM_URL` stay at `magicbusstudios.com` — they point to MBS Platform, not to modules
+
+### Docs Updated
+- `~/.claude/CLAUDE.md` — IL domain convention added to Architecture section
+- `~/Desktop/CLAUDE.md` — same
+- `MBSPlatform/CLAUDE.md` — new "Module Domain Convention" section
+- `platform-instructions-for-new-modules/CLAUDE.md` — explicit convention, PLATFORM_URL warning box, env var fixes (JWT_PUBLIC_KEY, CORS www+non-www, SERVICE_NAME)
+- `platform-instructions-for-innerlab/CLAUDE.md` — 10 TBD modules assigned `{slug}.innerlab.ai` domains in catalog table
+
+### Module Coolify Instruction Reviews (5 of 10)
+- **Rituals**: 5 issues found → corrected → v2 approved ✅
+- **StarMap**: 5 issues (hallucinated gpt-5.4-mini, domain, VITE_PLATFORM_URL) → correction sent twice (agent ignored first)
+- **InnerQuest**: 4 issues → correction sent
+- **LifeMap**: 7 issues → correction sent
+- **Archetypes**: 5 issues → correction sent
+
+### New File
+- **MODULE_REVIEW_CHECKLIST.md** — comprehensive review checklist for all module Coolify instructions, tracking table, correction prompt template
+
+### Recurring Agent Mistakes Documented
+Domain (always magicbusstudios.com), JWT (either/or), JWT_PUBLIC_KEY (manual escaping), CORS (single origin), GDPR (missing or narrow scope), OPENAI_MODEL (hallucinated), VITE_PLATFORM_URL (changed to innerlab.ai), invented env vars, "add to MBS CORS" line
+
+---
+
 ## April 10, 2026 — Session 31: Free Tier Entitlements, Subscribe Pages, GDPR Email Confirmation
 
 ### MBS Platform (1 commit on main + development)

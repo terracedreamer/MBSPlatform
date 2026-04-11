@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 10, 2026 (Session 31)
+**Last Updated**: April 11, 2026 (Session 32)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -117,6 +117,11 @@ Both fixes confirmed working across all affected apps.
 - [x] Subscribe pages — BillingPage→SubscribePage, SubscribeInnerLabPage, /billing→/subscribe redirects (Session 31)
 - [x] GDPR email confirmation — DataDeletionRequest model, confirmation email flow, no immediate deletion (Session 31)
 - [x] FlowState GDPR — verified il_user_wellness_profiles NOT deleted at app-level (identity singleton correctly protected)
+- [x] IL module domain convention — all new modules → `{slug}.innerlab.ai`, 5 docs updated (Session 32)
+- [x] MODULE_REVIEW_CHECKLIST.md — comprehensive review checklist for module Coolify instructions (Session 32)
+- [x] Module instruction reviews — Rituals approved, StarMap/InnerQuest/LifeMap/Archetypes corrections sent (Session 32)
+- [ ] Module instruction reviews — 5 remaining: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+- [ ] Module instruction corrections — 4 awaiting v2: StarMap, InnerQuest, LifeMap, Archetypes
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [ ] MBS Coolify redeploy needed (Session 31 changes pushed but not deployed)
