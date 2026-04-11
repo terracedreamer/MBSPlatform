@@ -195,8 +195,8 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
 
-- [ ] **Redeploy MBS on Coolify** — Session 31 changes pushed to main + development (`0fc98c4`) but not deployed. Frontend + backend both need rebuild.
-- [ ] **Run coming soon seed script** — `node server/seeds/setComingSoon.js` against production DB. Sets 5 apps (brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker) to coming_soon.
+- [x] **Redeploy MBS on Coolify** — ✅ Auto-deployed on push to main. Chrome-verified live April 11 (10 pages/endpoints confirmed).
+- [ ] **Run coming soon seed script** — `node server/seeds/setComingSoon.js` against production DB. Sets 5 apps (brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker) to coming_soon. `/products` page stuck on "Loading..." until this is run.
 - [ ] **Docker prune on VPS** — 97% disk usage. Run `docker system prune -a -f && docker builder prune -a -f`.
 - [ ] **CWG promote test → dev** — Requires passphrase + env var audit. Deferred since Session 19.
 

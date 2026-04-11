@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 11, 2026 (Session 32)
+**Last Updated**: April 11, 2026 (Sessions 31 + 32)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -68,8 +68,10 @@ Comprehensive checklist for reviewing all future module Coolify instructions. Co
 ### What's next (Session 33):
 - Continue reviewing remaining 5 module Coolify instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus)
 - Follow up on StarMap, InnerQuest, LifeMap, Archetypes — check if corrected instructions came back
-- MBS Platform code work (free tier entitlement, subscribe page) — deferred from Session 31
-- FlowState GDPR singleton bug verification (il_user_wellness_profiles) — ✅ verified NOT a bug (Session 31)
+- ~~MBS Platform code work (free tier entitlement, subscribe page)~~ — **DONE Session 31** (commit `0fc98c4`, Chrome-verified live)
+- ~~FlowState GDPR singleton bug verification~~ — **DONE Session 31** (NOT a bug, il_user_wellness_profiles correctly protected)
+- **Owner actions**: Run seed script, Docker prune, Stripe products, BTCPay, CWG promote test→dev
+- GDPR email confirmation rollout to child apps
 - CWG feature removal before alignment
 
 ---
@@ -116,15 +118,44 @@ Comprehensive checklist for reviewing all future module Coolify instructions. Co
 - Deleted 4 OneDrive -MSI conflict files (CURRENT_STATUS-MSI.md, FUTURE_WORK_TODO-MSI.md, SESSION_HANDOFF-MSI.md, PHASE_3A_MIGRATION_REPORT-MSI.md)
 - Removed `freeTierLimits` display from ProductPickerPage (40+ lines of `formatLimits()`)
 
+**7. Exhaustive Documentation Sweep (commit `38e68c8`)**
+- Grep'd entire repo for stale `/billing` URLs, `freeTierLimits`, `effectivePremium` patterns
+- Fixed 14 files: platform-instructions, alignment prompts, orchestration guide, audit annotations, new modules CLAUDE.md, .gitignore
+
+**8. Phase Report Consolidation (commit `ed35545`)**
+- Merged all 9 phase reports (3,113 lines across 10 files in `phase-reports/`) into single `archive/PHASE_REPORTS_CONSOLIDATED.md` (3,121 lines)
+- Historical archive header added with table of contents
+- Updated `CLAUDE.md` folder structure to reflect `phase-reports/` removal
+
+**9. Chrome Verification (Post-Deploy) — April 11, 2026**
+- MBS auto-deployed via Coolify on push to main
+- Verified 10 pages/endpoints live:
+  - `magicbusstudios.com/` — all 23 products, nav, footer links to `/subscribe`
+  - `magicbusstudios.com/subscribe` — 4 plan cards, monthly/annual toggle, free tier messaging, active entitlement shown
+  - `magicbusstudios.com/subscribe/innerlab` — 12 module picker, "Register Free", CWG+FlowState active, 10 coming soon
+  - `magicbusstudios.com/billing` — correctly redirects to `/subscribe`
+  - `magicbusstudios.com/auth/login` — Google SSO above email/password, forgot password link
+  - `magicbusstudios.com/auth/signup` — Google SSO, name/email/password, age consent, ToS
+  - `api.magicbusstudios.com/api/health` — `{"success":true,"service":"mbs-platform","database":true}`
+  - `api.magicbusstudios.com/api/auth/public-key` — RS256 public key served
+  - `api.magicbusstudios.com/api/entitlements/subscribe-free` — returns 401 (route exists, requires auth)
+  - `innerlab.ai` — placeholder page live with all 12 modules
+- `/products` page shows "Loading products..." — needs seed script run (owner action)
+- `/settings` and `/subscribe/individual` — require login to render full React SPA
+
 ### Per-repo commits this session:
 
 | Repo | Branch | Commits | Description |
 |------|--------|---------|-------------|
 | MBS | main + development | `0fc98c4` | Session 31 — free tier entitlements, subscribe pages, GDPR email confirmation |
+| MBSPlatform | main | `68fe106` | End session 31 docs |
+| MBSPlatform | main | `38e68c8` | Exhaustive doc sweep — fix stale /billing, freeTierLimits, effectivePremium |
+| MBSPlatform | main | `ed35545` | Consolidate 9 phase reports into single archive file |
 
-### What's next (Session 32):
-- **Owner actions** (not code): Redeploy MBS on Coolify, run seed script, Docker prune, create Stripe products, BTCPay API key regen, CWG promote test→dev
-- **Chrome verification**: Verify all Session 31 changes live after redeployment
+### What's next (Session 32 picked up):
+- ~~Chrome verification~~ — **DONE** (10 pages/endpoints verified, see item 9 above)
+- ~~Redeploy MBS on Coolify~~ — **DONE** (auto-deployed on push to main)
+- **Owner actions** (still pending): Run seed script, Docker prune, create Stripe products, BTCPay API key regen, CWG promote test→dev
 - **GDPR email confirmation rollout to child apps**: IL, CWG, FlowState, all 11 standalone apps
 - **Module alignment**: Give prompts to individual module agents (prompts ready from Session 30)
 
@@ -225,51 +256,47 @@ See bottom of this document for the comprehensive prompt to start Session 33.
 
 ---
 
-## NEXT-SESSION PROMPT — Session 33: Continue Module Reviews + Platform Code Work
+## NEXT-SESSION PROMPT — Session 33: Module Reviews + GDPR Rollout
 
 ```
-## Session 33 — Continue Module Reviews + Platform Code Work
+## Session 33 — Module Reviews + GDPR Rollout
 
-This is the MBS Platform architecture think tank (MBSPlatform repo — no code here).
+This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
 ### Context
-Session 31 built free_tier entitlements, subscribe pages, GDPR email confirmation, coming soon seed (MBS commit 0fc98c4, pushed to main + development, awaiting Coolify redeploy).
-Session 32 established the domain convention (all new IL modules → *.innerlab.ai) and reviewed Coolify deployment instructions from 5 module agents (Rituals, StarMap, InnerQuest, LifeMap, Archetypes). Rituals v2 was approved. The others had corrections sent back. A MODULE_REVIEW_CHECKLIST.md was created as a comprehensive reference for reviewing all module instructions.
+Session 31 built and deployed: free_tier entitlements, subscribe pages (`/subscribe`, `/subscribe/innerlab`), GDPR email confirmation, coming soon seed. All Chrome-verified live (10 pages/endpoints confirmed working April 11). MBS auto-deployed via Coolify.
+Session 32 established the domain convention (all new IL modules → *.innerlab.ai) and reviewed Coolify deployment instructions from 5 of 10 module agents (Rituals approved, StarMap/InnerQuest/LifeMap/Archetypes had corrections sent back).
 
 ### Read first
-- MBSPlatform/SESSION_HANDOFF.md (Session 32 summary)
-- MBSPlatform/MODULE_REVIEW_CHECKLIST.md (the review checklist + tracking table)
+- MBSPlatform/SESSION_HANDOFF.md (Sessions 31 + 32 summaries)
+- MBSPlatform/MODULE_REVIEW_CHECKLIST.md (review checklist + tracking table)
 - MBSPlatform/FUTURE_WORK_TODO.md
 
-### Session 32 decisions (already applied to docs):
-- All new IL modules deploy to {slug}.innerlab.ai / api.{slug}.innerlab.ai
-- CWG (conversationswithgod.ai) and FlowState (yoga.magicbusstudios.com) are historical exceptions
+### Key decisions already applied:
+- All new IL modules → {slug}.innerlab.ai / api.{slug}.innerlab.ai (Session 32)
 - PLATFORM_URL and VITE_PLATFORM_URL always stay at magicbusstudios.com (MBS Platform, not module)
-- All correction prompts end with "ask questions or regenerate" pattern — questions route to this agent
+- MBS passes NO limits — only hasAccess + isPremium. Each module enforces its own limits (Session 31)
+- Free tier is LIVE — three-state model: not_subscribed → free_tier → premium (Session 31)
 
-### Immediate work:
-1. **Check for returned corrections** from StarMap, InnerQuest, LifeMap, Archetypes agents
-2. **Review remaining 5 modules** when owner pastes their instructions: Bonds, AstroCompass, Arcana, DreamLens, Nexus
-3. Use MODULE_REVIEW_CHECKLIST.md for every review — update the tracking table as modules are reviewed
+### Priority 1 — Continue module Coolify instruction reviews:
+1. Check for returned corrections from StarMap, InnerQuest, LifeMap, Archetypes
+2. Review remaining 5 modules when owner pastes instructions: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+3. Use MODULE_REVIEW_CHECKLIST.md for every review — update tracking table
 
-### Owner actions still pending (not code):
-- Redeploy MBS frontend + backend on Coolify (Session 31 changes)
-- Run seed script: `node server/seeds/setComingSoon.js` against production DB
-- Docker prune on VPS (97% disk)
-- Create 6 Stripe products / 12 prices in Stripe Dashboard
-- BTCPay API key regeneration
-- CWG promote test → dev (requires passphrase)
+### Priority 2 — GDPR email confirmation rollout to child apps:
+MBS Platform (Layer 1) confirmation flow is built and live. Each child app needs to route through it.
+Build order: Inner Lab → CWG → FlowState → 11 standalone apps
+Architecture: see FUTURE_WORK_TODO.md "GDPR — Email Confirmation" section
 
-### After redeployment — Chrome verification:
-1. /subscribe loads (renamed from /billing)
-2. /billing redirects to /subscribe
-3. /subscribe/innerlab shows IL module picker with 12 modules
-4. Account settings shows email confirmation deletion flow
+### Priority 3 — Module alignment:
+Give alignment prompts to individual module agents (INNERLAB_MODULE_ALIGNMENT.md, CWG_ALIGNMENT.md, FLOWSTATE_ALIGNMENT.md)
 
-### Deferred work:
-- GDPR email confirmation rollout to child apps (IL → CWG → FlowState → 11 standalone)
-- Module alignment prompts to individual module agents
-- CWG feature removal before alignment
+### Owner actions still pending (not code — owner must do manually):
+- [ ] Run seed script: `node server/seeds/setComingSoon.js` against production DB (/products page stuck on "Loading...")
+- [ ] Docker prune on VPS (97% disk): `docker system prune -a -f && docker builder prune -a -f`
+- [ ] Create 6 Stripe products / 12 prices in Stripe Dashboard (see FUTURE_WORK_TODO.md)
+- [ ] BTCPay API key regeneration (403 error)
+- [ ] CWG promote test → dev (requires passphrase)
 
 ### Do NOT start building immediately. List all work items, confirm the plan, then I'll tell you which to start on.
 ```
