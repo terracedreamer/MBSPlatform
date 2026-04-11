@@ -79,6 +79,21 @@
 
 ---
 
+## Dockerfile (TypeScript Monorepo)
+
+> Every TS monorepo module has hit the same 3 failures. Check all 3.
+
+| Check | Correct | Common Mistake |
+|-------|---------|----------------|
+| npm install uses workspace | `npm ci --workspace=backend` or `npm ci` from root | `npm ci --prefix backend` (lockfile not found) |
+| devDeps installed in build stage | `RUN NODE_ENV=development npm ci ...` | No NODE_ENV override → Coolify injects production → tsc missing |
+| CMD path matches tsconfig output | `node backend/dist/src/server.js` (if rootDir is `.`) | `node backend/dist/server.js` (wrong — src/ folder preserved in output) |
+| Multi-stage build | Builder stage (devDeps + tsc) → Runtime stage (prod deps only) | Single stage with all deps |
+| HEALTHCHECK present | `wget -q --spider http://localhost:${PORT}/health` | Missing |
+| Non-root user | `USER node` | Running as root |
+
+---
+
 ## Other Checks
 
 | Check | Correct | Common Mistake |

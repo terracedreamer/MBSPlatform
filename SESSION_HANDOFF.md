@@ -1,6 +1,6 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 11, 2026 (Sessions 31 + 32)
+**Last Updated**: April 11, 2026 (Sessions 31 + 32, continued)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
@@ -8,7 +8,7 @@
 
 ---
 
-## SESSION 32 SUMMARY (April 10-11, 2026) — IL Module Domain Convention, Module Coolify Instruction Reviews
+## SESSION 32 SUMMARY (April 10-11, 2026) — IL Module Domain Convention, Coolify Reviews, Dockerfile Gotchas, Proactive Prompt
 
 ### What was done this session:
 
@@ -37,7 +37,7 @@ Reviewed compile/deploy instructions from 5 module agents. Found recurring patte
 | Archetypes | 5 (domain, JWT, JWT escaping, CORS, no GDPR + MBS CORS line) | ⏳ Correction sent |
 
 **4. MODULE_REVIEW_CHECKLIST.md Created**
-Comprehensive checklist for reviewing all future module Coolify instructions. Covers: domain convention, JWT dual-mode, GDPR, env vars, frontend build args, common mistakes, correction prompt template. Includes tracking table of reviewed vs not-yet-reviewed modules.
+Comprehensive checklist for reviewing all future module Coolify instructions. Covers: domain convention, JWT dual-mode, GDPR, env vars, frontend build args, Dockerfile checks, common mistakes, correction prompt template. Includes tracking table of reviewed vs not-yet-reviewed modules.
 
 **5. Recurring Agent Mistakes Identified & Documented**
 - Domain: agents default to `*.magicbusstudios.com` for IL modules
@@ -54,6 +54,32 @@ Comprehensive checklist for reviewing all future module Coolify instructions. Co
 - All correction prompts end with: "Apply corrections and regenerate, OR respond with questions. Questions will be routed to the MBS Platform architecture agent."
 - Added explicit "Do NOT change PLATFORM_URL or VITE_PLATFORM_URL" warning to all domain corrections
 
+**7. Theme Analysis of Module Agent Transcripts (Session 32 continued)**
+Analyzed full build+deploy transcripts from 4 module agents (InnerQuest, Archetypes, Rituals, LifeMap). Found **3 identical Dockerfile failures** hit every single TypeScript monorepo module in sequence:
+1. `npm ci --prefix backend` fails — lockfile at monorepo root, not in backend/
+2. `tsc: not found` — Coolify injects NODE_ENV=production, skips devDeps
+3. `Cannot find module dist/server.js` — tsconfig rootDir preserves src/ path
+
+Also confirmed from StarMap's Coolify deployment logs: exact same `tsc: not found` failure (exit code 127) + Docker warnings about secrets in ARG (JWT_SECRET, OPENAI_API_KEY leaked into build layer).
+
+**8. Template Fixed — Dockerfile Gotchas Added to New Modules CLAUDE.md**
+- Updated project structure to show TypeScript monorepo layout (frontend/, backend/, npm workspaces)
+- Added full "Dockerfile Gotchas (TypeScript Monorepo on Coolify)" section with all 3 gotchas explained + complete working Dockerfile.backend example
+
+**9. MODULE_REVIEW_CHECKLIST Updated — Dockerfile Section Added**
+- New "Dockerfile (TypeScript Monorepo)" table with 6 checks covering all 3 gotchas + multi-stage, HEALTHCHECK, non-root user
+
+**10. Proactive Prompt Created — PROACTIVE_MODULE_PROMPT.md**
+Comprehensive paste-ready prompt for remaining 5 module agents (Bonds, AstroCompass, Arcana, DreamLens, Nexus). Includes:
+- Domain convention with correct/wrong table
+- JWT dual-mode (both required)
+- All 3 Dockerfile gotchas with complete working example
+- Coolify secrets warning (don't expose JWT_SECRET/OPENAI_API_KEY at build time)
+- Complete env var list (backend runtime + frontend build args)
+- GDPR scope
+- Workflow instructions: generate instructions → self-check against checklist → ask questions if unclear → questions route to MBS Platform agent
+- Self-check checklist for agents to verify before presenting
+
 ### Files changed this session:
 
 | File | Change |
@@ -61,13 +87,15 @@ Comprehensive checklist for reviewing all future module Coolify instructions. Co
 | `~/.claude/CLAUDE.md` | Added IL domain convention |
 | `~/Desktop/CLAUDE.md` | Added IL domain convention |
 | `CLAUDE.md` (root) | New "Module Domain Convention" section |
-| `platform-instructions-for-new-modules/CLAUDE.md` | Domain convention, warning box, env var fixes |
+| `platform-instructions-for-new-modules/CLAUDE.md` | Domain convention, warning box, env var fixes, **TS monorepo project structure**, **Dockerfile Gotchas section** |
 | `platform-instructions-for-innerlab/CLAUDE.md` | Catalog table — 10 TBD → assigned domains |
-| `MODULE_REVIEW_CHECKLIST.md` | **NEW** — review checklist + tracking |
+| `MODULE_REVIEW_CHECKLIST.md` | **NEW** — review checklist + tracking + **Dockerfile section** |
+| `PROACTIVE_MODULE_PROMPT.md` | **NEW** — paste-ready prompt for remaining 5 modules |
 
 ### What's next (Session 33):
-- Continue reviewing remaining 5 module Coolify instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus)
-- Follow up on StarMap, InnerQuest, LifeMap, Archetypes — check if corrected instructions came back
+- **Paste PROACTIVE_MODULE_PROMPT.md** into remaining 5 module agents on other laptop (Bonds, AstroCompass, Arcana, DreamLens, Nexus)
+- Follow up on StarMap, InnerQuest, LifeMap, Archetypes — check if corrected instructions + Dockerfile fixes came back
+- StarMap DNS: A records for `starmap.innerlab.ai` and `api.starmap.innerlab.ai` still needed (deferred by owner)
 - ~~MBS Platform code work (free tier entitlement, subscribe page)~~ — **DONE Session 31** (commit `0fc98c4`, Chrome-verified live)
 - ~~FlowState GDPR singleton bug verification~~ — **DONE Session 31** (NOT a bug, il_user_wellness_profiles correctly protected)
 - **Owner actions**: Run seed script, Docker prune, Stripe products, BTCPay, CWG promote test→dev
@@ -256,20 +284,21 @@ See bottom of this document for the comprehensive prompt to start Session 33.
 
 ---
 
-## NEXT-SESSION PROMPT — Session 33: Module Reviews + GDPR Rollout
+## NEXT-SESSION PROMPT — Session 33: Module Follow-Up + GDPR Rollout
 
 ```
-## Session 33 — Module Reviews + GDPR Rollout
+## Session 33 — Module Follow-Up + GDPR Rollout
 
 This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
 ### Context
 Session 31 built and deployed: free_tier entitlements, subscribe pages (`/subscribe`, `/subscribe/innerlab`), GDPR email confirmation, coming soon seed. All Chrome-verified live (10 pages/endpoints confirmed working April 11). MBS auto-deployed via Coolify.
-Session 32 established the domain convention (all new IL modules → *.innerlab.ai) and reviewed Coolify deployment instructions from 5 of 10 module agents (Rituals approved, StarMap/InnerQuest/LifeMap/Archetypes had corrections sent back).
+Session 32 established the *.innerlab.ai domain convention, reviewed Coolify instructions from 5 modules (Rituals approved, 4 others corrected), then analyzed full build transcripts from 4 modules. Found every TypeScript monorepo module hits the same 3 Dockerfile failures. Fixed the template, updated the checklist, and created PROACTIVE_MODULE_PROMPT.md for the remaining 5 modules.
 
 ### Read first
 - MBSPlatform/SESSION_HANDOFF.md (Sessions 31 + 32 summaries)
-- MBSPlatform/MODULE_REVIEW_CHECKLIST.md (review checklist + tracking table)
+- MBSPlatform/MODULE_REVIEW_CHECKLIST.md (review checklist + tracking)
+- MBSPlatform/PROACTIVE_MODULE_PROMPT.md (the prompt for remaining modules)
 - MBSPlatform/FUTURE_WORK_TODO.md
 
 ### Key decisions already applied:
@@ -277,11 +306,14 @@ Session 32 established the domain convention (all new IL modules → *.innerlab.
 - PLATFORM_URL and VITE_PLATFORM_URL always stay at magicbusstudios.com (MBS Platform, not module)
 - MBS passes NO limits — only hasAccess + isPremium. Each module enforces its own limits (Session 31)
 - Free tier is LIVE — three-state model: not_subscribed → free_tier → premium (Session 31)
+- Dockerfile.backend must use NODE_ENV=development in builder stage (Coolify NODE_ENV=production breaks tsc)
+- Secrets (JWT_SECRET, OPENAI_API_KEY, MONGO_URL) must NOT be "Available at Buildtime" in Coolify
 
 ### Priority 1 — Continue module Coolify instruction reviews:
-1. Check for returned corrections from StarMap, InnerQuest, LifeMap, Archetypes
-2. Review remaining 5 modules when owner pastes instructions: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+1. Check for returned corrections from StarMap, InnerQuest, LifeMap, Archetypes (they were sent Dockerfile fixes + Coolify corrections)
+2. Review remaining 5 modules when owner pastes instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus — these got the proactive prompt)
 3. Use MODULE_REVIEW_CHECKLIST.md for every review — update tracking table
+4. StarMap DNS still needed: A records for starmap.innerlab.ai + api.starmap.innerlab.ai
 
 ### Priority 2 — GDPR email confirmation rollout to child apps:
 MBS Platform (Layer 1) confirmation flow is built and live. Each child app needs to route through it.
@@ -297,6 +329,7 @@ Give alignment prompts to individual module agents (INNERLAB_MODULE_ALIGNMENT.md
 - [ ] Create 6 Stripe products / 12 prices in Stripe Dashboard (see FUTURE_WORK_TODO.md)
 - [ ] BTCPay API key regeneration (403 error)
 - [ ] CWG promote test → dev (requires passphrase)
+- [ ] DNS A records for deploying IL modules (starmap.innerlab.ai first)
 
 ### Do NOT start building immediately. List all work items, confirm the plan, then I'll tell you which to start on.
 ```

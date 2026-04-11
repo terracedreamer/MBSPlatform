@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 11, 2026 (Session 32)
+**Last Updated**: April 11, 2026 (Session 32, continued)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -148,18 +148,20 @@ Each product provides:
 - [x] **Build `/subscribe/innerlab` dedicated page** — 12 IL module picker with checkboxes
 - [x] **Redesign main subscribe page** — free tier messaging + IL modules link
 
-### Module Coolify Instruction Reviews (Session 32 — in progress)
+### Module Coolify Instruction Reviews (Session 32)
 
 Domain convention decided (2026-04-10): all new IL modules → `{slug}.innerlab.ai`. See `MODULE_REVIEW_CHECKLIST.md` for full checklist and tracking.
 
+Dockerfile gotchas documented (2026-04-11): 3 TypeScript monorepo failures that hit every module. Fixed in template (`platform-instructions-for-new-modules/CLAUDE.md`) + proactive prompt (`PROACTIVE_MODULE_PROMPT.md`).
+
 **Reviewed (5/10):**
 - [x] Rituals — v2 approved ✅
-- [ ] StarMap — correction sent (twice), awaiting v2
+- [ ] StarMap — correction sent (twice) + Dockerfile fix. Coolify deploy failed (tsc: not found). Awaiting v2 + DNS setup.
 - [ ] InnerQuest — correction sent, awaiting v2
 - [ ] LifeMap — correction sent, awaiting v2
 - [ ] Archetypes — correction sent, awaiting v2
 
-**Not yet reviewed (5/10):**
+**Not yet reviewed (5/10) — proactive prompt ready (`PROACTIVE_MODULE_PROMPT.md`):**
 - [ ] Bonds
 - [ ] AstroCompass
 - [ ] Arcana

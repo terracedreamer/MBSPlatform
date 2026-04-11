@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 11, 2026 (Sessions 31 + 32)
+**Last Updated**: April 11, 2026 (Sessions 31 + 32, continued)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -118,10 +118,13 @@ Both fixes confirmed working across all affected apps.
 - [x] GDPR email confirmation — DataDeletionRequest model, confirmation email flow, no immediate deletion (Session 31)
 - [x] FlowState GDPR — verified il_user_wellness_profiles NOT deleted at app-level (identity singleton correctly protected)
 - [x] IL module domain convention — all new modules → `{slug}.innerlab.ai`, 5 docs updated (Session 32)
-- [x] MODULE_REVIEW_CHECKLIST.md — comprehensive review checklist for module Coolify instructions (Session 32)
+- [x] MODULE_REVIEW_CHECKLIST.md — comprehensive review checklist for module Coolify instructions + Dockerfile checks (Session 32)
 - [x] Module instruction reviews — Rituals approved, StarMap/InnerQuest/LifeMap/Archetypes corrections sent (Session 32)
-- [ ] Module instruction reviews — 5 remaining: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+- [x] Dockerfile gotchas — 3 TypeScript monorepo failures documented in template + checklist + proactive prompt (Session 32 continued)
+- [x] PROACTIVE_MODULE_PROMPT.md — paste-ready prompt for remaining 5 modules with all corrections + Dockerfile fixes + workflow (Session 32 continued)
+- [ ] Module instruction reviews — 5 remaining: Bonds, AstroCompass, Arcana, DreamLens, Nexus (proactive prompt ready)
 - [ ] Module instruction corrections — 4 awaiting v2: StarMap, InnerQuest, LifeMap, Archetypes
+- [ ] StarMap DNS — A records for starmap.innerlab.ai + api.starmap.innerlab.ai needed
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [x] MBS Coolify redeploy — auto-deployed on push to main, Chrome-verified live April 11 (Session 31)
