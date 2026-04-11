@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 11, 2026 (Session 32, continued)
+**Last Updated**: April 11, 2026 (Sessions 31 + 32, continued)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -55,7 +55,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website + Platform | **Deployed — Phase 1 complete. Session 31: free_tier entitlements, SubscribePage + SubscribeInnerLabPage, GDPR email confirmation, coming soon seed. Pushed to main + development, awaiting Coolify redeploy.** | magicbusstudios.com |
+| MBS website + Platform | **Deployed — Phase 1 complete. Session 31: free_tier entitlements, SubscribePage + SubscribeInnerLabPage, GDPR email confirmation, coming soon seed. Pushed + auto-deployed via Coolify. Chrome-verified live (10 pages/endpoints confirmed April 11).** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
@@ -127,5 +127,8 @@ Both fixes confirmed working across all affected apps.
 - [ ] StarMap DNS — A records for starmap.innerlab.ai + api.starmap.innerlab.ai needed
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
-- [ ] MBS Coolify redeploy needed (Session 31 changes pushed but not deployed)
+- [x] MBS Coolify redeploy — auto-deployed on push to main, Chrome-verified live April 11 (Session 31)
+- [x] Phase report consolidation — 9 reports merged to `archive/PHASE_REPORTS_CONSOLIDATED.md` (Session 31)
+- [x] Exhaustive doc sweep — 14 files fixed for stale /billing, freeTierLimits, effectivePremium (Session 31)
 - [ ] Run coming soon seed script against production DB
+- [ ] Docker prune on VPS (97% disk)

@@ -64,10 +64,16 @@ Domain (always magicbusstudios.com), JWT (either/or), JWT_PUBLIC_KEY (manual esc
 - `App.jsx` — /subscribe, /subscribe/innerlab, /subscribe/individual routes + /billing redirects
 - `AccountPage.jsx` — Deletion confirmation-sent state
 
+### MBSPlatform Architecture Repo (3 commits on main)
+- **End session 31 docs** (`68fe106`) — SESSION_HANDOFF, CHANGELOG, CURRENT_STATUS, FUTURE_WORK_TODO updated
+- **Exhaustive doc sweep** (`38e68c8`) — Fixed 14 files with stale `/billing` URLs, `freeTierLimits`, `effectivePremium` across platform-instructions, alignment prompts, orchestration guide, audits
+- **Phase report consolidation** (`ed35545`) — Merged all 9 phase reports (3,113 lines, 10 files) into single `archive/PHASE_REPORTS_CONSOLIDATED.md`. Updated CLAUDE.md folder structure.
+
 ### Verification
 - FlowState GDPR bug: NOT present — il_user_wellness_profiles correctly excluded from app-level deletion
 - Frontend build passes clean (528ms)
 - Pushed to both main and development branches
+- Chrome-verified live (April 11): homepage, /subscribe, /subscribe/innerlab, /billing→/subscribe redirect, /auth/login, /auth/signup, API health, public-key endpoint, subscribe-free endpoint, innerlab.ai
 
 ---
 
