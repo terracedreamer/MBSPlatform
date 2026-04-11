@@ -1,10 +1,88 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 11, 2026 (Sessions 31 + 32, continued)
+**Last Updated**: April 11, 2026 (Session 33)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 33 SUMMARY (April 11, 2026) — All Modules Active, FlowState Domain Migration, Caddy Proxy Fix
+
+### What was done this session:
+
+**1. All 12 IL Modules Activated (MBS code)**
+- Removed hardcoded `coming_soon` from SubscribeInnerLabPage.jsx (all 10 new modules → `active`)
+- ModuleCard.jsx simplified: coming_soon cards are non-clickable (no link wrapper, no cursor-pointer, no /waitlist redirect). Text changed to "Coming Soon" instead of "Join the waitlist"
+- Home.jsx: coming_soon cards pass `null` URL instead of `/waitlist`
+- Seed script (`setComingSoon.js`) deleted — admin dashboard toggle replaces it
+
+**2. FlowState Domain Migration Initiated**
+- MBS `products.js` + `modules.js`: `yoga.magicbusstudios.com` → `flowstate.innerlab.ai`
+- FlowState agent prompt created (frontend code, HTML metadata, backend defaults)
+- Inner Lab agent prompt includes FlowState domain update in its module catalog
+- CWG remains only historical exception (`conversationswithgod.ai`)
+
+**3. MBS CORS_ORIGINS Updated**
+- All 10 IL module domains changed from `*.magicbusstudios.com` to `*.innerlab.ai`
+- FlowState: `yoga.magicbusstudios.com` → `flowstate.innerlab.ai`
+- Removed stale entries: `cwg.magicbusstudios.com`, `breatharc.magicbusstudios.com`
+- Added missing: `bonds.innerlab.ai`, `lifemap.innerlab.ai`
+- Owner applied in Coolify
+
+**4. Agent Prompts Created (4 prompts)**
+- FlowState agent: domain migration (yoga → flowstate.innerlab.ai)
+- Inner Lab agent: module activation + domains + auth redirect allowlist (given to agent)
+- Consciousness agent: Caddy proxy fix instructions
+- Universal SSL notice: paste-ready for any module agent during rate limit period
+
+**5. Caddy Proxy Issue Diagnosed + Fixed**
+- Root cause: Consciousness B domain in Coolify was `api.consciousness.magicbusstudios.com` without `https://` prefix
+- Caddy interpreted domain as URL path → Caddyfile parse error looping every 5 seconds
+- Error spam blocked SSL cert provisioning for ALL apps on VPS
+- Found container via internal IP `10.0.1.47`, confirmed bad Docker label: `caddy_0: "://"`
+- Container stopped in Coolify. Error spam confirmed resolved (0 errors).
+- SSL cert rate limit still active from prior bad configs — resets after midnight UTC
+
+**6. Infrastructure Clarifications**
+- VPS is Contabo (387G disk, 6% used) — old Hostinger 97% disk issue no longer applies
+- Proxy is Caddy (`lucaslorentz/caddy-docker-proxy`), NOT Traefik
+- Coolify accessible via `http://<contabo-ip>:8000` when proxy is down
+- Caddy reads domain config from Docker labels — Coolify UI changes require redeploy to take effect
+
+**7. ProductPickerPage Loading Bug Identified**
+- `/products` page shows "Loading..." forever for unauthenticated users
+- Root cause: `getAuthHeaders()` returns null → early return without clearing loading state
+- Not related to seed script. Fix deferred (not blocking — page is behind auth anyway)
+
+### Files changed this session:
+
+| File | Change |
+|------|--------|
+| `~/.claude/CLAUDE.md` | FlowState domain updated, all modules active, CWG only exception |
+| `~/Desktop/CLAUDE.md` | Same |
+| `MBSPlatform/CLAUDE.md` | Same + product catalog updated |
+| `MBSPlatform/SESSION_HANDOFF.md` | Session 33 summary |
+| `MBSPlatform/CHANGELOG.md` | Session 33 entry |
+| `MBSPlatform/CURRENT_STATUS.md` | FlowState domain, new known issues, stale items resolved |
+| `MBSPlatform/FUTURE_WORK_TODO.md` | Seed script/Docker prune resolved, new items added |
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| MBS | main | `a5ed166` | All IL modules active, FlowState → flowstate.innerlab.ai, ModuleCard simplified |
+| MBSPlatform | main | (this commit) | Session 33 docs |
+
+### What's next (Session 34):
+- **DNS verification** — confirm wildcard `*.innerlab.ai` resolves to Contabo VPS IP
+- **SSL cert check** — `curl -k https://api.dreamlens.innerlab.ai/health` (should work after midnight UTC)
+- **Consciousness B redeploy** — fix domain prefix in Coolify, then redeploy
+- **Module Coolify instruction reviews** — 4 awaiting corrections, 5 not yet reviewed
+- **GDPR email confirmation rollout** — architecture + per-app prompts
+- **Module alignment prompts** — give to individual module agents
+- **Owner actions**: Stripe products, BTCPay, CWG promote test→dev
 
 ---
 
@@ -280,56 +358,59 @@ Comprehensive paste-ready prompt for remaining 5 module agents (Bonds, AstroComp
 
 ## NEXT-SESSION PROMPT
 
-See bottom of this document for the comprehensive prompt to start Session 33.
+See bottom of this document for the comprehensive prompt to start Session 34.
 
 ---
 
-## NEXT-SESSION PROMPT — Session 33: Module Follow-Up + GDPR Rollout
+## NEXT-SESSION PROMPT — Session 34: DNS Verification, SSL Recovery, Module Reviews, GDPR Rollout
 
 ```
-## Session 33 — Module Follow-Up + GDPR Rollout
+## Session 34 — DNS + SSL Recovery, Module Reviews, GDPR Rollout
 
 This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
 ### Context
-Session 31 built and deployed: free_tier entitlements, subscribe pages (`/subscribe`, `/subscribe/innerlab`), GDPR email confirmation, coming soon seed. All Chrome-verified live (10 pages/endpoints confirmed working April 11). MBS auto-deployed via Coolify.
-Session 32 established the *.innerlab.ai domain convention, reviewed Coolify instructions from 5 modules (Rituals approved, 4 others corrected), then analyzed full build transcripts from 4 modules. Found every TypeScript monorepo module hits the same 3 Dockerfile failures. Fixed the template, updated the checklist, and created PROACTIVE_MODULE_PROMPT.md for the remaining 5 modules.
+Session 33 activated all 12 IL modules (no more coming_soon), initiated FlowState domain migration (yoga.magicbusstudios.com → flowstate.innerlab.ai), updated MBS CORS_ORIGINS to *.innerlab.ai, and diagnosed/fixed a Caddy proxy error spam from Consciousness B (bad domain label). SSL cert provisioning was rate-limited from prior bad domain configs — should have reset by now (midnight UTC).
+
+MBS commit `a5ed166` pushed and auto-deployed. FlowState + Inner Lab agents given domain migration prompts.
 
 ### Read first
-- MBSPlatform/SESSION_HANDOFF.md (Sessions 31 + 32 summaries)
+- MBSPlatform/SESSION_HANDOFF.md (Session 33 summary)
 - MBSPlatform/MODULE_REVIEW_CHECKLIST.md (review checklist + tracking)
-- MBSPlatform/PROACTIVE_MODULE_PROMPT.md (the prompt for remaining modules)
 - MBSPlatform/FUTURE_WORK_TODO.md
 
 ### Key decisions already applied:
-- All new IL modules → {slug}.innerlab.ai / api.{slug}.innerlab.ai (Session 32)
-- PLATFORM_URL and VITE_PLATFORM_URL always stay at magicbusstudios.com (MBS Platform, not module)
-- MBS passes NO limits — only hasAccess + isPremium. Each module enforces its own limits (Session 31)
-- Free tier is LIVE — three-state model: not_subscribed → free_tier → premium (Session 31)
-- Dockerfile.backend must use NODE_ENV=development in builder stage (Coolify NODE_ENV=production breaks tsc)
-- Secrets (JWT_SECRET, OPENAI_API_KEY, MONGO_URL) must NOT be "Available at Buildtime" in Coolify
+- All 12 IL modules → active, no more coming_soon hardcodes (Session 33)
+- All IL modules (including FlowState) → {slug}.innerlab.ai (Session 33)
+- CWG is the ONLY historical exception (conversationswithgod.ai)
+- VPS proxy is Caddy (NOT Traefik). Domain fields MUST have https:// prefix.
+- Coolify domain changes require redeploy (Docker labels don't update on running containers)
+- PLATFORM_URL and VITE_PLATFORM_URL always stay at magicbusstudios.com
 
-### Priority 1 — Continue module Coolify instruction reviews:
-1. Check for returned corrections from StarMap, InnerQuest, LifeMap, Archetypes (they were sent Dockerfile fixes + Coolify corrections)
-2. Review remaining 5 modules when owner pastes instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus — these got the proactive prompt)
+### Priority 1 — Infrastructure recovery:
+1. DNS verification: confirm wildcard *.innerlab.ai resolves to Contabo VPS IP (`dig +short dreamlens.innerlab.ai`)
+2. SSL cert check: `curl -k https://api.dreamlens.innerlab.ai/health` — should work now
+3. If SSL still failing: restart Caddy proxy from Coolify (Servers → Contabo → Proxy → Restart)
+4. Consciousness B: redeploy with correct `https://api.consciousness.magicbusstudios.com` domain
+
+### Priority 2 — Module Coolify instruction reviews:
+1. Check for returned corrections from StarMap, InnerQuest, LifeMap, Archetypes
+2. Review remaining 5 modules when owner pastes instructions (Bonds, AstroCompass, Arcana, DreamLens, Nexus)
 3. Use MODULE_REVIEW_CHECKLIST.md for every review — update tracking table
-4. StarMap DNS still needed: A records for starmap.innerlab.ai + api.starmap.innerlab.ai
 
-### Priority 2 — GDPR email confirmation rollout to child apps:
+### Priority 3 — GDPR email confirmation rollout to child apps:
 MBS Platform (Layer 1) confirmation flow is built and live. Each child app needs to route through it.
 Build order: Inner Lab → CWG → FlowState → 11 standalone apps
 Architecture: see FUTURE_WORK_TODO.md "GDPR — Email Confirmation" section
 
-### Priority 3 — Module alignment:
+### Priority 4 — Module alignment:
 Give alignment prompts to individual module agents (INNERLAB_MODULE_ALIGNMENT.md, CWG_ALIGNMENT.md, FLOWSTATE_ALIGNMENT.md)
 
 ### Owner actions still pending (not code — owner must do manually):
-- [ ] Run seed script: `node server/seeds/setComingSoon.js` against production DB (/products page stuck on "Loading...")
-- [ ] Docker prune on VPS (97% disk): `docker system prune -a -f && docker builder prune -a -f`
 - [ ] Create 6 Stripe products / 12 prices in Stripe Dashboard (see FUTURE_WORK_TODO.md)
 - [ ] BTCPay API key regeneration (403 error)
 - [ ] CWG promote test → dev (requires passphrase)
-- [ ] DNS A records for deploying IL modules (starmap.innerlab.ai first)
+- [ ] DNS A records for flowstate.innerlab.ai + api.flowstate.innerlab.ai (if wildcard doesn't cover it)
 
 ### Do NOT start building immediately. List all work items, confirm the plan, then I'll tell you which to start on.
 ```

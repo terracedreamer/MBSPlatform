@@ -39,6 +39,8 @@ This repo contains architecture decisions, migration plans, reference files, aud
 |-------|--------|-----------|
 | BTCPay API key 403 | Lightning payments fail | Regenerate API key with full store permissions in BTCPay |
 | Stripe bundle price IDs | Checkout buttons fail for all 6 products | Create products/prices in Stripe Dashboard (see FUTURE_WORK_TODO.md) |
+| SSL cert rate limit (Session 33) | New *.innerlab.ai domains show ERR_SSL_VERSION_OR_CIPHER_MISMATCH | Rate limit resets after midnight UTC. Caddy proxy restarted, bad Consciousness domain fixed (container stopped). Check api.dreamlens.innerlab.ai/health after reset. |
+| Consciousness B stopped (Session 33) | consciousness.magicbusstudios.com backend offline | Domain was missing https:// prefix, causing Caddy error spam every 5s for ALL apps. Must redeploy with correct domain before restarting. |
 | RS256 JWT upgrade | ✅ Session 11: RS256 signing live, all 15 apps have dual-mode (RS256→HS256). Session 12: Phase 2 attempted + reverted — back to dual-mode. Session 20: LazyChef SSO blocker resolved. | Dual-mode is the safe steady state. Phase 2 can proceed — LazyChef SSO migration done. |
 | CWG entitlement enforcement | check_entitlement() wired on `test` branch (`f9c38ab`). Session 20: Chrome-verified admin access works (21 guides, profile API 200). | Full enforcement testing needs non-admin test account |
 | CWG on `test` branch | Running on test, not main — intentional. Session 19: migration scripts RUN, bidirectional sync ADDED (CWG reads il_* first). All verified via Chrome. Session 29: MBS_PLATFORM_URL fixed on dev. | Promote test → dev when ready (requires passphrase + env var audit) |
@@ -58,7 +60,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 | MBS website + Platform | **Deployed — Phase 1 complete. Session 31: free_tier entitlements, SubscribePage + SubscribeInnerLabPage, GDPR email confirmation, coming soon seed. Pushed + auto-deployed via Coolify. Chrome-verified live (10 pages/endpoints confirmed April 11).** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
-| FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
+| FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. Session 33: domain migration to flowstate.innerlab.ai initiated. | flowstate.innerlab.ai (was yoga.magicbusstudios.com) |
 | Arcade games (5) | **All 5 SSO migrated and deployed** | *.magicbusstudios.com |
 | Studio Works tools (6) | **All 6 SSO migrated and deployed** | *.magicbusstudios.com |
 
@@ -124,11 +126,18 @@ Both fixes confirmed working across all affected apps.
 - [x] PROACTIVE_MODULE_PROMPT.md — paste-ready prompt for remaining 5 modules with all corrections + Dockerfile fixes + workflow (Session 32 continued)
 - [ ] Module instruction reviews — 5 remaining: Bonds, AstroCompass, Arcana, DreamLens, Nexus (proactive prompt ready)
 - [ ] Module instruction corrections — 4 awaiting v2: StarMap, InnerQuest, LifeMap, Archetypes
-- [ ] StarMap DNS — A records for starmap.innerlab.ai + api.starmap.innerlab.ai needed
+- [ ] DNS verification — confirm wildcard *.innerlab.ai resolves to Contabo VPS IP for all modules
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [x] MBS Coolify redeploy — auto-deployed on push to main, Chrome-verified live April 11 (Session 31)
 - [x] Phase report consolidation — 9 reports merged to `archive/PHASE_REPORTS_CONSOLIDATED.md` (Session 31)
 - [x] Exhaustive doc sweep — 14 files fixed for stale /billing, freeTierLimits, effectivePremium (Session 31)
-- [ ] Run coming soon seed script against production DB
-- [ ] Docker prune on VPS (97% disk)
+- [x] Seed script — DELETED Session 33. Admin dashboard toggle replaces it. No seed needed.
+- [x] VPS disk — Contabo has 387G (6% used). Old Hostinger had 97% issue. Resolved by migration.
+- [x] All 12 IL modules activated — no more coming_soon hardcodes (Session 33, MBS commit `a5ed166`)
+- [x] FlowState URL → flowstate.innerlab.ai in MBS products.js + modules.js (Session 33)
+- [x] ModuleCard simplified — coming_soon = non-clickable (no link, no waitlist redirect)
+- [x] MBS CORS_ORIGINS updated — all IL modules now *.innerlab.ai (owner applied in Coolify)
+- [x] Caddy proxy error spam — Consciousness B had bad domain label, stopped container (Session 33)
+- [ ] SSL cert rate limit — Let's Encrypt/ZeroSSL rate-limited from bad domain configs. Resets after midnight UTC. Check api.dreamlens.innerlab.ai/health.
+- [ ] Consciousness B — stopped in Coolify. Needs redeploy with correct https:// domain prefix.

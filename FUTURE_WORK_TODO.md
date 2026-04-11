@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 11, 2026 (Session 32, continued)
+**Last Updated**: April 11, 2026 (Session 33)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -198,9 +198,12 @@ Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to C
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
 
 - [x] **Redeploy MBS on Coolify** — ✅ Auto-deployed on push to main. Chrome-verified live April 11 (10 pages/endpoints confirmed).
-- [ ] **Run coming soon seed script** — `node server/seeds/setComingSoon.js` against production DB. Sets 5 apps (brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker) to coming_soon. `/products` page stuck on "Loading..." until this is run.
-- [ ] **Docker prune on VPS** — 97% disk usage. Run `docker system prune -a -f && docker builder prune -a -f`.
+- [x] ~~**Run coming soon seed script**~~ — DELETED Session 33. Admin dashboard toggle replaces seed script. All modules now active.
+- [x] ~~**Docker prune on VPS**~~ — N/A. Migrated from Hostinger (97% disk) to Contabo (6% used, 387G total).
 - [ ] **CWG promote test → dev** — Requires passphrase + env var audit. Deferred since Session 19.
+- [ ] **DNS verification** — Confirm wildcard `*.innerlab.ai` resolves to Contabo VPS IP for all module subdomains.
+- [ ] **SSL cert recovery** — Rate limit from bad domain configs. Check `api.dreamlens.innerlab.ai/health` after midnight UTC. Restart Caddy proxy if needed.
+- [ ] **Consciousness B redeploy** — Stopped in Coolify (Session 33). Domain must have `https://` prefix before restarting. See Consciousness agent prompt.
 
 ### Completed — Session 10
 12 enhancements (ADMIN_EMAILS, response helpers, activity logging, connected accounts, GDPR type-DELETE, onboarding, friends, AdminPage split, user segmentation, revenue analytics, referral emails, promo checkout) + 3 billing features (entitlement sync, premium gating, invoice PDFs). See CHANGELOG.md Session 10 entries.

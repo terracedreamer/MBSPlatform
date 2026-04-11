@@ -84,9 +84,10 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 **All new Inner Lab modules** deploy to `{slug}.innerlab.ai` (frontend) and `api.{slug}.innerlab.ai` (backend).
 **Standalone products** (Arcade, Studio Works) deploy to `{slug}.magicbusstudios.com` / `api.{slug}.magicbusstudios.com`.
 
-Historical exceptions (keep as-is):
-- CWG: `conversationswithgod.ai` (own domain)
-- FlowState: `yoga.magicbusstudios.com`
+Historical exceptions:
+- CWG: `conversationswithgod.ai` (own domain — keep as-is)
+
+FlowState moved from `yoga.magicbusstudios.com` to `flowstate.innerlab.ai` (Session 33).
 
 ## Auth: Four Methods
 - Google SSO (primary — existing across MBS)
@@ -120,7 +121,7 @@ Both login pages call the SAME MBS Platform auth API endpoints. Both support all
 
 ## Product Catalog
 ### Inner Lab (12 modules)
-`cwg` (Active), `flowstate` (Active), `bonds`, `lifemap`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus` (all Coming Soon)
+`cwg`, `flowstate`, `bonds`, `lifemap`, `starmap`, `astrocompass`, `arcana`, `archetypes`, `dreamlens`, `rituals`, `innerquest`, `nexus` (all Active)
 
 ### The Arcade (5 games)
 `brokenchain`, `mindhacker`, `triviaroast`, `whisperinghouse`, `fakeartist`

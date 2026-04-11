@@ -1,5 +1,46 @@
 # CHANGELOG — MBS Platform
 
+## April 11, 2026 — Session 33: All Modules Active, FlowState Domain Migration, Caddy Proxy Fix
+
+### MBS Platform (1 commit on main)
+- **All IL modules active + FlowState domain migration** (`a5ed166`) — All 12 IL modules set to active (removed hardcoded coming_soon). FlowState URL updated from yoga.magicbusstudios.com to flowstate.innerlab.ai in products.js + modules.js. ModuleCard simplified: coming_soon cards are non-clickable (no link, no cursor, no /waitlist redirect). Home.jsx: coming_soon cards pass null URL instead of /waitlist. Seed script deleted (admin dashboard toggle replaces it). SubscribeInnerLabPage: all 10 modules changed from coming_soon to active.
+
+### MBS CORS_ORIGINS Updated
+- All IL module domains changed from `*.magicbusstudios.com` to `*.innerlab.ai`
+- FlowState: `yoga.magicbusstudios.com` → `flowstate.innerlab.ai`
+- Removed: `cwg.magicbusstudios.com` (redundant), `breatharc.magicbusstudios.com` (deleted product)
+- Added: `bonds.innerlab.ai`, `lifemap.innerlab.ai` (were missing)
+
+### Agent Prompts Created
+- **FlowState agent** — domain migration prompt (yoga.magicbusstudios.com → flowstate.innerlab.ai): frontend code, HTML metadata, backend defaults, .env.example
+- **Inner Lab agent** — module activation + domain convention + FlowState domain change: server/config/modules.js, src/data/modules.js, AuthLoginPage redirect allowlist (add *.innerlab.ai)
+- **Consciousness agent** — Caddy proxy fix instructions (domain must have https:// prefix, redeploy required)
+- **Universal SSL notice** — paste-ready prompt for all module agents explaining rate limit, Caddy rules, what to skip
+
+### Caddy Proxy Issue Diagnosed + Fixed
+- Consciousness B had `api.consciousness.magicbusstudios.com` without `https://` prefix in Coolify
+- Caddy interpreted domain as URL path → Caddyfile parse error every 5 seconds
+- Error spam blocked SSL cert provisioning for ALL apps on VPS
+- Container identified via internal IP `10.0.1.47` → `m8wc4gksc408ogsowo0ww880-192227890436`
+- Docker label confirmed: `caddy_0: "://"` (should be `https://api.consciousness.magicbusstudios.com`)
+- Container stopped in Coolify. Error spam confirmed gone (0 errors in 30s).
+- SSL cert rate limit still active — will resolve after midnight UTC
+
+### Infrastructure Confirmed
+- VPS is Contabo, NOT Hostinger. 387G disk, 6% used (no prune needed)
+- Proxy is Caddy (lucaslorentz/caddy-docker-proxy), NOT Traefik
+- Coolify accessible via `http://<contabo-ip>:8000` when proxy is down
+
+### Global CLAUDE.md Updates (3 files)
+- `~/.claude/CLAUDE.md` — FlowState domain updated, all modules "all active", CWG only historical exception
+- `~/Desktop/CLAUDE.md` — same
+- `MBSPlatform/CLAUDE.md` — same + product catalog updated
+
+### Memory Saved
+- `project_caddy_proxy_gotchas.md` — Caddy proxy rules, debugging commands, domain format requirements
+
+---
+
 ## April 10-11, 2026 — Session 32: IL Module Domain Convention, Coolify Reviews, Dockerfile Gotchas, Proactive Prompt
 
 ### Domain Convention Decision
