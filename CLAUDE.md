@@ -260,19 +260,13 @@ MBSPlatform/                                    ← THIS REPO (think tank, no co
 ├── (MOVED) Brand Overview/                     ← Now lives at Desktop/Marketing/Brand Overview/
 ├── (MOVED) Architecture Docs/                  ← Now lives at Desktop/Marketing/Architecture Docs/
 │
-├── phase-reports/                               ← Completion reports from each build phase
-│   ├── PHASE_1_REPORT.md, PHASE_1_LEARNINGS.md, PHASE_1_ADDENDUM_REPORT.md
-│   ├── PHASE_2_REPORT.md, PHASE_2_ADDENDUM_REPORT.md
-│   ├── PHASE_3A_MIGRATION_REPORT.md, PHASE_3B_REPORT.md
-│   ├── PHASE_4_REPORT.md
-│   └── README.md                               ← Report workflow documentation
-│
 ├── audits/                                      ← Compliance and brand audits
 │   ├── 2026-03-29-compliance-audit.md           ← 17-project standards audit
 │   ├── 2026-03-29-arcade-brand-audit.md         ← Arcade Brand DNA audit
 │   └── 2026-03-30-platform-review.md            ← SSO/entitlements/GDPR/billing review
 │
-├── archive/                                     ← Old reference (absorbed)
+├── archive/                                     ← Old reference + historical reports
+│   ├── PHASE_REPORTS_CONSOLIDATED.md            ← All 9 phase reports (Phases 1-5, March 2026)
 │   ├── ChatGPT-architecture/
 │   └── MBS_Platform_Technical_Architecture.docx
 │
