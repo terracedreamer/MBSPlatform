@@ -76,7 +76,7 @@
 - **More prominent Add Product button**: Larger, bolder styling.
 
 **2. Inner Lab Module Alignment Prompts — 3 Documents Created**
-- **INNERLAB_MODULE_ALIGNMENT.md** — 16-section prompt for the 10 new IL modules (Bonds through Nexus). Covers: visual alignment (concrete design tokens, centralized API client, animation presets, form patterns), entitlement gating (three states, effectivePremium, downgrade), GDPR, backend standards, IL data layer, env vars, deployment. Phased approach (A→B→C→D).
+- **INNERLAB_MODULE_ALIGNMENT.md** — 16-section prompt for the 10 new IL modules (Bonds through Nexus). Covers: visual alignment (concrete design tokens, centralized API client, animation presets, form patterns), entitlement gating (three states, real free/premium split, downgrade), GDPR, backend standards, IL data layer, env vars, deployment. Phased approach (A→B→C→D).
 - **CWG_ALIGNMENT.md** — Targeted prompt for CWG. Visual polish + entitlement gating only. Preserves Python/FastAPI patterns, existing SSO/GDPR/il_* integration. Notes feature removal must happen FIRST.
 - **FLOWSTATE_ALIGNMENT.md** — Targeted prompt for FlowState. CSS Modules decision (keep vs migrate to Tailwind). Custom toast → Sonner migration. Flags potential GDPR bug: `il_user_wellness_profiles` is identity singleton, should NOT be deleted at app-level.
 

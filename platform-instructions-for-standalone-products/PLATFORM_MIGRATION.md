@@ -86,7 +86,7 @@ async function requireAuth(req, res, next) {
 **Add:**
 - Upgrade/billing buttons redirect to:
   ```
-  https://magicbusstudios.com/billing?product={PRODUCT_SLUG}&brand=mbs
+  https://magicbusstudios.com/subscribe?product={PRODUCT_SLUG}&brand=mbs
   ```
 - Check access from your backend:
   ```javascript
@@ -260,7 +260,7 @@ Data deletion is **layered**, not a single nuclear cascade:
 
 **What you MUST implement:** `DELETE /api/user-data` — an authenticated endpoint that deletes all data for `req.user.userId` from your product's database. This endpoint serves BOTH purposes:
 - Called by your own app when the user clicks "Delete my data" in Settings
-- Called by the MBS Platform during category-level or full account deletion (planned — not yet wired)
+- Called by the MBS Platform during category-level or full account deletion (MBS Layer 1 wired in Session 31 — email confirmation flow)
 
 **Important:** This endpoint must NOT delete the user's MBS Platform account. It only deletes local product data. The user can still log into other apps after deleting their data from yours.
 
@@ -354,3 +354,23 @@ When migrating a legacy user's `_id` to the platform ID, you must also update ev
 
 ### CORS_ORIGINS — Both Platform AND Product Domains
 The MBS Platform's `CORS_ORIGINS` must include your product domain (e.g., `https://wildlens.magicbusstudios.com`), otherwise the `?token=` redirect never arrives. Check this BEFORE debugging login issues — it's the second most common cause of "SSO doesn't work".
+
+---
+
+## Phase 6 Learnings (Added by Orchestrator — 2026-04-08)
+
+These are real-world lessons from the AI Tutor RS256 migration:
+
+### Python Apps: `pyjwt[crypto]` Required for RS256
+The MBS Platform now signs JWTs with **RS256** (asymmetric). Plain `pyjwt` only supports HS256 — it does NOT include the `cryptography` package needed for RSA operations. If a Python app's `requirements.txt` has `PyJWT==2.x.x` without the `[crypto]` extra, RS256 verification fails with `InvalidAlgorithmError: Algorithm not supported`, falls through to HS256 (which also fails since the token is RS256-signed), and returns 401. The user sees a login loop — authenticates on the platform, gets redirected back, but appears not logged in.
+
+**Fix**: In `requirements.txt`, use `PyJWT[crypto]==2.9.0` (not `PyJWT==2.9.0`). This installs the `cryptography` package as a dependency.
+
+**Symptoms**: Backend logs show `InvalidAlgorithmError: Algorithm not supported` on RS256, then `InvalidAlgorithmError: The specified alg value is not allowed` on HS256 fallback. The `JWT_PUBLIC_KEY` env var IS set and the PEM is valid — the error is a missing dependency, not a key problem.
+
+### RS256 Env Var for Python Apps
+Python apps need `JWT_PUBLIC_KEY` in Coolify (multiline PEM format). The auth service should handle `\\n` → `\n` conversion for Coolify's env var storage:
+```python
+_raw = os.environ.get("JWT_PUBLIC_KEY", "")
+JWT_PUBLIC_KEY = _raw.replace("\\n", "\n") if _raw else None
+```

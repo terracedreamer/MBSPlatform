@@ -16,9 +16,9 @@
 ### Entitlements (Verified from actual code)
 - Endpoint: `GET /api/entitlements/{product_slug}` with Bearer JWT
 - Three tiers: not_subscribed → free_tier → paid (product_pass/category_access/mbs_all_access)
-- free_tier is a DERIVED reason (not stored) — computed when product_pass has no stripe_subscription_id
-- 7-day trial on free subscribe, lazy downgrade after expiry
-- freeTierLimits returned but NO product enforces them yet
+- free_tier is a DERIVED reason (not stored) — computed when product_pass has no stripe_subscription_id **[SUPERSEDED Session 31: free_tier is now an explicit Entitlement type]**
+- 7-day trial on free subscribe, lazy downgrade after expiry **[SUPERSEDED Session 31: default trial removed, trial days configurable per product via admin]**
+- freeTierLimits returned but NO product enforces them yet **[SUPERSEDED Session 31: freeTierLimits removed entirely, modules enforce own limits]**
 - 22 products in catalog (11 IL + 5 Arcade + 6 Studio Works)
 
 ### GDPR Cascade (Verified from actual code)

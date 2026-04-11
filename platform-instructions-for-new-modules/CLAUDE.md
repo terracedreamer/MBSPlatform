@@ -155,19 +155,27 @@ User visits your-module.innerlab.ai (Inner Lab modules live under innerlab.ai)
 ```
 
 ### Checking Entitlements
-Before giving access to premium features, check with the platform:
+
+**Read `~/.claude/reference/entitlement-integration.md` for full patterns (frontend + backend).**
+
+Before giving access to features, check with the platform:
 ```javascript
 // Call from your backend
 const response = await fetch(`${PLATFORM_URL}/api/entitlements/${YOUR_SLUG}`, {
   headers: { Authorization: `Bearer ${userToken}` }
 });
-const { hasAccess, reason } = await response.json();
-// hasAccess: true/false
-// reason: "free_tier", "product_pass", "category_access", "mbs_all_access", "no_subscription"
+const { hasAccess, isPremium, reason } = await response.json();
+// hasAccess: true/false — does the user have ANY access?
+// isPremium: true/false — is it premium or free tier?
+// reason: "free_tier", "product_pass", "category_access", "mbs_all_access", "none"
 ```
 
-If `hasAccess: false` and `reason: "no_subscription"`:
-- Redirect user to `magicbusstudios.com/billing?product={YOUR_SLUG}`
+Three states to handle:
+- `hasAccess: false` → redirect to `magicbusstudios.com/subscribe/innerlab` (all IL modules use this dedicated page)
+- `hasAccess: true, isPremium: false` → allow access, enforce module-defined free tier limits
+- `hasAccess: true, isPremium: true` → full access, no limits
+
+**MBS does NOT pass limits.** Your module defines its own free vs premium limits (e.g., daily caps, feature locks). Cache entitlement for 5 minutes, support `?refresh=true` to bust cache.
 
 ---
 
@@ -180,7 +188,8 @@ If `hasAccess: false` and `reason: "no_subscription"`:
 | JWT_SECRET | (same as MBS Platform) | Must match for JWT validation |
 | PORT | (unique per module) | Don't conflict with other modules |
 | CORS_ORIGINS | Your frontend domain(s) | |
-| PLATFORM_URL | `https://magicbusstudios.com` | For entitlement checks |
+| PLATFORM_URL | `https://api.magicbusstudios.com` | For entitlement checks (backend API, not frontend) |
+| JWT_PUBLIC_KEY | (MBS Platform public key) | RS256 verification. PEM format. |
 | PRODUCT_SLUG | Your module's slug | e.g., `breatharc`, `starmap` |
 
 Optional (if your module uses AI):
