@@ -220,27 +220,138 @@ Optional (if your module uses AI):
 
 ## Project Structure (Recommended)
 
-Follow the standard MBS two-container pattern:
+Follow the standard MBS two-container pattern. Most modules use a **TypeScript monorepo** with npm workspaces:
 ```
 your-module/
-├── src/                    # React frontend (Vite)
-│   ├── pages/
-│   ├── components/
-│   ├── store/              # Zustand for local state
-│   ├── hooks/
-│   ├── lib/api.js          # API client with JWT header
-│   └── ...
-├── server/
-│   ├── index.js            # Express entry
-│   ├── routes/             # Module-specific routes
-│   ├── middleware/          # requireAuth (JWT validation)
-│   ├── services/           # AI service, module logic
-│   └── config/
-├── Dockerfile
+├── frontend/               # React frontend (Vite + TypeScript)
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── store/          # Zustand for local state
+│   │   ├── hooks/
+│   │   ├── lib/api.ts      # API client with JWT header
+│   │   └── ...
+│   ├── package.json        # workspace: "frontend"
+│   └── tsconfig.json
+├── backend/                # Express backend (TypeScript)
+│   ├── src/
+│   │   ├── server.ts       # Express entry
+│   │   ├── routes/         # Module-specific routes
+│   │   ├── middleware/      # requireAuth (JWT validation)
+│   │   ├── services/       # AI service, module logic
+│   │   └── config/
+│   ├── package.json        # workspace: "backend"
+│   └── tsconfig.json
+├── Dockerfile.frontend     # Multi-stage: build → nginx
+├── Dockerfile.backend      # Multi-stage: build (tsc) → runtime
 ├── nginx.conf
 ├── CLAUDE.md               # THIS FILE (customized for your module)
-└── package.json
+└── package.json            # Root: npm workspaces ["frontend", "backend"]
 ```
+
+If using plain JavaScript instead of TypeScript, the structure is simpler (no `src/` subfolder, no tsconfig, no build step for backend).
+
+---
+
+## Dockerfile Gotchas (TypeScript Monorepo on Coolify)
+
+> **Every TypeScript monorepo module has hit the same 3 deployment failures.** Read this section carefully before writing Dockerfiles.
+
+### Gotcha 1: `npm ci --prefix backend` fails — lockfile not found
+
+**Why**: npm workspaces keep `package-lock.json` at the monorepo **root**, not inside `backend/`. The `--prefix` flag looks for a lockfile inside `backend/` and fails.
+
+**Fix**: Copy the root lockfile and use workspace install:
+```dockerfile
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+RUN npm ci --workspace=backend
+```
+
+Or install everything from root (simpler but larger image):
+```dockerfile
+COPY package.json package-lock.json ./
+COPY backend/ ./backend/
+RUN npm ci
+```
+
+### Gotcha 2: `tsc: not found` — Coolify strips devDependencies
+
+**Why**: Coolify injects `NODE_ENV=production` as a Docker build arg. When `NODE_ENV=production`, `npm install` and `npm ci` skip devDependencies — but `typescript` is a devDependency. The `tsc` compiler is never installed.
+
+**Fix**: Override NODE_ENV during the **build stage** (the runtime stage should still be production):
+```dockerfile
+# Build stage — need devDeps for tsc
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+RUN NODE_ENV=development npm ci --workspace=backend
+COPY backend/ ./backend/
+RUN npx tsc -p backend/tsconfig.json
+
+# Runtime stage — production only
+FROM node:22-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+RUN npm ci --workspace=backend --omit=dev
+COPY --from=builder /app/backend/dist ./backend/dist
+CMD ["node", "backend/dist/src/server.js"]
+```
+
+### Gotcha 3: `Cannot find module dist/server.js` — wrong output path
+
+**Why**: If `tsconfig.json` has `rootDir: "."` (the default), TypeScript preserves the folder structure in output. So `backend/src/server.ts` compiles to `backend/dist/src/server.js`, NOT `backend/dist/server.js`.
+
+**Fix** (choose one):
+- **Option A** — Use the correct path in CMD: `CMD ["node", "backend/dist/src/server.js"]`
+- **Option B** — Create a `tsconfig.build.json` with `rootDir: "src"` so output goes directly to `dist/server.js`:
+  ```json
+  {
+    "extends": "./tsconfig.json",
+    "compilerOptions": { "rootDir": "src" },
+    "include": ["src"]
+  }
+  ```
+  Then compile with: `RUN npx tsc -p backend/tsconfig.build.json`
+
+### Complete Dockerfile.backend Example
+
+```dockerfile
+# ---- Build Stage ----
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+
+# Force development to install devDeps (typescript, etc.)
+RUN NODE_ENV=development npm ci --workspace=backend
+
+COPY backend/ ./backend/
+RUN npx tsc -p backend/tsconfig.json
+
+# ---- Runtime Stage ----
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+
+# Production deps only
+RUN npm ci --workspace=backend --omit=dev
+
+COPY --from=builder /app/backend/dist ./backend/dist
+
+EXPOSE 4000
+USER node
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -q --spider http://localhost:4000/health || exit 1
+CMD ["node", "backend/dist/src/server.js"]
+```
+
+**Adjust the CMD path** based on your tsconfig's `rootDir` setting (see Gotcha 3).
 
 ---
 

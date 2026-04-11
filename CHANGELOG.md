@@ -1,6 +1,6 @@
 # CHANGELOG — MBS Platform
 
-## April 10-11, 2026 — Session 32: IL Module Domain Convention, Module Coolify Instruction Reviews
+## April 10-11, 2026 — Session 32: IL Module Domain Convention, Coolify Reviews, Dockerfile Gotchas, Proactive Prompt
 
 ### Domain Convention Decision
 - **All new IL modules → `{slug}.innerlab.ai`** (frontend) / `api.{slug}.innerlab.ai` (backend)
@@ -12,21 +12,33 @@
 - `~/.claude/CLAUDE.md` — IL domain convention added to Architecture section
 - `~/Desktop/CLAUDE.md` — same
 - `MBSPlatform/CLAUDE.md` — new "Module Domain Convention" section
-- `platform-instructions-for-new-modules/CLAUDE.md` — explicit convention, PLATFORM_URL warning box, env var fixes (JWT_PUBLIC_KEY, CORS www+non-www, SERVICE_NAME)
+- `platform-instructions-for-new-modules/CLAUDE.md` — explicit convention, PLATFORM_URL warning box, env var fixes (JWT_PUBLIC_KEY, CORS www+non-www, SERVICE_NAME), **TypeScript monorepo project structure**, **Dockerfile Gotchas section**
 - `platform-instructions-for-innerlab/CLAUDE.md` — 10 TBD modules assigned `{slug}.innerlab.ai` domains in catalog table
 
 ### Module Coolify Instruction Reviews (5 of 10)
 - **Rituals**: 5 issues found → corrected → v2 approved ✅
-- **StarMap**: 5 issues (hallucinated gpt-5.4-mini, domain, VITE_PLATFORM_URL) → correction sent twice (agent ignored first)
+- **StarMap**: 5 issues (hallucinated gpt-5.4-mini, domain, VITE_PLATFORM_URL) → correction sent twice (agent ignored first). Coolify deploy failed with `tsc: not found` (NODE_ENV=production skipping devDeps) — exactly the pattern documented.
 - **InnerQuest**: 4 issues → correction sent
 - **LifeMap**: 7 issues → correction sent
 - **Archetypes**: 5 issues → correction sent
 
-### New File
-- **MODULE_REVIEW_CHECKLIST.md** — comprehensive review checklist for all module Coolify instructions, tracking table, correction prompt template
+### Dockerfile Theme Analysis (Session 32 continued)
+Analyzed full build+deploy transcripts from 4 module agent sessions (InnerQuest, Archetypes, Rituals, LifeMap). Found **3 identical Dockerfile failures** across every TypeScript monorepo module:
+1. `npm ci --prefix backend` fails — lockfile at monorepo root
+2. `tsc: not found` — Coolify NODE_ENV=production skips devDependencies
+3. `Cannot find module dist/server.js` — tsconfig rootDir preserves src/ path
+
+StarMap's Coolify deployment logs confirmed the same pattern + revealed secrets leaking into Docker build layer (JWT_SECRET and OPENAI_API_KEY marked as build-time args).
+
+### New Files
+- **MODULE_REVIEW_CHECKLIST.md** — comprehensive review checklist for all module Coolify instructions, tracking table, correction prompt template, **Dockerfile section** with 6 checks
+- **PROACTIVE_MODULE_PROMPT.md** — paste-ready prompt for remaining 5 modules (Bonds, AstroCompass, Arcana, DreamLens, Nexus). Covers: domain convention, JWT dual-mode, all 3 Dockerfile gotchas with working example, Coolify secrets warning, complete env var list, GDPR scope, workflow instructions, self-check checklist.
+
+### Template Fixed
+- `platform-instructions-for-new-modules/CLAUDE.md` — project structure updated to TypeScript monorepo layout. New "Dockerfile Gotchas" section with 3 gotchas + complete working Dockerfile.backend example.
 
 ### Recurring Agent Mistakes Documented
-Domain (always magicbusstudios.com), JWT (either/or), JWT_PUBLIC_KEY (manual escaping), CORS (single origin), GDPR (missing or narrow scope), OPENAI_MODEL (hallucinated), VITE_PLATFORM_URL (changed to innerlab.ai), invented env vars, "add to MBS CORS" line
+Domain (always magicbusstudios.com), JWT (either/or), JWT_PUBLIC_KEY (manual escaping), CORS (single origin), GDPR (missing or narrow scope), OPENAI_MODEL (hallucinated), VITE_PLATFORM_URL (changed to innerlab.ai), invented env vars, "add to MBS CORS" line, Dockerfile lockfile path, tsc not found, dist output path, secrets as build args
 
 ---
 
