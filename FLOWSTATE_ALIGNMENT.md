@@ -146,9 +146,8 @@ interface AuthState {
   setIsPremium: (val: boolean) => void;
 }
 
-// Default to true until MBS free tier is live
-// TODO: remove effectivePremium when MBS free tier is live
-const EFFECTIVE_PREMIUM = true;
+// MBS free tier is LIVE (Session 31) — implement real gating
+// isPremium comes from entitlement check response
 ```
 
 ### 2.3 Backend — premium gating middleware
@@ -157,10 +156,7 @@ Create middleware for routes that need premium checks:
 
 ```javascript
 async function requirePremium(req, res, next) {
-  // TODO: remove effectivePremium when MBS free tier is live
-  const EFFECTIVE_PREMIUM = true;
-  if (EFFECTIVE_PREMIUM) return next();
-
+  // MBS free tier is live — real gating required (no effectivePremium)
   const entitlement = req.entitlement; // set by requireEntitlement middleware
   if (!entitlement?.isPremium) {
     return res.status(403).json({

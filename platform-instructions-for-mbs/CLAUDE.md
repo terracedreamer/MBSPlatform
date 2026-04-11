@@ -7,7 +7,7 @@ This project is `MBS/` — the magicbusstudios.com website. It currently serves 
 - `magicbusstudios.com` (public) — marketing pages (existing, unchanged)
 - `magicbusstudios.com/auth/login` — branded login page (NEW)
 - `magicbusstudios.com/auth/signup` — branded signup page (NEW)
-- `magicbusstudios.com/billing` — checkout, subscription management (NEW)
+- `magicbusstudios.com/subscribe` — checkout, subscription management (NEW, renamed from /billing)
 - `magicbusstudios.com/account` — profile, settings, connected auth methods (NEW)
 - `magicbusstudios.com/admin` — user management, analytics (NEW, Phase 2+)
 - `magicbusstudios.com/api/...` — all platform API endpoints (NEW)
@@ -173,16 +173,18 @@ Valid `reason` values:
 ### Free Tier Logic
 The product catalog config determines which products have free tiers. Example:
 ```javascript
-// config/products.js
-{ slug: "cwg", freeTier: true, freeTierLimits: { messagesPerDay: 5 } }
-{ slug: "brokenchain", freeTier: true, freeTierLimits: { minutesPerDay: 30 } }
+// config/products.js — freeTierLimits REMOVED (Session 31)
+{ slug: "cwg", freeTier: true }
+{ slug: "brokenchain", freeTier: true }
 { slug: "wildlens", freeTier: false }
 ```
-When a user has no Entitlement for a product:
-- If `freeTier: true` → return `{ hasAccess: true, reason: "free_tier" }`
-- If `freeTier: false` → return `{ hasAccess: false, reason: "no_subscription" }`
 
-The product's OWN backend enforces free tier limits (message caps, time caps) based on the `reason` field. The platform only answers "can they access it at all."
+**Three-state entitlement model (Session 31):**
+- Users with `type: "free_tier"` entitlement → `{ hasAccess: true, isPremium: false, reason: "free_tier" }`
+- Users with paid entitlement → `{ hasAccess: true, isPremium: true, reason: "product_pass" | "category_access" | "mbs_all_access" }`
+- Users with no entitlement and `freeTier: false` → `{ hasAccess: false, reason: "no_subscription" }`
+
+Each product's OWN backend enforces free tier limits (message caps, time caps) based on the `isPremium` field. MBS Platform passes NO limits — only `hasAccess` + `isPremium`.
 
 ## API Endpoints
 
@@ -378,7 +380,9 @@ All services share a single JWT_SECRET. This is a deliberate tradeoff for simpli
 **Mitigations**:
 1. Rotate JWT_SECRET periodically (requires coordinated redeployment of all services)
 2. Monitor for suspicious admin access patterns
-3. Phase 2+: Consider asymmetric signing (RS256) — only the platform has the private key, products have the public key. Products can VERIFY but not FORGE tokens.
+3. **RS256 asymmetric signing is NOW ACTIVE** — the platform signs JWTs with `JWT_PRIVATE_KEY` (RS256), products verify with `JWT_PUBLIC_KEY`. Products can VERIFY but not FORGE tokens. HS256 fallback remains for backward compatibility.
+   - **Node.js apps**: `jsonwebtoken` supports RS256 natively — no extra packages needed.
+   - **Python apps**: MUST use `PyJWT[crypto]` (not plain `PyJWT`) — the `[crypto]` extra installs the `cryptography` package required for RSA operations. Without it, RS256 fails with `InvalidAlgorithmError: Algorithm not supported`.
 
 ## ALLOWED_REDIRECT_DOMAINS
 

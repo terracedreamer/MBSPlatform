@@ -331,10 +331,10 @@ Response (same from either path): `{ hasAccess: true/false, isPremium: true/fals
 
 | Variable | Value | Notes |
 |----------|-------|-------|
-| `VITE_BACKEND_URL` | `https://api.{module_slug}.magicbusstudios.com` | Module's own backend API URL |
-| `VITE_PLATFORM_URL` | `https://magicbusstudios.com` | MBS frontend — for API calls (via nginx proxy) AND user-facing links (/subscribe, /auth) |
-| `VITE_PRODUCT_SLUG` | `{module_slug}` | For branded login |
-| `VITE_GOOGLE_CLIENT_ID` | (Google OAuth client ID) | The `.apps.googleusercontent.com` value |
+| `VITE_BACKEND_URL` | `https://api.{module_slug}.innerlab.ai` | Module's own backend API URL (IL modules use innerlab.ai subdomains) |
+| `VITE_PLATFORM_URL` | `https://magicbusstudios.com` | MBS frontend — for user-facing links (/subscribe, /auth) and API calls (nginx proxies /api/*) |
+| `VITE_PRODUCT_SLUG` | `{module_slug}` | For branded login redirect |
+| ~~`VITE_GOOGLE_CLIENT_ID`~~ | NOT needed | IL modules delegate auth entirely to innerlab.ai/auth/login — they never render a Google sign-in button |
 
 #### 15. Platform registration
 

@@ -1,192 +1,286 @@
-# FlowState (YogaGhost) — MBS Platform Migration Instructions
+# Standalone Product — MBS Platform SSO Migration
 
-## Prerequisites — Do NOT Start Until These Are Built
+## Prerequisites — Do NOT Start Until This Is Built
 1. **MBS Platform (Layer 1)** at magicbusstudios.com must be live with SSO + entitlements API
-2. **Inner Lab Middleware (Layer 2)** at innerlab.ai must be live with il_* collections created
-3. Both must be tested and working before ANY FlowState migration begins
+2. The platform must be tested and working before ANY standalone product migration begins
 
 ## What's Happening
-FlowState is being migrated to use the centralized MBS Platform for auth/billing and the Inner Lab shared database for data. This document tells the FlowState agent what to do.
+This product is being migrated to use the centralized MBS Platform for authentication and entitlement checks. This is a **simple SSO integration** — no database migration, no shared data layer.
 
-## Important Technical Notes
-- **FlowState uses MongoDB ObjectId for _id** — this matches the MBS Platform, so ID mapping is simpler than CWG
-- **FlowState uses native MongoDB driver (not Mongoose)** — may want to switch to Mongoose for consistency with platform, or keep native driver. Agent decides.
-- **JWT_SECRET must match the MBS Platform** — use the same secret so JWTs issued by the platform validate in FlowState
-- **Migration scripts run FROM the MBS/ project** (`MBS/server/scripts/`), not from FlowState. The FlowState agent should NOT build its own migration script — just prepare the backend for the new database structure.
+## Important: Fill In These Values First
 
-## Current State
-- FlowState has its own auth (Google SSO + email/password with scrypt hashing)
-- FlowState has its own Stripe integration (not configured — missing env vars)
-- FlowState database: `yogaghost` with 7 collections
-- 0 real users (no production data to protect)
-- Uses native MongoDB driver (not Mongoose)
-- Zustand local storage + cloud sync pattern
+Before starting, the agent (or you) must fill in these product-specific values:
+
+| Variable | Value | Example |
+|----------|-------|---------|
+| PRODUCT_SLUG | ??? | `brokenchain`, `wildlens`, `lazychef` |
+| PRODUCT_DOMAIN | ??? | `brokenchain.magicbusstudios.com` |
+| PRODUCT_CATEGORY | ??? | `arcade` or `studioworks` |
+| BRAND_PARAM | `mbs` | Arcade and Studio Works always use MBS branding |
+| CURRENT_AUTH | ??? | What auth does this product currently have? (Google SSO, email/password, none, etc.) |
+| CURRENT_BILLING | ??? | What billing does this product currently have? (Stripe, none, etc.) |
 
 ## Target State
 - Auth handled by MBS Platform at magicbusstudios.com (Google SSO + Email/Password + Nostr + LNURL + 2FA/TOTP)
-- Login redirects to Inner Lab login page: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`
-- Billing handled by MBS Platform (Stripe + BTCPay)
-- User identity stored in `mbs_platform` database
-- FlowState product data stored in `inner_lab` database with `yoga_` prefix
-- Shared Inner Lab data stored in `inner_lab` database with `il_` prefix
-- Old `yogaghost` database stays untouched as backup
+- Billing handled by MBS Platform (Stripe + BTCPay) — if product has premium features
+- Product keeps its own database (no migration to inner_lab)
+- Product keeps all its own backend logic
+- Only auth and billing change
+
+## What This Product Does NOT Get
+- No shared data layer (that's Inner Lab only)
+- No consciousness profiles, memories, or check-ins
+- No cross-product intelligence
+- No connection to `inner_lab` database
+- Friends/invites are platform-level but cross-product visibility is optional
+
+---
 
 ## Migration Steps
 
-### Step 1: Update Auth Flow
-- Remove FlowState's standalone auth (login, signup, password reset, scrypt hashing)
-- Remove `/auth/signup`, `/auth/login`, `/auth/logout` routes
-- Add JWT verification middleware that validates tokens from MBS Platform
-- Login button redirects to: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`
-  - FlowState is an Inner Lab module, so login goes through Inner Lab login page (which calls MBS Platform auth APIs — supports Google SSO, email/password, Nostr, LNURL, 2FA)
-- After login, user is redirected back with `?token={JWT}`
-- Store JWT, send in Authorization header
+### Step 1: Add JWT Validation Middleware
 
-### Step 2: Remove Billing
-- Remove FlowState's Stripe routes and webhook handler
-- Remove Stripe env vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_*)
-- Upgrade buttons redirect to MBS Platform billing page
-- Check access via: `GET https://api.magicbusstudios.com/api/entitlements/flowstate`
+Add this middleware to your backend. Every protected route uses it:
 
-### Step 3: Migrate Data
-Since FlowState has 0 real users, this is less critical than CWG. But follow the same pattern:
+```javascript
+const jwt = require('jsonwebtoken');
 
-**User identity fields → `mbs_platform.users`:**
-- email, name, picture → **rename to `avatar`** (platform model uses `avatar`)
-- googleId → **rename to `google_id`** (platform uses snake_case)
-- stripeCustomerId → **rename to `stripe_customer_id`** (platform uses snake_case)
-- emailPreferences → **normalize to `consent_preferences`** structure:
-  - `{ marketing_emails: emailPreferences.marketing, product_updates: true, billing_alerts: true, promotional_offers: true }`
-  - FlowState's `streakReminders` and `weeklyDigest` are product-level preferences, NOT platform-level. Keep them in `yoga_user_profiles`.
+async function requireAuth(req, res, next) {
+  const token = req.headers.authorization?.split('Bearer ')[1];
+  if (!token) return res.status(401).json({ success: false, message: 'No token' });
 
-**Fields NOT in FlowState but required by platform (set defaults):**
-- nostr_npub: `null` (FlowState has no Nostr support)
-- lnurl_linking_key: `null` (FlowState has no LNURL support)
-- auth_methods: `["google"]` (FlowState only supports Google SSO currently)
-- preferred_language: `"en"`
-- preferences: `{}`
-- is_admin: `false`
-- referral_code: `null`
-- referred_by: `null`
-- referral_count: `0`
-- created_at: use FlowState's `joinedDate` from user profile, or migration timestamp
-- updated_at: migration timestamp
-- last_login: `null`
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // { userId, email, name, ... }
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Invalid token' });
+  }
+}
+```
 
-**Do NOT migrate to platform:**
-- subscription object (platform creates its own Entitlement records via Stripe)
-- deviceId (deprecated — not a platform concept)
+### Step 2: Update Login Flow
 
-**Product data → `inner_lab` with `yoga_` prefix:**
-- `yoga_user_profiles` — onboarded, settings, favorites, joinedDate, customFlows, dailyStreak, lastSessionDate, streakSaverUsed, activeCategory, breathworkFavorites, breathworkPersonalBests, breathworkSessions (embedded), breathworkAchievements (embedded), activePrograms (embedded), completedPrograms, meditationSessions (embedded), meditationFavorites, flowSessions (embedded)
-- `yoga_sessions` (from `sessions` collection) — yoga practice sessions with TTL
-- `yoga_achievements` (from `achievements` collection) — earned badges
-- `yoga_community_flows` (from `communityFlows`) — published user flows
-- `yoga_activity` (from `activity`) — social activity feed, add `product: "flowstate"` field
+**Remove:**
+- Any standalone login/signup pages
+- Any standalone auth routes (`/auth/login`, `/auth/signup`, `/auth/logout`, etc.)
+- Password hashing, session management, auth token generation
+- Google OAuth callback handling (the platform handles this now)
 
-**Shared data → `inner_lab` with `il_` prefix:**
-- `il_user_wellness_profiles` — extract healthConditions + injuries from users doc
-- Goals → partially shared (currently FlowState-specific strings like 'balance', 'flexibility')
+**Add:**
+- Login button redirects to:
+  ```
+  https://magicbusstudios.com/auth/login?redirect={PRODUCT_DOMAIN}&brand=mbs
+  ```
+- After login, MBS Platform redirects back with `?token={JWT}`
+- Frontend stores JWT (localStorage or cookie), sends in `Authorization: Bearer {JWT}` header
+- Logout clears the stored JWT and optionally calls `POST https://api.magicbusstudios.com/api/auth/logout`
 
-**Platform-level → `mbs_platform` database:**
-- `friends` collection (from `friends`) — add `source_product: "flowstate"` field
-- `invites` collection (from `invites`) — add `product: "flowstate"` field
+### Step 3: Remove Standalone Billing (If Any)
 
-### Step 4: Update FlowState Backend
-- Change database connection from `yogaghost` to `inner_lab`
-- Update all collection references to use `yoga_` prefix
-- Read shared data from `il_*` collections (wellness profiles, check-ins, memories)
-- Use `platformUserId` (from JWT) instead of local `_id`
-- Remove auth routes, Stripe routes
-- Remove `deviceId`-based sync routes (sunset after 90 days)
-- Keep cloud sync but use platform user ID instead of local ID
+**Remove:**
+- Stripe integration (checkout, webhooks, portal, env vars)
+- Pricing pages
+- Subscription management UI
 
-### Step 5: Update FlowState Frontend
-- Remove LoginPage — redirect to MBS Platform
-- Remove PricingPage — redirect to MBS Platform
-- Update `useAuthStore` to use MBS Platform JWT
-- Remove `mbflow-device-id` localStorage key (deprecated)
-- Update sync endpoints to use authenticated routes only
+**Add:**
+- Upgrade/billing buttons redirect to:
+  ```
+  https://magicbusstudios.com/subscribe?product={PRODUCT_SLUG}&brand=mbs
+  ```
+- Check access from your backend:
+  ```javascript
+  const response = await fetch(
+    `https://api.magicbusstudios.com/api/entitlements/${PRODUCT_SLUG}`,
+    { headers: { Authorization: `Bearer ${userToken}` } }
+  );
+  const { hasAccess, reason } = await response.json();
+  // hasAccess: true/false
+  // reason: "free_tier", "product_pass", "category_access", "mbs_all_access", "no_subscription"
+  ```
+- If `hasAccess: false`: redirect to MBS Platform billing page
 
-### Step 6: Handle Embedded Arrays
-FlowState stores breathwork/meditation/flow data as embedded arrays in the `users` doc. During migration, decide:
-- **Option A**: Keep embedded (simpler, current pattern works)
-- **Option B**: Extract to separate `yoga_breathwork_sessions`, `yoga_meditation_sessions`, `yoga_flow_sessions` collections (better for scale)
-- **Recommendation**: Keep embedded for now (0 users, no scale concern). Extract later if needed.
+### Step 4: Update Frontend
 
-## deviceId Legacy Pattern
-- `deviceId` was used for pre-auth device-based sync
-- All routes now require JWT auth
-- Keep deviceId-based routes for 90-day migration window
-- After 90 days, remove deviceId routes and field entirely
-- Do NOT create new deviceId entries
+- Remove login/signup page components
+- Remove pricing/billing page components (if any)
+- Update auth store/context to use MBS Platform JWT
+- Update API client to send JWT in Authorization header
+- Add "Login" button that redirects to MBS Platform
+- Handle `?token={JWT}` on redirect back from platform
 
-## User Dedup / Merge Logic
-FlowState has 0 real users, so collision risk is zero. The migration script should still use upsert on email as a safety pattern — if a user somehow exists (from CWG migration), merge without overwriting existing values.
+### Step 5: Handle Legacy User Collision (CRITICAL)
+
+**If this product has existing users in its database**, you MUST handle the case where a platform user ID doesn't match the local user's `_id`. This is the #1 cause of "login appears to fail" bugs.
+
+**The problem:**
+1. User `you@gmail.com` exists locally with `_id: ObjectId("abc123...")` (from before SSO)
+2. Platform assigns `userId: "def456..."` (a different ID)
+3. `User.findById("def456...")` returns `null` — no user with that platform ID
+4. Auto-provisioning tries `User.create({ _id: "def456...", email: "you@gmail.com" })` — **CRASHES on unique email index**
+5. `/auth/me` returns 500, frontend sees no user → appears not signed in
+
+**The fix — add this to your `requireAuth` or `/auth/me` endpoint:**
+```javascript
+async function getOrProvisionUser(platformUser) {
+  // platformUser = { userId, email, name, avatar } from JWT
+
+  // 1. Try finding by platform ID (fast path — works after first login)
+  let user = await User.findById(platformUser.userId);
+  if (user) return user;
+
+  // 2. Check for legacy user with same email (migration path)
+  if (platformUser.email) {
+    const legacyUser = await User.findOne({ email: platformUser.email });
+    if (legacyUser) {
+      const oldId = legacyUser._id;
+
+      // Preserve user data from legacy record
+      const userData = legacyUser.toObject();
+      delete userData._id;
+      delete userData.__v;
+
+      // Delete old record, recreate with platform _id
+      await User.deleteOne({ _id: oldId });
+      user = await User.create({
+        _id: platformUser.userId,
+        ...userData,
+        name: platformUser.name || userData.name,
+        avatar: platformUser.avatar || userData.avatar,
+      });
+
+      // UPDATE ALL RELATED COLLECTIONS that reference the old _id
+      // Replace these with your actual collection names:
+      const collections = ['sessions', 'posts', 'bookmarks', 'notifications'];
+      for (const col of collections) {
+        await mongoose.connection.collection(col).updateMany(
+          { user_id: oldId.toString() },
+          { $set: { user_id: platformUser.userId } }
+        );
+        // Also check 'userId' field if your collections use camelCase
+        await mongoose.connection.collection(col).updateMany(
+          { userId: oldId.toString() },
+          { $set: { userId: platformUser.userId } }
+        );
+      }
+
+      return user;
+    }
+  }
+
+  // 3. Brand new user — create fresh profile
+  user = await User.create({
+    _id: platformUser.userId,
+    email: platformUser.email,
+    name: platformUser.name,
+    avatar: platformUser.avatar,
+  });
+  return user;
+}
+```
+
+**Important:**
+- This is a **one-time migration per user** — after the first login, `findById` hits directly
+- You MUST update ALL related collections that reference the old `_id`, or data (sessions, posts, progress, achievements, etc.) will be orphaned
+- Grep your codebase for `user_id`, `userId`, `user`, `author`, `created_by` fields to find all collections that need updating
+- If your product uses MongoDB ObjectId for `_id` (most do), the old ID is an ObjectId and the new one is a string — handle both types in your `updateMany` queries
+
+### Step 6: Update Backend
+
+- Add `requireAuth` middleware to all protected routes
+- Add `getOrProvisionUser` (Step 5) to your `/auth/me` or user-loading endpoint
+- Remove standalone auth routes
+- Remove Stripe/billing routes (if any)
+- Add `JWT_SECRET` to environment variables (must match MBS Platform)
+- Keep all product-specific routes and logic unchanged
+
+### Step 7: Update Environment Variables
+
+**Remove:**
+- Any auth-related env vars (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET — if handled locally)
+- Any Stripe env vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, etc.)
+
+**Add:**
+- `JWT_SECRET` — must match the MBS Platform's secret exactly
+- `PLATFORM_URL` — `https://magicbusstudios.com`
+- `PRODUCT_SLUG` — your product's slug (e.g., `brokenchain`)
+
+**Keep (do NOT remove):**
+- `MONGO_URL` — your product's own database connection (NOT inner_lab, NOT mbs_platform)
+- `DB_NAME` — your product's own database name
+- All other existing product-specific env vars (OPENAI_API_KEY, etc.)
+
+---
+
+## Free Tier Handling
+
+Some products have free tiers (e.g., Arcade: 30 min/day free). The platform's entitlement check returns:
+- `{ hasAccess: true, reason: "free_tier" }` for free users
+- `{ hasAccess: true, reason: "product_pass" }` for paid users
+
+Your product's backend is responsible for enforcing free tier limits (time, usage caps, etc.) based on the `reason` field.
+
+## Products That Need This Migration
+
+### The Arcade (5 games) — Category: `arcade`, Brand: `mbs`
+
+| Product | Slug | Domain |
+|---------|------|--------|
+| Broken Chain | `brokenchain` | brokenchain.magicbusstudios.com |
+| MindHacker | `mindhacker` | mindhacker.magicbusstudios.com |
+| Trivia Roast | `triviaroast` | triviaroast.magicbusstudios.com |
+| Whispering House | `whisperinghouse` | whisperinghouse.magicbusstudios.com |
+| Fake Artist | `fakeartist` | fakeartist.magicbusstudios.com |
+
+### Studio Works (6 apps) — Category: `studioworks`, Brand: `mbs`
+
+| Product | Slug | Domain |
+|---------|------|--------|
+| WildLens | `wildlens` | wildlens.magicbusstudios.com |
+| Lazy Chef | `lazychef` | lazy-chef.magicbusstudios.com |
+| Family Task Tracker | `tasktracker` | tasktracker.magicbusstudios.com |
+| AI Tutor | `tutor` | tutor.magicbusstudios.com |
+| SmartCart | `smartcart` | smartcart.magicbusstudios.com |
+| Movie Picker | `moviepicker` | moviepicker.magicbusstudios.com |
 
 ## What NOT to Do
-- Do NOT delete the `yogaghost` database — it's the backup
-- Do NOT modify user data during migration — copy only
-- Do NOT run migration until MBS Platform and Inner Lab Middleware are built and tested
-- Do NOT keep standalone auth/billing code after migration
+- Do NOT touch the product's own database — keep it as-is
+- Do NOT connect to `inner_lab` database — that's Inner Lab modules only
+- Do NOT build your own Stripe integration — the platform handles billing
+- Do NOT keep standalone auth after migration — remove it completely
+- Do NOT hardcode the product slug — use env var `PRODUCT_SLUG`
+
+## GDPR — Data Deletion (Three Levels)
+
+Data deletion is **layered**, not a single nuclear cascade:
+
+1. **App-level** ("Delete my data from this app") — triggered from within YOUR app's Settings page. Deletes ONLY this app's data from its own database. The user's MBS Platform account, entitlements, and data in other apps stay intact.
+2. **Category-level** — triggered from magicbusstudios.com/settings. MBS Platform calls `DELETE /api/user-data` on every app in the category (e.g., all Arcade games or all Studio Works tools).
+3. **Full account deletion** — triggered from magicbusstudios.com/settings. MBS Platform calls every product's delete endpoint, then deletes the user record.
+
+**What you MUST implement:** `DELETE /api/user-data` — an authenticated endpoint that deletes all data for `req.user.userId` from your product's database. This endpoint serves BOTH purposes:
+- Called by your own app when the user clicks "Delete my data" in Settings
+- Called by the MBS Platform during category-level or full account deletion (MBS Layer 1 wired in Session 31 — email confirmation flow)
+
+**Important:** This endpoint must NOT delete the user's MBS Platform account. It only deletes local product data. The user can still log into other apps after deleting their data from yours.
 
 ---
 
 ## Completion Report (REQUIRED)
 
-When you finish the migration and refactor, generate a file called `PHASE_4_REPORT.md` in the project root. The orchestrator will fetch it from here. The report must contain:
+When you finish the SSO migration, generate a file called `PHASE_5_REPORT.md` in the project root. The orchestrator will fetch it from here. The report must contain:
 
-1. **What was built/changed** — Every file created, modified, or deleted, grouped by backend/frontend
+1. **What was built/changed** — Every file created, modified, or deleted
 2. **What changed from the plan** — Any deviations from this document. Why?
-3. **Migration results** — How many users migrated, collections copied, any errors or skipped records
-4. **Collection mapping** — Old collection name → new collection name (yoga_* and il_*) as actually created
-5. **Field renames** — Every field that was renamed during migration (old → new)
-6. **Env vars required** — Complete list for the refactored FlowState app
-7. **Code removed** — List of removed auth/billing routes, pages, and files
-8. **JWT integration** — How JWT middleware was implemented (library, header format, fields extracted)
-9. **deviceId sunset** — How deviceId legacy routes were handled (kept for 90 days? removed?)
-10. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
-11. **Known gaps** — Anything deferred or issues discovered
-12. **Testing steps** — How to verify the migration worked and the refactored app functions correctly
+3. **Env vars required** — Complete list for the migrated app
+4. **Code removed** — List of removed auth/billing routes, pages, and files (if any existed)
+5. **JWT integration** — How JWT middleware was implemented (library, header format, fields extracted)
+6. **Entitlement check** — How entitlement is checked (API call? cached? which endpoint?)
+7. **Assumptions made** — Anything you had to decide that wasn't explicitly in the spec
+8. **Known gaps** — Anything deferred or issues discovered
+9. **Testing steps** — How to verify the SSO migration works
 
-This report is critical — the orchestrator session (MBSPlatform repo) uses it to track the migration.
-
----
-
-## Phase 3B Learnings (Added by Orchestrator — 2026-03-27)
-
-These are real-world lessons from the CWG migration that apply to FlowState:
-
-### API URL: Use `api.magicbusstudios.com` NOT `magicbusstudios.com`
-The MBS Platform API lives at `https://api.magicbusstudios.com` (the backend container). `https://magicbusstudios.com` is the frontend (nginx). Calling the frontend URL for API requests causes CORS errors. All entitlement checks, billing redirects, and any backend API calls must use `api.magicbusstudios.com`.
-
-### After Deleting Auth Files — Grep for ALL Imports
-When you delete auth routes and services (e.g., stripe_integration.js, auth_routes.js), other files may still import functions from them. A runtime crash will occur. **Before deploying, run:** `grep -r "require.*auth\|require.*stripe\|require.*btcpay\|import.*auth\|import.*stripe" server/` and remove all stale imports.
-
-### Legacy Auth Routes — Redirect to Platform Login, Not Homepage
-When removing `/login`, `/signup`, `/forgot-password` pages, DO NOT redirect those routes to `/` (homepage). Instead, redirect them to the platform login URL: `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`. Users with bookmarks or cached links will otherwise land on a confusing homepage.
-
-### BrowserRouter Ordering
-Any React component that uses `useLocation()`, `useNavigate()`, or other React Router hooks MUST be nested INSIDE `<BrowserRouter>`, not wrapping it. If you have a wrapper component (e.g., SmoothScroll) that uses these hooks, it must be a child of BrowserRouter.
-
-### User ID Resolution — CRITICAL for Migrated Modules
-The JWT `userId` field contains the MBS Platform ObjectId (e.g., `69c53401fe8f1763b9046ae5`). But if data was migrated from the old database, documents may use the old module-specific `_id`. FlowState uses MongoDB ObjectId natively so this is LESS of a problem than CWG (which used UUIDs), but still:
-- **If FlowState has 0 real users**: auto-provision new profiles with the platform user ID. No resolution layer needed.
-- **If any users exist at migration time**: implement email-based resolution like CWG did — look up old profile by email from JWT, add `platform_user_id` field, cache the mapping in memory.
-- **All new user_id fields in yoga_* collections must store the platform ObjectId string**, not a local ID.
-
-### Entitlements Check — MUST Be Wired
-CWG missed this during Phase 3B. FlowState MUST call `GET https://api.magicbusstudios.com/api/entitlements/flowstate` (with Bearer token) and enforce the result. Without it, there's no free/premium distinction. Cache the result for 5 minutes.
-
-### Cross-Origin Login Redirect Already Works
-Inner Lab's login page (commit `efebe36`) already supports cross-origin redirects to `*.magicbusstudios.com` domains. When FlowState redirects to `https://innerlab.ai/auth/login?redirect=https://yoga.magicbusstudios.com`, Inner Lab will:
-1. Accept the redirect URL (it's in the trusted domain whitelist)
-2. After login, redirect back with `?token={JWT}` appended
-3. FlowState frontend extracts the token and stores it in localStorage
-No changes needed on Inner Lab's side for this to work with FlowState.
-
-### Coolify Env Vars — Separate Lines
-When pasting env vars in Coolify, ensure each var is on its own line. A known CWG issue: `JWT_SECRET=xxxLOG_LEVEL=INFO` was pasted as one line, making JWT validation fail silently.
+This report helps the orchestrator track which standalone products are fully migrated.
 
 ---
 
@@ -194,35 +288,89 @@ When pasting env vars in Coolify, ensure each var is on its own line. A known CW
 
 These are real-world implementation details from the MBS Platform build that affect this migration:
 
-### Env Var Name
-- The MBS Platform uses **`MONGO_URL`** (not `MONGODB_URI`). Use `MONGO_URL` for consistency.
-
 ### JWT Details (as actually implemented)
 - Header: `Authorization: Bearer <token>`
 - Payload: `{ userId, email, name, avatar, isAdmin, iat, exp }`
 - `userId` is a **string** (ObjectId.toString())
-- Node.js: use `jsonwebtoken` package, algorithm `HS256`, verify with shared `JWT_SECRET`
+- Use `jsonwebtoken` (Node.js) or `PyJWT` (Python), algorithm `HS256`, verify with shared `JWT_SECRET`
 
 ### Frontend Token Storage
 - After login redirect, JWT arrives as `?token=<JWT>` in the URL
-- FlowState frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
-- All API calls use header: `Authorization: Bearer ${localStorage.getItem("mbs_token")}`
+- Your frontend must: extract token, store as `localStorage.setItem("mbs_token", token)`, store user as `localStorage.setItem("mbs_user", JSON.stringify(user))`, then `history.replaceState` to remove from URL
 
 ### Entitlement Check
-- `GET https://api.magicbusstudios.com/api/entitlements/flowstate` with `Authorization: Bearer <JWT>`
-- Returns `{ success, hasAccess, reason }` — reason `free_tier` means free access
+- `GET https://api.magicbusstudios.com/api/entitlements/{your_slug}` with `Authorization: Bearer <JWT>`
+- Returns `{ success, hasAccess, reason }`
 - Cache response for 5 minutes in-memory
+- **This MUST be wired** — without it, there's no free/premium enforcement
 
-### Category Values
-- Categories are lowercase no-separator: `innerlab` (not `inner_lab`)
+### Open Redirect Protection
+- The `?redirect=` URL in the login flow is validated against CORS_ORIGINS. Your product's domain MUST be in the MBS Platform's CORS_ORIGINS list, or users will be redirected to magicbusstudios.com instead of your product.
 
-### GDPR
-- MBS Platform cascade delete reaches into `inner_lab` database. All yoga_* and il_* collections must use `user_id` field consistently.
+---
 
-### Additional Phase 1 Learnings (updated after live testing)
-- **email can be null** — Nostr/LNURL users have no email. Guard with `if (user.email)` everywhere.
-- **Entitlement reason values**: `"product_pass"`, `"category_access"`, `"mbs_all_access"`, `"free_tier"`, `"no_subscription"` — confirmed from live code.
-- **Rate limiting on platform API**: 100 req/15min. Cache entitlement checks for 5 min.
-- **Billing page is live** at `magicbusstudios.com/billing` with CWG pricing and Lightning option. Redirect upgrade buttons there.
-- **BTCPay status**: Currently 403 due to API key permissions. Will be fixed separately — does not block FlowState migration.
-- **First platform user**: Abhinav Gupta (`1984.abhinav@gmail.com`), ID: `69c53401fe8f1763b9046ae5`.
+## Phase 3B Learnings (Added by Orchestrator — 2026-03-27)
+
+These are real-world lessons from the CWG migration:
+
+### API URL: Use `api.magicbusstudios.com` NOT `magicbusstudios.com`
+The MBS Platform API lives at `https://api.magicbusstudios.com` (the backend container). `https://magicbusstudios.com` is the frontend (nginx). Calling the frontend URL for API requests causes CORS errors. All entitlement checks and API calls must use `api.magicbusstudios.com`.
+
+### After Deleting Auth Files — Grep for ALL Imports
+When you delete auth routes and services, other files may still import functions from them causing runtime crashes. **Before deploying, grep for all imports from deleted files.**
+
+### Legacy Auth Routes — Redirect to Platform Login, Not Homepage
+When removing `/login`, `/signup` pages, redirect those routes to `https://magicbusstudios.com/auth/login?redirect=https://{YOUR_DOMAIN}` — NOT to `/` (homepage). Users with bookmarks need to reach the platform login.
+
+---
+
+## Phase 4 Learnings (Added by Orchestrator — 2026-03-28)
+
+These are real-world lessons from the FlowState migration:
+
+### MONGO_URL / MONGODB_URI / MONGO_URI — Check All Three
+Coolify services may use `MONGO_URL`, `MONGODB_URI`, or `MONGO_URI` depending on when they were set up. Your code should support whichever one exists, or add fallbacks: `process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGO_URI`.
+
+### Remove Google GSI Script from index.html
+If your `index.html` loads `https://accounts.google.com/gsi/client` (Google Identity Services), remove it — Google SSO is now handled by the MBS Platform. Also update CSP headers in nginx.conf to remove `accounts.google.com` from `script-src`, `style-src`, `connect-src`, and `frame-src`.
+
+### Coolify Env Vars — Separate Lines
+When pasting env vars in Coolify, ensure each var is on its own line. A known issue: concatenated env vars cause JWT validation to fail silently.
+
+---
+
+## Phase 5 Learnings (Added by Orchestrator — 2026-03-28)
+
+These are real-world lessons from WildLens and other standalone product SSO migrations:
+
+### Legacy User Collision — The #1 SSO Migration Bug
+When an app has existing users, the platform assigns a different `userId` than the local `_id`. The auto-provisioning code tries to `create()` a new user with the platform `_id` but the same email → **unique index crash** → `/auth/me` returns 500 → frontend shows user as not logged in. See Step 5 for the complete fix pattern. This hit WildLens and will hit EVERY standalone app with existing users.
+
+### Python Apps: JWT_SECRET_KEY vs JWT_SECRET
+Python frameworks (Flask, FastAPI) commonly use `JWT_SECRET_KEY` in their config files. Coolify has the env var as `JWT_SECRET` (matching the MBS Platform). If your app's `config.py` reads `JWT_SECRET_KEY`, the JWT verification silently fails because the secret is empty/None. Fix: add a fallback in your config: `os.environ.get("JWT_SECRET_KEY") or os.environ.get("JWT_SECRET") or ""`. This caused a login loop in a Python app — user authenticates on platform, gets redirected back, JWT verification fails, gets sent back to login.
+
+### After Legacy Migration — Update ALL Related Collections
+When migrating a legacy user's `_id` to the platform ID, you must also update every collection that references the old ID. Grep for fields like `user_id`, `userId`, `user`, `author`, `created_by`, `owner` across all collections. Missing even one causes data loss (orphaned records). WildLens had to update 8+ collections (discoveries, posts, bookmarks, chat sessions, collections, expeditions, notifications, challenges).
+
+### CORS_ORIGINS — Both Platform AND Product Domains
+The MBS Platform's `CORS_ORIGINS` must include your product domain (e.g., `https://wildlens.magicbusstudios.com`), otherwise the `?token=` redirect never arrives. Check this BEFORE debugging login issues — it's the second most common cause of "SSO doesn't work".
+
+---
+
+## Phase 6 Learnings (Added by Orchestrator — 2026-04-08)
+
+These are real-world lessons from the AI Tutor RS256 migration:
+
+### Python Apps: `pyjwt[crypto]` Required for RS256
+The MBS Platform now signs JWTs with **RS256** (asymmetric). Plain `pyjwt` only supports HS256 — it does NOT include the `cryptography` package needed for RSA operations. If a Python app's `requirements.txt` has `PyJWT==2.x.x` without the `[crypto]` extra, RS256 verification fails with `InvalidAlgorithmError: Algorithm not supported`, falls through to HS256 (which also fails since the token is RS256-signed), and returns 401. The user sees a login loop — authenticates on the platform, gets redirected back, but appears not logged in.
+
+**Fix**: In `requirements.txt`, use `PyJWT[crypto]==2.9.0` (not `PyJWT==2.9.0`). This installs the `cryptography` package as a dependency.
+
+**Symptoms**: Backend logs show `InvalidAlgorithmError: Algorithm not supported` on RS256, then `InvalidAlgorithmError: The specified alg value is not allowed` on HS256 fallback. The `JWT_PUBLIC_KEY` env var IS set and the PEM is valid — the error is a missing dependency, not a key problem.
+
+### RS256 Env Var for Python Apps
+Python apps need `JWT_PUBLIC_KEY` in Coolify (multiline PEM format). The auth service should handle `\\n` → `\n` conversion for Coolify's env var storage:
+```python
+_raw = os.environ.get("JWT_PUBLIC_KEY", "")
+JWT_PUBLIC_KEY = _raw.replace("\\n", "\n") if _raw else None
+```

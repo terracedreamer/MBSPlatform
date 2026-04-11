@@ -1,9 +1,12 @@
 # Agent Prompts — Free Tier Entitlement Gating
 
 **Created**: April 8, 2026 (Session 30)
+**Updated**: April 10, 2026 (Session 31)
 **Architecture**: See `FREE_TIER_ARCHITECTURE.md` for the full spec.
 
-These are paste-ready prompts for each product's Claude Code agent. The MBS Platform build prompt comes first (builds the billing page + backend), then child app prompts.
+> **Session 31 changes**: MBS Platform free tier is now BUILT. `freeTierLimits` removed from products.js — each module enforces its own limits. `/billing` renamed to `/subscribe`. Entitlement response returns `isPremium: true/false` (no `limits` field). The MBS Platform prompt (#1) is **DONE** — skip it. Child app prompts still apply but must use `/subscribe` URLs and implement their own limit logic.
+
+These are paste-ready prompts for each product's Claude Code agent. The MBS Platform build prompt comes first (builds the subscribe page + backend), then child app prompts.
 
 ---
 
@@ -92,7 +95,7 @@ What needs to change:
 
 1. Entitlement check on dashboard load:
    - When user hits /dashboard (or any authenticated page), call GET {PLATFORM_URL}/api/entitlements/category/innerlab
-   - If the user has NO entitlements for any IL product → redirect to magicbusstudios.com/billing?category=innerlab
+   - If the user has NO entitlements for any IL product → redirect to magicbusstudios.com/subscribe?category=innerlab
    - If the user has at least one IL product entitlement → show dashboard with only registered modules
 
 2. Module picker page (new page: /modules):
@@ -152,12 +155,12 @@ What needs to change:
 1. Backend entitlement check:
    - On every authenticated API request (or at minimum, on chat/message endpoints), check entitlement
    - Call GET {MBS_PLATFORM_URL}/api/entitlements/cwg with the user's JWT
-   - If hasAccess is false → return 403 { success: false, message: "Registration required", redirectUrl: "https://magicbusstudios.com/billing?product=cwg" }
+   - If hasAccess is false → return 403 { success: false, message: "Registration required", redirectUrl: "https://magicbusstudios.com/subscribe?product=cwg" }
    - Cache the result for the session (don't call on every single request — cache for 5 minutes)
 
 2. Frontend entitlement check:
    - On app load (after auth), call the CWG backend to check entitlement
-   - If 403 with redirectUrl → redirect to magicbusstudios.com/billing?product=cwg
+   - If 403 with redirectUrl → redirect to magicbusstudios.com/subscribe?product=cwg
    - If free tier → store isPremium: false and limits in app state
    - If premium → store isPremium: true
 
@@ -169,7 +172,7 @@ What needs to change:
 4. Premium feature gating:
    - premiumFeatures from products.js: ["unlimited_messages", "advanced_guides", "conversation_history", "export_conversations"]
    - Free users: basic guides only, no conversation history, no export
-   - Show "Premium" lock icon on gated features with upgrade link to magicbusstudios.com/billing?product=cwg
+   - Show "Premium" lock icon on gated features with upgrade link to magicbusstudios.com/subscribe?product=cwg
 
 5. Handle ?refresh=true:
    - When redirected back from billing page after registration
@@ -207,7 +210,7 @@ What needs to change:
 1. Frontend entitlement check (FlowState is Express + React):
    - On app load (after auth), call GET /api/entitlements/check (new backend route)
    - Backend route proxies to MBS Platform: GET {MBS_PLATFORM_URL}/api/entitlements/flowstate
-   - If hasAccess is false → redirect to magicbusstudios.com/billing?product=flowstate
+   - If hasAccess is false → redirect to magicbusstudios.com/subscribe?product=flowstate
    - If free tier → store limits in app state
 
 2. Session limit enforcement (free tier):
@@ -255,7 +258,7 @@ What needs to change:
    - On app load (after auth), check entitlement
    - Call your own backend: GET /api/entitlements/check (new route)
    - Backend proxies to: GET {PLATFORM_URL}/api/entitlements/{PRODUCT_SLUG} with user JWT
-   - If hasAccess is false → redirect to magicbusstudios.com/billing?product={PRODUCT_SLUG}
+   - If hasAccess is false → redirect to magicbusstudios.com/subscribe?product={PRODUCT_SLUG}
    - If free tier → store limits in app state
    - Cache entitlement for 5 minutes
 
@@ -263,7 +266,7 @@ What needs to change:
    - {LIMIT_DESCRIPTION}
    - Show usage counter in UI
    - When limit reached, show: "Daily limit reached. Upgrade to Premium for unlimited access."
-   - Include link to magicbusstudios.com/billing?product={PRODUCT_SLUG}
+   - Include link to magicbusstudios.com/subscribe?product={PRODUCT_SLUG}
 
 3. Add backend route:
    - GET /api/entitlements/check — calls MBS Platform, returns { hasAccess, isPremium, limits }

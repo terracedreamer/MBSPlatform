@@ -364,7 +364,7 @@ Do the SSO migration:
 3. Login button redirects to: https://magicbusstudios.com/auth/login?redirect=https://{THIS_PRODUCT_DOMAIN}&brand=mbs
 4. Handle ?token= on redirect back — extract, store as mbs_token in localStorage, replaceState to clean URL
 5. All API calls use Authorization: Bearer header (not cookies)
-6. Remove Stripe/billing if any — upgrade buttons go to https://magicbusstudios.com/billing
+6. Remove Stripe/billing if any — upgrade buttons go to https://magicbusstudios.com/subscribe
 7. Check entitlement: GET https://api.magicbusstudios.com/api/entitlements/{THIS_PRODUCT_SLUG} (cache 5 min)
 8. Add JWT_SECRET and PLATFORM_URL to env vars
 9. Keep everything else (own database, own features, own logic)
