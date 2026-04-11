@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 10, 2026 (Session 30 (continued))
+**Last Updated**: April 10, 2026 (Session 31)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -55,7 +55,7 @@ This repo contains architecture decisions, migration plans, reference files, aud
 
 | Component | Status | Where |
 |-----------|--------|-------|
-| MBS website + Platform | **Deployed — Phase 1 complete. Session 30 (continued): admin link fix, all 3 categories on homepage, admin-created products visible. Session 31: admin product management, free tier architecture. Session 30: 52 frontend tests, Nitro cleanup.** | magicbusstudios.com |
+| MBS website + Platform | **Deployed — Phase 1 complete. Session 31: free_tier entitlements, SubscribePage + SubscribeInnerLabPage, GDPR email confirmation, coming soon seed. Pushed to main + development, awaiting Coolify redeploy.** | magicbusstudios.com |
 | Inner Lab website + Middleware + Auth | **Deployed — Session 20: 13 dashboard pages, OG image live, 14 il_* collections, 15 route files, 33 tests, all 14 routes use response helpers** | innerlab.ai / api.innerlab.ai |
 | CWG | **Migrated** — running on `test` branch | conversationswithgod.ai |
 | FlowState | **Migrated** — live on production. Session 22: dev merged to main, production redeployed. il_check_ins + il_user_wellness_profiles + il_activity_feed now live. | yoga.magicbusstudios.com |
@@ -113,6 +113,11 @@ Both fixes confirmed working across all affected apps.
 - [x] PLATFORM_URL dual-use pattern documented — frontend=magicbusstudios.com, backend=api.magicbusstudios.com (Session 30 (continued))
 - [x] Global reference files updated — innerlab-module-alignment.md added, CLAUDE.md module count fixed, registration updated (Session 30 (continued))
 - [x] New modules CLAUDE.md fixed — entitlement response (isPremium), redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY (Session 30 (continued))
+- [x] Free tier entitlements — free_tier type added, subscribe-free rewritten, category registered:true/false, Stripe downgrade (Session 31, commit `0fc98c4`)
+- [x] Subscribe pages — BillingPage→SubscribePage, SubscribeInnerLabPage, /billing→/subscribe redirects (Session 31)
+- [x] GDPR email confirmation — DataDeletionRequest model, confirmation email flow, no immediate deletion (Session 31)
+- [x] FlowState GDPR — verified il_user_wellness_profiles NOT deleted at app-level (identity singleton correctly protected)
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
-- [ ] FlowState GDPR — verify il_user_wellness_profiles not deleted at app-level (potential singleton bug)
+- [ ] MBS Coolify redeploy needed (Session 31 changes pushed but not deployed)
+- [ ] Run coming soon seed script against production DB

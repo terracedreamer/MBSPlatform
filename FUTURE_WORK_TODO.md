@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 10, 2026 (Session 30 (continued))
+**Last Updated**: April 10, 2026 (Session 31)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -84,7 +84,8 @@ Each product provides:
 
 ### GDPR — Email Confirmation Before Data Deletion (ALL APPS)
 
-- [ ] **Every "Delete My Data" action must send a confirmation email before deleting anything**
+- [x] **MBS Platform (Layer 1) — DONE Session 31** (commit `0fc98c4`): DataDeletionRequest model, DELETE /api/auth/account sends confirmation email, GET /api/user-data/confirm-delete/:token executes cascade, DELETE /api/user-data/category/:category, sendDeletionConfirmationEmail(), Account settings confirmation UI
+- [ ] **Child apps (Layer 2+3) — still need to route through MBS confirmation flow**
 
 **Principle:** No data is deleted immediately. User clicks "Delete My Data" → receives email with confirmation link → clicks link → data is deleted. This protects against accidental deletion, unauthorized access, and provides an audit trail.
 
@@ -136,23 +137,23 @@ Each product provides:
 5. FlowState — update GDPR endpoint
 6. All 11 standalone apps — update GDPR endpoints (can be parallelized with agent prompts)
 
-### Free Tier + Subscribe Page (Session 31-32 decisions, not yet built)
+### Free Tier + Subscribe Page — DONE Session 31 (commit `0fc98c4`)
 
-- [ ] **Add `free_tier` to Entitlement model type enum**
-- [ ] **Build `POST /api/entitlements/subscribe-free`** — creates free_tier entitlement, handles IL category + module selections
-- [ ] **Update `GET /api/entitlements/category/:cat`** to return `products[]` array with `registered: true/false`
-- [ ] **Handle premium→free downgrade in Stripe webhook** — auto-create free_tier when subscription cancelled
-- [ ] **Remove `freeTierLimits` from products.js** — MBS doesn't pass limits
-- [ ] **Rename Billing → Subscribe** — `BillingPage.jsx` → `SubscribePage.jsx`, `/billing` → `/subscribe` (add redirect)
-- [ ] **Build `/subscribe/innerlab` dedicated page** — SubscribeInnerLabPage.jsx with IL module picker
-- [ ] **Redesign main subscribe page** — free vs premium per category
+- [x] **Add `free_tier` to Entitlement model type enum**
+- [x] **Build `POST /api/entitlements/subscribe-free`** — single product + category+modules mode
+- [x] **Update `GET /api/entitlements/category/:cat`** — returns `registered: true/false` per product
+- [x] **Handle premium→free downgrade in Stripe webhook** — auto-create free_tier on cancellation
+- [x] **Remove `freeTierLimits` from products.js** — MBS passes NO limits
+- [x] **Rename Billing → Subscribe** — `SubscribePage.jsx`, `/billing` → `/subscribe` redirect
+- [x] **Build `/subscribe/innerlab` dedicated page** — 12 IL module picker with checkboxes
+- [x] **Redesign main subscribe page** — free tier messaging + IL modules link
 
 ### Module Alignment (Session 30 (continued) — prompts ready, not yet executed)
 
 - [ ] **Give INNERLAB_MODULE_ALIGNMENT.md to 10 new module agents** (Bonds through Nexus)
 - [ ] **Give CWG_ALIGNMENT.md to CWG agent** — AFTER feature removal is complete
 - [ ] **Give FLOWSTATE_ALIGNMENT.md to FlowState agent** — includes GDPR singleton bug fix
-- [ ] **Verify FlowState GDPR bug** — does DELETE /api/user-data delete il_user_wellness_profiles? If yes, fix (identity singleton)
+- [x] **Verify FlowState GDPR bug** — VERIFIED Session 31: NOT a bug. il_user_wellness_profiles correctly excluded from app-level deletion (line 696 in YogaGhost/server/index.js)
 
 ### Marketing / Content
 - [ ] Convert CWG marketing plan .docx in Desktop/Marketing/ to .md (old content, may delete)
@@ -175,6 +176,11 @@ Each product provides:
 Steps: Create in Stripe Dashboard (test mode) → copy 12 price IDs → add to Coolify MBS B env vars → redeploy.
 
 - [ ] **Regenerate BTCPay API key** — Current key has insufficient permissions (403). Lightning payments don't work until fixed.
+
+- [ ] **Redeploy MBS on Coolify** — Session 31 changes pushed to main + development (`0fc98c4`) but not deployed. Frontend + backend both need rebuild.
+- [ ] **Run coming soon seed script** — `node server/seeds/setComingSoon.js` against production DB. Sets 5 apps (brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker) to coming_soon.
+- [ ] **Docker prune on VPS** — 97% disk usage. Run `docker system prune -a -f && docker builder prune -a -f`.
+- [ ] **CWG promote test → dev** — Requires passphrase + env var audit. Deferred since Session 19.
 
 ### Completed — Session 10
 12 enhancements (ADMIN_EMAILS, response helpers, activity logging, connected accounts, GDPR type-DELETE, onboarding, friends, AdminPage split, user segmentation, revenue analytics, referral emails, promo checkout) + 3 billing features (entitlement sync, premium gating, invoice PDFs). See CHANGELOG.md Session 10 entries.
@@ -340,7 +346,7 @@ AuthContext, ProtectedRoute, profile editing, notifications, feature flags, acti
 ### Future Work (Decided but Deferred)
 - [x] FlowState il_* integration — **DONE Sessions 19+21.** FlowState now writes to 3 il_* collections: il_activity_feed (S19 `cc65a40`), il_check_ins + il_user_wellness_profiles (S21 `e8a3c79`). Remaining: il_reflections (no journaling feature), il_user_memories (no AI insight extraction).
 - [x] FlowState GDPR user_id fix — **RESOLVED Session 19.** Verified NOT a bug — yoga_activity uses `userId` consistently in writes and deletes. GDPR also updated to delete il_activity_feed by source_module.
-- [ ] **Rename "Billing" → "Subscription" across MBS frontend** — BillingPage.jsx → SubscriptionPage.jsx, /billing → /subscription, nav links, page titles, button labels. Keep API routes as `/api/billing/*` (backend unchanged). Update IndividualPlansPage references too.
+- [x] **Rename "Billing" → "Subscribe" across MBS frontend** — DONE Session 31. SubscribePage.jsx, /billing → /subscribe redirect, IndividualPlansPage updated. API routes remain `/api/billing/*`.
 - [ ] Stripe subscription portal testing — "Manage Subscription" button calls `/api/billing/portal`. Test full upgrade/downgrade/cancel flow once Stripe products are created.
 - [ ] BTCPay expiry reminders — Lightning is a 30-day one-time pass with manual renewal. Add email reminders when the 30 days are about to expire.
 - [ ] Win-back offers — needs centralized email digest + promo system working together. See architecture below.

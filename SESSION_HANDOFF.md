@@ -1,10 +1,66 @@
 # SESSION HANDOFF — MBS Platform Architecture Think Tank
 
-**Last Updated**: April 10, 2026 (Session 30 (continued))
+**Last Updated**: April 10, 2026 (Session 31)
 **Git Branch**: main
 **Last Commit**: See per-repo commits below
 **GitHub Repo**: https://github.com/terracedreamer/MBSPlatform.git
 **Repo Purpose**: Architecture think tank — no code here. Reference files get copied to actual projects.
+
+---
+
+## SESSION 31 SUMMARY (April 10, 2026) — Free Tier Entitlements, Subscribe Pages, GDPR Email Confirmation, Coming Soon
+
+### What was done this session:
+
+**1. Entitlement Model + Free Tier Support (code in MBS repo)**
+- Added `free_tier` to Entitlement model type enum (three-state: not_subscribed → free_tier → premium)
+- Rewrote `POST /api/entitlements/subscribe-free` — two modes: single product `{ product: "cwg" }` and category+modules `{ category: "innerlab", modules: ["cwg", "flowstate"] }`
+- Rewrote `GET /api/entitlements/category/:cat` — returns `{ hasAccess, isPremium, reason }` + `products[]` with `registered: true/false` per product
+- Updated `checkAccess()` — returns `isPremium: true/false` explicitly, removed `limits` from response
+- Stripe webhook `customer.subscription.deleted` — auto-creates `free_tier` entitlement on cancellation (premium→free downgrade, not removal)
+- Removed `freeTierLimits` from all 23 products in products.js (MBS passes NO limits — apps enforce own)
+- Updated entitlement middleware — matches `free_tier` type, removed `limits` from `req.entitlement`
+
+**2. Subscribe Page Rename (code in MBS repo)**
+- `SubscribePage.jsx` — renamed from BillingPage, updated SEO, success/cancel URLs, added IL modules link
+- `SubscribeInnerLabPage.jsx` — new dedicated page at `/subscribe/innerlab` with 12 IL module cards as checkboxes, select all, sticky register bar, premium upsell
+- Routes: `/subscribe` (SubscribePage), `/subscribe/innerlab` (SubscribeInnerLabPage), `/subscribe/individual` (IndividualPlansPage)
+- Redirects: `/billing` → `/subscribe`, `/billing/individual` → `/subscribe/individual`
+- Marketing `/subscribe` (newsletter) moved to `/newsletter`
+- Updated all `/billing` references in AccountPage, IndividualPlansPage, ProductPickerPage, email templates
+
+**3. GDPR Email Confirmation (code in MBS repo)**
+- `DataDeletionRequest` model — user_id, level (app/category/full), target, confirmation_token, status (pending/confirmed/expired/completed), 24h TTL
+- `DELETE /api/auth/account` — no longer deletes immediately. Creates DataDeletionRequest + sends confirmation email. Checks for existing pending requests (409). Requires email on account.
+- `GET /api/user-data/confirm-delete/:token` — validates token, checks expiry, executes deletion cascade (full or category), returns styled HTML result page
+- `DELETE /api/user-data/category/:category` — category-level deletion request with email confirmation
+- `sendDeletionConfirmationEmail()` — red-themed HTML email, 24h expiry, level descriptions
+- `executeFullDeletion(userId)` — cascade to child apps, cancel Stripe, delete from 14 mbs_platform collections, anonymize ConsentAuditLog, cross-DB inner_lab cleanup
+- Account settings UI — "Confirmation email sent" state with CheckCircle icon, explanatory text, button text changed to "Send Confirmation Email"
+- User data routes registered at `/api/user-data` in server/index.js
+
+**4. Coming Soon Toggle**
+- Seed script `server/seeds/setComingSoon.js` — sets 5 apps to `coming_soon`: brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker
+- Script needs to be run against production DB (owner action)
+
+**5. FlowState GDPR Bug Verification**
+- Checked YogaGhost/server/index.js — bug NOT present. Line 696 explicitly excludes `il_user_wellness_profiles` from app-level deletion (identity singleton protected).
+
+**6. Cleanup**
+- Deleted 4 OneDrive -MSI conflict files (CURRENT_STATUS-MSI.md, FUTURE_WORK_TODO-MSI.md, SESSION_HANDOFF-MSI.md, PHASE_3A_MIGRATION_REPORT-MSI.md)
+- Removed `freeTierLimits` display from ProductPickerPage (40+ lines of `formatLimits()`)
+
+### Per-repo commits this session:
+
+| Repo | Branch | Commits | Description |
+|------|--------|---------|-------------|
+| MBS | main + development | `0fc98c4` | Session 31 — free tier entitlements, subscribe pages, GDPR email confirmation |
+
+### What's next (Session 32):
+- **Owner actions** (not code): Redeploy MBS on Coolify, run seed script, Docker prune, create Stripe products, BTCPay API key regen, CWG promote test→dev
+- **Chrome verification**: Verify all Session 31 changes live after redeployment
+- **GDPR email confirmation rollout to child apps**: IL, CWG, FlowState, all 11 standalone apps
+- **Module alignment**: Give prompts to individual module agents (prompts ready from Session 30)
 
 ---
 
@@ -46,6 +102,17 @@
 **6. Final Module Prompt Created**
 - Single autonomous prompt for any IL module agent — reads 3 reference files, does everything in one pass, proposes real free/premium split
 
+**7. StarMap Env Var Clarification → All IL Modules**
+- PLATFORM_URL (backend) = `https://api.magicbusstudios.com` — NOT innerlab.ai. This is where entitlement checks live.
+- VITE_GOOGLE_CLIENT_ID NOT needed for IL modules — they delegate auth to innerlab.ai/auth/login and never render a Google sign-in button.
+- Created env var clarification prompt for all module agents (correct PLATFORM_URL + remove VITE_GOOGLE_CLIENT_ID)
+
+**8. Domain Convention Change (owner-applied to global CLAUDE.md)**
+- New IL modules deploy to `{slug}.innerlab.ai` / `api.{slug}.innerlab.ai`
+- Standalone products (Arcade, Studio Works) deploy to `*.magicbusstudios.com`
+- CWG (`conversationswithgod.ai`) and FlowState (`yoga.magicbusstudios.com`) are historical exceptions
+- Frontend VITE_BACKEND_URL for IL modules is now `https://api.{slug}.innerlab.ai` (not `api.{slug}.magicbusstudios.com`)
+
 ### Per-repo commits this session:
 
 | Repo | Branch | Commits | Description |
@@ -66,7 +133,7 @@
 
 ---
 
-## SESSION 31 SUMMARY (April 8, 2026) — Free Tier Architecture, Admin Product Management, Entitlement Instructions
+## SESSION 30 (planning) SUMMARY (April 8, 2026) — Free Tier Architecture, Admin Product Management, Entitlement Instructions
 
 ### What was done:
 - Admin dashboard: link editing, product creation, category grouping, unified status source
@@ -86,68 +153,41 @@
 
 ---
 
-## NEXT-SESSION PROMPT
-
-See bottom of this document for the comprehensive prompt to start Session 31.
-
----
-
-## NEXT-SESSION PROMPT — Session 31: MBS Platform Code Work
+## NEXT-SESSION PROMPT — Session 32
 
 ```
-## Session 31 — MBS Platform Code Work
+## Session 32 — Post-Deploy Verification + GDPR Rollout
 
 This is the MBS Platform architecture think tank (MBSPlatform repo — no code here). The actual code work happens in the MBS/ repo.
 
 ### Context
-Session 30 made major architecture decisions and created three module alignment prompts (INNERLAB_MODULE_ALIGNMENT.md, CWG_ALIGNMENT.md, FLOWSTATE_ALIGNMENT.md). IL agent reviewed and confirmed all are accurate. CWG and FlowState agents received their prompts with owner decisions: FlowState keeps CSS Modules + Inter font + pushes to dev; CWG does feature removal before alignment. Key decision change: ALL modules now implement real free/premium gating (no effectivePremium = true anywhere). Reference files synced to ~/.claude/reference/ on all laptops.
+Session 31 built all 4 priorities: free_tier entitlements, subscribe pages, GDPR email confirmation, coming soon seed. Code committed and pushed to both main and development (MBS commit 0fc98c4). Site needs redeployment on Coolify before anything is live.
 
 ### Read first
 - MBSPlatform/SESSION_HANDOFF.md
 - MBSPlatform/FUTURE_WORK_TODO.md
-- ~/.claude/reference/entitlement-integration.md (what we promised apps would get)
-- MBSPlatform/FREE_TIER_ARCHITECTURE.md (free tier design decisions)
 
-### What was built in Session 30 (already committed + pushed):
-- MBS commit 1b08acf: admin link URL normalization fix, homepage shows all 3 categories, admin-created products appear on frontend
-- 3 module alignment prompts created, IL agent reviewed, owner decisions applied
-- Global CLAUDE.md updated (12 modules, admin dashboard registration, module alignment reference)
-- platform-instructions-for-new-modules/CLAUDE.md fixed (isPremium, redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY)
-- All reference files synced to ~/.claude/reference/ on all laptops
+### Owner actions still pending (must be done before verification):
+- [ ] Redeploy MBS frontend + backend on Coolify
+- [ ] Run seed script: `node server/seeds/setComingSoon.js` against production DB
+- [ ] Docker prune on VPS (97% disk)
+- [ ] Create 6 Stripe products / 12 prices in Stripe Dashboard
+- [ ] BTCPay API key regeneration
+- [ ] CWG promote test → dev (requires passphrase)
 
-### MBS Platform Code Work Items (prioritized)
+### Priority 1 — Chrome verification (after redeployment):
+1. /subscribe loads (renamed from /billing)
+2. /billing redirects to /subscribe
+3. /subscribe/innerlab shows IL module picker with 12 modules
+4. Account settings shows email confirmation deletion flow
+5. Health check returns success
 
-**Priority 1 — Entitlement model + free tier support:**
-1. Add `free_tier` to Entitlement model type enum
-2. Build `POST /api/entitlements/subscribe-free` — creates free_tier entitlement, handles IL category + module selections
-3. Update `GET /api/entitlements/category/:cat` to return `products[]` array with `registered: true/false` per product
-4. Handle premium→free downgrade in Stripe webhook (auto-create free_tier entitlement when subscription cancelled)
-5. Remove `freeTierLimits` from all products in products.js (MBS doesn't pass limits)
+### Priority 2 — GDPR email confirmation rollout to child apps:
+Each child app's DELETE /api/user-data should go through MBS confirmation flow instead of deleting immediately.
+Build order: Inner Lab → CWG → FlowState → 11 standalone apps (can parallelize with agent prompts)
 
-**Priority 2 — Subscribe page (billing→subscribe rename):**
-6. Rename `BillingPage.jsx` → `SubscribePage.jsx`, route `/billing` → `/subscribe` (add redirect from old URL)
-7. Build dedicated `SubscribeInnerLabPage.jsx` at `/subscribe/innerlab` — shows all 12 IL modules as checkboxes, "Register Free" button, premium upgrade option
-8. Redesign main subscribe page with free vs premium per category
-
-**Priority 3 — GDPR email confirmation:**
-9. Build `DataDeletionRequest` model (user_id, level, target, confirmation_token, status, expires_at 24h)
-10. Modify `DELETE /api/auth/account` to create deletion request + send confirmation email instead of deleting immediately
-11. Build `GET /api/user-data/confirm-delete/:token` — validates token, executes deletion cascade
-12. Email template for deletion confirmation
-13. Update Account settings page UI — "Confirmation email sent" state
-
-**Priority 4 — Admin dashboard polish:**
-14. Toggle 5 apps to Coming Soon in admin: brokenchain, mindhacker, whisperinghouse, fakeartist, moviepicker
-
-**Verify before starting:**
-- FlowState GDPR bug: does `DELETE /api/user-data` in YogaGhost/server/index.js delete `il_user_wellness_profiles`? If yes, flag it — identity singleton, should NOT be deleted at app-level. Don't fix here (FlowState agent handles it).
-
-### Owner actions still pending (not code):
-- Docker prune on current VPS (97% disk)
-- Redeploy MBS frontend + backend on Coolify (Session 30 commits need deploying)
-- Create 6 Stripe products / 12 prices in Stripe Dashboard
-- BTCPay API key regeneration
-- CWG promote test → dev (requires passphrase)
+### Priority 3 — Module alignment:
+Give alignment prompts to individual module agents (prompts ready from Session 30)
 
 ### Do NOT start building immediately. List all work items, confirm the plan, then I'll tell you which to start on.
 ```

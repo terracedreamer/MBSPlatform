@@ -1,5 +1,34 @@
 # CHANGELOG — MBS Platform
 
+## April 10, 2026 — Session 31: Free Tier Entitlements, Subscribe Pages, GDPR Email Confirmation
+
+### MBS Platform (1 commit on main + development)
+- **Session 31 full build** (`0fc98c4`) — Free tier entitlement type added. subscribe-free endpoint rewritten (single product + category+modules mode). Category entitlements return registered:true/false. Stripe webhook premium→free auto-downgrade. freeTierLimits removed from all 23 products. BillingPage→SubscribePage rename with /billing→/subscribe redirect. New SubscribeInnerLabPage with 12 IL module picker. DataDeletionRequest model + GDPR email confirmation flow (no immediate deletion). Account settings confirmation-sent UI. Coming Soon seed script for 5 apps. 4 OneDrive -MSI conflict files cleaned up.
+
+### New Files
+- `server/models/DataDeletionRequest.js` — GDPR deletion request tracking
+- `server/routes/userData.js` — Deletion confirmation + category deletion endpoints
+- `server/seeds/setComingSoon.js` — Seed 5 apps to coming_soon status
+- `src/pages/SubscribePage.jsx` — Renamed from BillingPage
+- `src/pages/SubscribeInnerLabPage.jsx` — IL module picker page
+
+### Key Changes
+- `Entitlement.js` — `free_tier` added to type enum
+- `entitlements.js` — `checkAccess()` returns isPremium, `subscribe-free` supports category+modules, `category/:cat` returns registered per product
+- `billing.js` — Stripe webhook auto-creates free_tier on subscription cancellation
+- `auth.js` — DELETE /api/auth/account now sends confirmation email (DataDeletionRequest + sendDeletionConfirmationEmail)
+- `emailService.js` — New sendDeletionConfirmationEmail(), all /billing links → /subscribe
+- `products.js` — freeTierLimits removed from all products
+- `App.jsx` — /subscribe, /subscribe/innerlab, /subscribe/individual routes + /billing redirects
+- `AccountPage.jsx` — Deletion confirmation-sent state
+
+### Verification
+- FlowState GDPR bug: NOT present — il_user_wellness_profiles correctly excluded from app-level deletion
+- Frontend build passes clean (528ms)
+- Pushed to both main and development branches
+
+---
+
 ## April 10, 2026 — Session 30 (continued): Admin Fixes, Module Alignment Prompts, IL Agent Sync, Owner Decisions
 
 ### MBS Platform (1 commit on main)
