@@ -421,18 +421,20 @@ Do NOT hardcode these. Store in config so new modules can be added.
 
 | Slug | Name | Status | Domain |
 |------|------|--------|--------|
-| cwg | Conversations With God | Active | conversationswithgod.ai |
-| flowstate | FlowState | Active | yoga.magicbusstudios.com |
-| bonds | Bonds | Coming Soon | bonds.magicbusstudios.com |
-| lifemap | LifeMap | Coming Soon | TBD |
-| starmap | StarMap | Coming Soon | TBD |
-| astrocompass | AstroCompass | Coming Soon | TBD |
-| arcana | Arcana | Coming Soon | TBD |
-| archetypes | Archetypes | Coming Soon | TBD |
-| dreamlens | DreamLens | Coming Soon | TBD |
-| rituals | Rituals | Coming Soon | TBD |
-| innerquest | InnerQuest | Coming Soon | TBD |
-| nexus | Nexus | Coming Soon | TBD |
+| cwg | Conversations With God | Active | conversationswithgod.ai (historical) |
+| flowstate | FlowState | Active | yoga.magicbusstudios.com (historical) |
+| bonds | Bonds | Coming Soon | bonds.innerlab.ai |
+| lifemap | LifeMap | Coming Soon | lifemap.innerlab.ai |
+| starmap | StarMap | Coming Soon | starmap.innerlab.ai |
+| astrocompass | AstroCompass | Coming Soon | astrocompass.innerlab.ai |
+| arcana | Arcana | Coming Soon | arcana.innerlab.ai |
+| archetypes | Archetypes | Coming Soon | archetypes.innerlab.ai |
+| dreamlens | DreamLens | Coming Soon | dreamlens.innerlab.ai |
+| rituals | Rituals | Coming Soon | rituals.innerlab.ai |
+| innerquest | InnerQuest | Coming Soon | innerquest.innerlab.ai |
+| nexus | Nexus | Coming Soon | nexus.innerlab.ai |
+
+**Domain convention (decided 2026-04-10):** All new Inner Lab modules deploy to `{slug}.innerlab.ai` (frontend) and `api.{slug}.innerlab.ai` (backend). CWG and FlowState keep their historical domains.
 
 ## Project Structure (After Upgrade)
 ```

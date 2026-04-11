@@ -1,6 +1,6 @@
 # FUTURE WORK TODO — MBS Platform
 
-**Last Updated**: April 10, 2026 (Session 30 (continued))
+**Last Updated**: April 11, 2026 (Session 32)
 
 **RULE: If an item depends on a specific phase, it goes INTO that phase's platform-instructions document — NOT here. This file is ONLY for items that are either phase-independent or span multiple phases.**
 
@@ -146,6 +146,24 @@ Each product provides:
 - [ ] **Rename Billing → Subscribe** — `BillingPage.jsx` → `SubscribePage.jsx`, `/billing` → `/subscribe` (add redirect)
 - [ ] **Build `/subscribe/innerlab` dedicated page** — SubscribeInnerLabPage.jsx with IL module picker
 - [ ] **Redesign main subscribe page** — free vs premium per category
+
+### Module Coolify Instruction Reviews (Session 32 — in progress)
+
+Domain convention decided (2026-04-10): all new IL modules → `{slug}.innerlab.ai`. See `MODULE_REVIEW_CHECKLIST.md` for full checklist and tracking.
+
+**Reviewed (5/10):**
+- [x] Rituals — v2 approved ✅
+- [ ] StarMap — correction sent (twice), awaiting v2
+- [ ] InnerQuest — correction sent, awaiting v2
+- [ ] LifeMap — correction sent, awaiting v2
+- [ ] Archetypes — correction sent, awaiting v2
+
+**Not yet reviewed (5/10):**
+- [ ] Bonds
+- [ ] AstroCompass
+- [ ] Arcana
+- [ ] DreamLens
+- [ ] Nexus
 
 ### Module Alignment (Session 30 (continued) — prompts ready, not yet executed)
 

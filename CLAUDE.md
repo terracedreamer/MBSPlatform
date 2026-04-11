@@ -79,6 +79,15 @@ MBSPlatform/ (THIS REPO — think tank, no code)
 
 **These are the same Coolify deployments that already exist** — we're adding backend functionality to existing projects, not creating new containers.
 
+## Module Domain Convention (Decided 2026-04-10)
+
+**All new Inner Lab modules** deploy to `{slug}.innerlab.ai` (frontend) and `api.{slug}.innerlab.ai` (backend).
+**Standalone products** (Arcade, Studio Works) deploy to `{slug}.magicbusstudios.com` / `api.{slug}.magicbusstudios.com`.
+
+Historical exceptions (keep as-is):
+- CWG: `conversationswithgod.ai` (own domain)
+- FlowState: `yoga.magicbusstudios.com`
+
 ## Auth: Four Methods
 - Google SSO (primary — existing across MBS)
 - Email/Password (traditional signup + login, email verification, password reset, optional 2FA/TOTP with backup codes)

@@ -1,6 +1,6 @@
 # CURRENT STATUS — MBS Platform Architecture Repo
 
-**Last Updated**: April 10, 2026 (Session 30 (continued))
+**Last Updated**: April 11, 2026 (Session 32)
 
 ## Repo Purpose: MBS Ecosystem Documentation
 
@@ -113,6 +113,11 @@ Both fixes confirmed working across all affected apps.
 - [x] PLATFORM_URL dual-use pattern documented — frontend=magicbusstudios.com, backend=api.magicbusstudios.com (Session 30 (continued))
 - [x] Global reference files updated — innerlab-module-alignment.md added, CLAUDE.md module count fixed, registration updated (Session 30 (continued))
 - [x] New modules CLAUDE.md fixed — entitlement response (isPremium), redirect URL, PLATFORM_URL, JWT_PUBLIC_KEY (Session 30 (continued))
+- [x] IL module domain convention — all new modules → `{slug}.innerlab.ai`, 5 docs updated (Session 32)
+- [x] MODULE_REVIEW_CHECKLIST.md — comprehensive review checklist for module Coolify instructions (Session 32)
+- [x] Module instruction reviews — Rituals approved, StarMap/InnerQuest/LifeMap/Archetypes corrections sent (Session 32)
+- [ ] Module instruction reviews — 5 remaining: Bonds, AstroCompass, Arcana, DreamLens, Nexus
+- [ ] Module instruction corrections — 4 awaiting v2: StarMap, InnerQuest, LifeMap, Archetypes
 - [ ] Stripe bundle price IDs created in Dashboard
 - [ ] BTCPay API key regenerated
 - [ ] FlowState GDPR — verify il_user_wellness_profiles not deleted at app-level (potential singleton bug)
